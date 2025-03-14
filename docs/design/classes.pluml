@@ -1,0 +1,1402 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class Bank {
+  + Bank(): 
+  + MAX_KNIGHT_CARDS: int
+  + MAX_MONOPOLY_CARDS: int
+  + REQUIRE_THREE_TIMES_RESOURCES: int
+  + random: Random
+  + MAX_ROAD_CARDS: int
+  + REQUIRE_FOUR_TIMES_RESOURCES: int
+  + MAX_VICTORY_CARDS: int
+  + MAX_INDIVIDUAL_RESOURCE: int
+  + resources: HashMap<ResourceType, Integer>
+  + MAX_PLENTY_CARDS: int
+  + developmentCards: ArrayList<DevelopmentCards>
+  + playerDiscardResources(Player, Collection<ResourceType>): boolean
+  + setBankResource(ResourceType, int): void
+  + maxResources(ResourceType, int): boolean
+  + getDevelopmentCards(): List<DevelopmentCards>
+  + unsuccessfulRemoveOrGibeBack(Player, ResourceType): boolean
+  + obtainDevelopmentCard(Player): boolean
+  + tradeResourcePortExchangeResources(Port, ResourceType, ResourceType, int): void
+  + setDevelopmentCards(ArrayList<DevelopmentCards>): void
+  + playerTrade(Player, Player, Collection<ResourceType>, Collection<ResourceType>): boolean
+  + giveBackResource(ResourceType, int): boolean
+  + setupDevCardsLoop(DevelopmentCards, int): void
+  + handlePlayerBuysCard(Player): void
+  + discardAll(Player, Collection<ResourceType>): boolean
+  + obtainResource(ResourceType, int): boolean
+  + getBankResource(ResourceType): int
+  + setupResources(): void
+  + playerTradeLogic(Player, Player, Collection<ResourceType>, Collection<ResourceType>): void
+  + playerDoesntHaveResourcesForDevelopmentCard(Player): boolean
+  + tradeResourcePort(Port, ResourceType, ResourceType, int): boolean
+  + exchangeResourcesInBank(ResourceType, ResourceType, int, int): void
+  + tradeResourceBank(ResourceType, ResourceType, int): boolean
+  + noMoreResource(ResourceType, int): boolean
+  + setUpDevelopmentCards(): void
+  + isTwoToOnePortOfDifferentResource(Port, ResourceType): boolean
+}
+class BoardDisplay {
+  + BoardDisplay(BoardManager, boolean, Locale): 
+  + hexDisplays: HexagonDisplay[]
+  + Y_CENTER_MULT: int
+  + BROWN: Color
+  + Y_CENTER_OFFSET: int
+  + X_CENTER_OFFSET: int
+  + BRIDGE_STROKE: BasicStroke
+  + intersectionButtonManager: IntersectionButtonManager
+  + CITY_BUTTON_SIZE: int
+  + X_CENTER_MULT: int
+  + INTERSECTION_BUTTON_BORDER_THICKNESS: int
+  + messages: ResourceBundle
+  + boardManager: BoardManager
+  + hexButtonManager: HexButtonManager
+  + VECTOR_MAGNITUDE_SCALER: double
+  + redrawButtons(BoardManager): void
+  + boardSetup(BoardManager, boolean): void
+  + setupHexDisplays(Hexagon[]): void
+  + convertXToDisplay(double): int
+  + setGraphicToBridgeMode(Graphics2D): void
+  + intersectionAction(BoardManager, JButton): void
+  + drawPortLabel(Graphics2D, int[], int[], Port): void
+  + paintBridges(Graphics2D): void
+  + drawPortBridge(Graphics2D, double, double, double): int[]
+  + setGraphicsAndDrawBridgesAtPort(Graphics2D, Intersection[], ArrayList<Port>, int): void
+  + portDisplay(Port): String
+  + calculatePortBridgeLocationAndDraw(Graphics2D, Point2D): int[]
+  + addActionToHexButtons(BoardManager): void
+  + addIntersectionsToManager(BoardManager): void
+  + upgradeToCityButton(int): void
+  + redrawButton(BoardManager, Intersection): void
+  + initializeButtonManagers(): void
+  + drawBridgesAtPort(Graphics2D, Intersection[], int, Port): void
+  + getFormattedResource(String): String
+  + paintComponent(Graphics): void
+  + toggleIntersectionButtons(boolean): void
+  + convertPointToDisplay(double, double): int[]
+  + getPreferredSize(): Dimension
+  + calculateCenter(int[], int[]): int[]
+  + main(String[]): void
+  + convertYToDisplay(double): int
+  + addActionListenersAndComponentsToManager(BoardManager): void
+  + addHexButtonsToManager(BoardManager): void
+  + addActionToIntersections(BoardManager): void
+  + setGraphicToPortTextMode(Graphics2D): void
+  + paintHexes(Graphics2D): void
+  + redrawButtonWithSettlement(BoardManager, int): void
+  + toggleHexButtons(boolean): void
+  + hexAction(BoardManager, JButton): void
+}
+class BoardManager {
+  + BoardManager(Intersection[], List<Intersection>): 
+  + BoardManager(): 
+  + BoardManager(Intersection[], List<Intersection>, ArrayList<Intersection>): 
+  + BoardManager(Intersection[]): 
+  + BoardManager(Random): 
+  + BoardManager(Hexagon[], Intersection[]): 
+  + BoardManager(Intersection[], List<Intersection>, List<Road>): 
+  + BoardManager(Hexagon[]): 
+  + NUM_THREE_TO_ONE_PORTS: int
+  + END_OF_BOARD_INTERSECTIONS: int
+  + MAX_INTERSECTION_INDEX: int
+  + RANDOM_BOUND: int
+  + ports: ArrayList<Port>
+  + structures: List<Structure>
+  + MAX_HEX_INDEX: int
+  + PRESET_BOARD_ROW_3: int[]
+  + PORT_INTERSECTIONS: int[][]
+  + PORT_SEVEN: int[]
+  + PORT_TWO: int[]
+  + INTERSECTION_BOARD_MID: int
+  + PORT_EIGHT: int[]
+  + INTERSECTION_MID_ROW_SIZE: int
+  + PORT_NINE: int[]
+  + INTERSECTION_HEIGHT_DIFF: double
+  + PRESET_BOARD_ROW_5: int[]
+  + HEX_MID_ROW_SIZE: int
+  + roadsOnBoard: List<Road>
+  + PRESET_BOARD_ROW_4: int[]
+  + shuffler: Shuffler
+  + rand: Random
+  + PORT_SIX: int[]
+  + PRESET_BOARD_ROW_1: int[]
+  + PORT_THREE: int[]
+  + PORT_FIVE: int[]
+  + ADJ_DISTANCE: double
+  + selectedHex: int
+  + structureLocations: List<Intersection>
+  + PORT_ONE: int[]
+  + roads: List<Intersection>
+  + intersections: Intersection[]
+  + NUM_INTERSECTIONS: int
+  + PRESET_BOARD_ROW_2: int[]
+  + selectedIntersection: int
+  + NUM_HEXAGONS: int
+  + hexagons: Hexagon[]
+  + HALF_BOARD_SIZE: int
+  + PORT_FOUR: int[]
+  + distributeResources(int): ArrayList<ResourceType>
+  + addIntersectionsToHexagons(Hexagon[], Intersection[]): void
+  + distributeResourcesAtEachHex(Hexagon[], ArrayList<ResourceType>): void
+  + removeRoadFromPlay(int, int, Road): void
+  + assignPredeterminedResources(Hexagon[], ResourceType[]): void
+  + ifHexValueZeroSetDesert(int[][], int[], int, int): void
+  + checkValidRoadPlacementLocation(int, int, Player): boolean
+  + ensureNewLocation(int[][], Random, int[], int[]): void
+  + getPorts(): ArrayList<Port>
+  + makeSettlement(int, Player, Settlement): void
+  + reassignResource(Hexagon[]): void
+  + placeSettlementSetup(int, Player, Settlement): boolean
+  + addFlippedIntersectionIfNotHorizontallyCentered(IntersectionHelper, int): void
+  + swapResourceBetweenPlayers(Player, Player, ResourceType): void
+  + randomizePorts(Shuffler): void
+  + makeAdjacentIntersection(Intersection[], int): void
+  + removeRoad(int, int): boolean
+  + addHexagonsToIntersection(Hexagon[], Intersection): void
+  + randomizeDesert(int[][], Random): void
+  + buildSettlement(int, Player): boolean
+  + placeSettlementAndDecrementCount(int, Player): void
+  + reassignValue(Hexagon[], int[][]): void
+  + indexOutOfBoundsOrViolatesSettlementRules(int): boolean
+  + checkStructureExistsAndTryToGiveResource(Bank, Hexagon): int
+  + addHexagonIfAdjacent(ArrayList<Hexagon>, Point2D, Hexagon): void
+  + addHexagonOnSide(HexagonHelper, int): void
+  + checkSettlementPlacement(int, Player): boolean
+  + makeAdjacentIntersections(Intersection[]): void
+  + getIntersectionSettlement(int): Structure
+  + invalidRoadIndices(int, int): boolean
+  + getRoadsOnBoard(): ArrayList<Road>
+  + addIntersectionsThatAddToAndFlipY(IntersectionHelper, int, int): void
+  + roadNotConnectingOrNotOwnedByPlayer(int, Player): boolean
+  + checkSettlementPlacementLocation(int): boolean
+  + addHexagonsToTop(HexagonHelper, int): void
+  + setIntersectionAsAdjacent(Intersection[], int, Point2D, int): void
+  + randomizeAndReassignBoard(Shuffler, Hexagon[], int[][], Random): void
+  + addIntersection(IntersectionHelper, double, double): void
+  + getPredeterminedHexagonValues(): int[][]
+  + addIntersectionsInRow(IntersectionHelper, int, int): void
+  + swapRandomResource(Player, Player, ArrayList<ResourceType>): ResourceType
+  + removeFromBoard(int, int, Road): void
+  + addSubtractFlipIntersectionIfNotHorizontallyCentered(IntersectionHelper, int): void
+  + getPlayersOnHex(Hexagon): List<Player>
+  + addAllIntersections(IntersectionHelper): void
+  + placeRoad(int, int, Player): boolean
+  + generateAllHexagons(HexagonHelper): void
+  + generateIntersections(): Intersection[]
+  + setAllIntersectionsAsAdjacent(Intersection[], int, Point2D): void
+  + addHexagonsToBottom(HexagonHelper, int): void
+  + addIntersectionsThatSubtractFromY(IntersectionHelper, int, int): void
+  + roadAlreadyExistsOnIntersections(int, int): boolean
+  + getHexagons(): Hexagon[]
+  + swapWithHexIfNullFound(Hexagon[], ResourceType): void
+  + initializeBoardStructure(boolean): Hexagon[]
+  + checkHasRoadResources(Player): boolean
+  + nonAdjacentIntersections(int, int): boolean
+  + addResAndValToValidHex(HexagonHelper): void
+  + swapHexWithLocation(int[][], int[], int[]): void
+  + peekIntersectionSelection(): int
+  + setRoadIntersectionsAndOwner(int, int, Player, Road): void
+  + generateHexagons(boolean): Hexagon[]
+  + checkRoadPlacementLocation(int, int, Player): boolean
+  + reassignValueAtHexAndUpdateInfo(Hexagon, boolean, int[][], int[]): void
+  + addIntersectionIfNotHorizontallyCentered(IntersectionHelper, int): void
+  + makeRoad(int, int, Player): void
+  + stealResource(Player, Player): ResourceType
+  + getRoad(int, int): Road
+  + boardPredeterminedLayout(HexagonHelper): void
+  + addHexagon(HexagonHelper, double, double): void
+  + reassignResourceIfValueIsZero(Hexagon[], Hexagon): void
+  + getHexagonPlayers(): ArrayList<Player>
+  + tryAddResourcesFromRoll(Bank, Intersection, ResourceType): int
+  + searchForDesertInHexagonValuesForm(int[][], int[]): void
+  + getHexSelection(): int
+  + intersectionsNotOwnedByPlayer(int, int, Player): boolean
+  + getPortIntersections(): int[][]
+  + addPredeterminedTwoToOnePort(int, ResourceType): int
+  + giveResourceBasedOnRoll(int, Bank, Hexagon): int
+  + intersectionSetStructureAndAddOwner(int, Player, Settlement): void
+  + checkRoadPlacementThatHopefullyGetsDeleted(int, int, Player): void
+  + getIntersectionSettlementColor(int): Color
+  + addHexagonsToIntersections(Hexagon[], Intersection[]): void
+  + buildRoad(int, int, Player): boolean
+  + addMirroredHexagonsIfNotMiddle(HexagonHelper, int, int): void
+  + predeterminedThreeToOnePorts(): int
+  + distributeResourcesOnRoll(int, Bank): int
+  + checkHasCityResources(Player): boolean
+  + findDesertInHexagonValuesForm(int[][]): int[]
+  + addResAndValToHex(HexagonHelper): void
+  + checkSettlementCostAndCount(Player): boolean
+  + makeRoadAndDecrementCount(int, int, Player): void
+  + generateAllHexagonsAndRandomize(boolean, HexagonHelper): void
+  + setIntersectionSelection(int): void
+  + predeterminedTwoToOnePorts(int): void
+  + checkIfViolatesSettlementRules(int, Intersection): boolean
+  + addSubtractIntersectionIfNotHorizontallyCentered(IntersectionHelper, int): void
+  + predeterminedPorts(): void
+  + getStructures(): Collection<Structure>
+  + linkHexagonsAndIntersections(Hexagon[], Intersection[]): void
+  + addIntersectionsToHexagon(Intersection[], Hexagon): void
+  + roadFound(int, int, Road): boolean
+  + reassignHexWithValue(int[][], Hexagon): void
+  + loadPredeterminedBoardLayout(Hexagon[], int[][], ResourceType[]): void
+  + addAllAdjacentHexagons(Hexagon[], ArrayList<Hexagon>, Point2D): void
+  + addAllAdjacentIntersections(Intersection[], ArrayList<Intersection>, Point2D): void
+  + tryToAddFromCityOrSettlement(Bank, Intersection, ResourceType, Player): int
+  + boardShuffleAndRandomization(HexagonHelper): void
+  + addIntersectionsThatSubtractFromAndFlipY(IntersectionHelper, int, int): void
+  + setHexSelection(int): void
+  + buildCity(int, Player): boolean
+  + addNormalIntersectionsInRow(IntersectionHelper, int, int): void
+  + getRobberLocation(): int
+  + generatePorts(boolean): void
+  + getIntersectionSelection(): int
+  + getIntersections(): Intersection[]
+  + addFlippedIntersectionsInRow(IntersectionHelper, int, int): void
+  + setIntersection(int, Intersection): void
+  + generateHexagonsAt(HexagonHelper, int): void
+  + replaceSettlementWithCity(City, int): void
+  + addIntersectionIfAdjacent(ArrayList<Intersection>, Point2D, Intersection): void
+  + moveRobber(int): void
+  + getPredeterminedResourceLayout(): ResourceType[]
+  + checkCityPlacementLocation(int, Player): boolean
+  + peekHexSelection(): int
+  + randomizeBoard(boolean, HexagonHelper): void
+  + tryDistributeResources(int): List<ResourceType>
+  + getHexagonHelper(): HexagonHelper
+  + prepareForAndAddIntersectionsInRow(IntersectionHelper, int): void
+  + addPredeterminedThreeToOnePort(int): void
+  + addIntersectionsThatAddToY(IntersectionHelper, int, int): void
+  + reassignValueAtHex(int[][], Hexagon, int[]): void
+  + placeCity(int, Player): void
+}
+class BuildManagerGUI {
+  + BuildManagerGUI(GameDisplay, Locale): 
+  + buildRoad: JButton
+  + frame: JFrame
+  + gameDisplay: GameDisplay
+  + messages: ResourceBundle
+  + buildSettlement: JButton
+  + buildCity: JButton
+  + FRAME_WIDTH: int
+  + FRAME_HEIGHT: int
+  + MILLS_TO_WAIT: int
+  + label: JLabel
+  + buildFrame: JPanel
+  + initializeFrameContent(): void
+  + initializeFields(GameDisplay, Locale): void
+  + buildSettlementActionPreformed(): void
+  + createBuildSettlementButton(): void
+  + refreshFrame(): void
+  + createBuildCityButton(): void
+  + buildRoadActionPerformed(): void
+  + initializeLabels(): void
+  + actionPerformed(ActionEvent): void
+  + initializeButtons(): void
+  + displayFrame(): void
+  + buildCityActionPerformed(): void
+  + addComponentsToFrame(): void
+  + createBuildRoadButton(): void
+  + initializeMainFields(): void
+  + initializeSetFields(GameDisplay, Locale): void
+  + initializeBuildOptionGUI(): void
+}
+class CardButton {
+  + CardButton(String, DevelopmentCards): 
+  + devCard: DevelopmentCards
+  + getCardType(): DevelopmentCards
+}
+class CardGUI {
+  + CardGUI(Player[], GameManager, GameDisplay, Locale): 
+  + FRAME_HEIGHT: int
+  + MAIN_PANEL_WIDTH: int
+  + frame: JPanel
+  + FRAME_WIDTH: int
+  + buyButton: JButton
+  + display: GameDisplay
+  + players: Player[]
+  + MAIN_PANEL_HEIGHT: int
+  + cardPanel: JPanel
+  + mainPanel: JPanel
+  + messages: ResourceBundle
+  + gameManager: GameManager
+  + initializeFields(Player[], GameManager, GameDisplay, Locale): void
+  + updateFrame(): void
+  + displayPlayableCardsPanel(): void
+  + playKnight(): void
+  + getDevelopmentCardText(DevelopmentCards): String
+  + buyButtonAction(): void
+  + tryMoveRobber(int): boolean
+  + displayFutureDevelopmentCards(): boolean
+  + displaySuccessfulDevelopmentCardPurchaseMessage(): void
+  + getRoadInput(): int[]
+  + initializeAndDisplayButtonsAndPanels(): void
+  + getCurrentPlayer(): Player?
+  + activateYearOfPlenty(ResourceType, ResourceType): void
+  + prepareForAndPlayKnight(): void
+  + initializeCardPanel(): void
+  + displayInvalidRoadPlacementMessage(): void
+  + playCard(DevelopmentCards): void
+  + toggleIntersectionsAndGetRoadInput(): int[]
+  + purchaseFailedMessage(): void
+  + combineRoads(int[], int[]): int[][]
+  + playMonopoly(): void
+  + drawMainPanel(): void
+  + addPlayableCardToPanel(DevelopmentCards): void
+  + playRoadBuildingLoop(int[], int[]): void
+  + getResourceInputFromMessage(String, String): int
+  + displaySecondRoadBuildingMessage(): void
+  + displayLackResourcesForDevelopmentCardMessage(): void
+  + displayUnplayableCardsPanel(): void
+  + displayActualUnplayableCards(): boolean
+  + getResourceInput(String, String): ResourceType
+  + tryPlayMonopoly(): void
+  + playKnightThreadAction(): void
+  + displayUnplayableCards(): boolean
+  + displayPlayableCards(): boolean
+  + createCardLabel(DevelopmentCards): JLabel
+  + playRoadBuildingThread(): void
+  + convertOptionToResourceType(int): ResourceType
+  + toggleHexButtonsAndTemporarilyMoveRobber(): int
+  + displayBankOutOfDevelopmentCardsMessage(): void
+  + temporarilyMoveRobber(): int
+  + prepareForAndPlayRoadBuilding(): void
+  + tryPlayYearOfPlenty(): void
+  + actionPerformed(ActionEvent): void
+  + initializeBuyButton(): void
+  + waitAndEnsureValidRobberMove(int): void
+  + displayUnplayableDevelopmentCard(DevelopmentCards): void
+  + prepareForAndTryPlayMonopoly(): void
+  + playYearOfPlenty(): void
+  + displayFirstRoadBuildingMessage(): void
+  + playRoadBuilding(): void
+  + initializeFrameAndPanel(): void
+  + createPlayableCardButton(DevelopmentCards): JButton
+}
+class City {
+  + City(): 
+  + COST: List<ResourceType>
+  + distributeResources(ResourceType): void
+  + getVictoryPoints(): int
+  + getCost(): Collection<ResourceType>
+}
+class ColorPickerDisplay {
+  + ColorPickerDisplay(int, Locale): 
+  + messages: ResourceBundle
+  + colorArray: Color[]
+  + colorsPicked: int
+  + getUserColor(): Color
+  + chooseColor(): Color
+  + colorSelectMessage(): Color
+  + colorArrayContains(Color): boolean
+  + colorSelectionErrorMessage(): Color
+}
+class DevelopmentCardManager {
+  + DevelopmentCardManager(Player[], Bank, BoardManager): 
+  + board: BoardManager
+  + largestArmyOwner: Player
+  + MAX_HEX_INDEX: int
+  + players: Player[]
+  + MIN_ROADS_FOR_LONGEST: int
+  + longestRoadOwner: Player
+  + MIN_FOR_ARMY: int
+  + bank: Bank
+  + AT_LEAST_THREE_UNIQUE_INTERSECTIONS: int
+  + validateHasKnightCard(Player): void
+  + dfsSetCurrentToNext(DFSPackage, int, SearchState, Intersection): void
+  + packageSetup(Intersection, Player, HashSet<Intersection>): DFSPackage
+  + playYearOfPlenty(Player, ResourceType, ResourceType): Collection<ResourceType>
+  + validateHexIndexRange(int): void
+  + addResourcesToPlayer(Player, ResourceType, ResourceType): void
+  + findLongestRoad(Player[], Road[]): boolean
+  + getNumPlayedKnights(Player): int
+  + validatePlayKnight(Player, Player, int): boolean
+  + validateRobberNotOnHexAlready(int): void
+  + checkIfInsufficientResources(ResourceType, ResourceType): boolean
+  + validatePlayRoadBuilding(int[][]): void
+  + playKnight(Player, Player, int): ResourceType
+  + ensureValidPlayerForHex(Player, int, ArrayList<Player>): void
+  + dfs(DFSPackage, int, SearchState): void
+  + noPlayerToStealFrom(Player): void
+  + longestRoadDecision(SearchState): boolean
+  + updateLargestArmy(Player): void
+  + longestRoadInnerInnerLoop(Player, SearchState, Intersection): void
+  + getLongestRoadOwner(): Player
+  + checkNoMoreResourceForEach(ResourceType, ResourceType): boolean
+  + placementFails(Player, int[][]): boolean
+  + moveRobberAndGetPlayersOnHex(int): ArrayList<Player>
+  + preprocessStates(Player, Road, SearchState): void
+  + validateTargetPlayerOnNewHex(Player, int): boolean
+  + getMostKnightsPlayed(): int
+  + getLargestArmyOwner(): Player
+  + playRoadBuilding(Player, int[][]): boolean
+  + initializeDFS(Intersection, Player, HashSet<Intersection>, DFSPackage): void
+  + setStateHelper(int, Player, SearchState): void
+  + placeRoadBuildingRoads(Player, int[][]): boolean
+  + moveRobberBackAndErrorIfPlayerNotOnHex(Player, int, ArrayList<Player>): void
+  + preprocessInnerLoop(Player[], Road, SearchState): void
+  + dfsOuterLoop(DFSPackage, int, SearchState): void
+  + dfsInnerLoop(DFSPackage, Road, int, SearchState): void
+  + setState(int, Player, SearchState): void
+  + makeIntersectionSet(int[][]): HashSet<Integer>
+  + longestRoadInnerLoop(Player, SearchState): void
+  + longestRoadLoop(Player[], SearchState): void
+  + setLargestArmyOwner(Player): void
+  + getPossibleStolenResource(Player, Player, boolean): ResourceType
+  + preprocessRoads(Player[], Road[], SearchState): void
+  + playMonopoly(Player, ResourceType): Collection<ResourceType>
+  + setLongestRoadOwner(Player): void
+  + checkSecondRoadPlacement(Player, int[][]): boolean
+}
+enum DevelopmentCards << enumeration >> {
+  + DevelopmentCards(): 
+  + KNIGHT: 
+  + ROAD: 
+  + PLENTY: 
+  + MONOPOLY: 
+  + VICTORY: 
+  + valueOf(String): DevelopmentCards
+  + values(): DevelopmentCards[]
+}
+class DiceManager {
+  + DiceManager(int): 
+  + DICE_MAX_ROLL: int
+  + DICE_MIN_ROLL: int
+  + lastRoll: int
+  + random: Random
+  + dice: int[]
+  + playerHasRolledDice: boolean
+  + getCurrentDiceRoll(Random): int
+  + updateDice(Random): void
+  + getDie(int): int
+  + rollAllDice(Random): int
+  + getIndividualDiceRolls(): int[]
+  + hasPlayerRolledDice(): boolean
+  + rollAllDice(): int
+  + getNumDice(): int
+  + getSumOfDice(): int
+  + getCurrentDiceRoll(): int
+  + getDie(int, Random): int
+  + invalidateDice(): void
+  + rollDiceIfNotRolled(Random): void
+}
+class DicePanel {
+  + DicePanel(Player[], GameManager, Locale): 
+  + diceManager: DiceManager
+  + DICE_GRIDBAG_Y_POSITION: int
+  + diceLabels: JLabel[]
+  + buttonsToEnable: ArrayList<JButton>
+  + DICE_ROW: int
+  + SMALL_INSET_PADDING: int
+  + DICE_SMALL_PADDING: int
+  + DICE_LARGE_PADDING: int
+  + players: Player[]
+  + PLAYER_SMALL_INSET_PADDING: int
+  + rollDiceButton: JButton
+  + gameManager: GameManager
+  + DICE_IMAGE_HEIGHT: int
+  + DICE_BOTTOM_GRID_BAG_WIDTH: int
+  + PLAYER_LARGE_INSET_PADDING: int
+  + DICE_GRIDBAG_X_POSITION: int
+  + DICE_IMAGE_WIDTH: int
+  + LARGE_INSET_PADDING: int
+  + messages: ResourceBundle
+  + getDiceImageIcon(int): ImageIcon
+  + generateDiceConstraints(int): GridBagConstraints
+  + addDiceLabelsIfNull(int, ImageIcon): void
+  + updateDiceImages(): void
+  + setDiceButtonWeightAndInsetsConstraints(GridBagConstraints): void
+  + main(String[]): void
+  + resetButtons(): void
+  + initializeSetFields(Player[], GameManager, Locale): void
+  + enableButtons(): void
+  + tryLoadDiceImage(int): BufferedImage
+  + setDiceGridConstraints(int, GridBagConstraints): void
+  + adjustLeftDicePadding(int): int
+  + addDiceButtonAndLabels(GameManager): void
+  + loadDiceImage(int): BufferedImage
+  + rollDiceButtonAction(): void
+  + addDiceButton(): void
+  + addButtonsToEnable(JButton[]): void
+  + getBufferedImage(int): BufferedImage
+  + setDiceButtonGridConstraints(GridBagConstraints): void
+  + updateDiceImage(int, int): void
+  + setDiceConstraints(int, GridBagConstraints): void
+  + setDiceInsetAndAnchorConstraints(GridBagConstraints, int): void
+  + scaleAndSetDiceImage(int, int): void
+}
+class GameDisplay {
+  + GameDisplay(boolean): 
+  + TIMER_START_AFTER: int
+  + actionTaken: boolean
+  + quickPlayerNames: String[]
+  + QUICK_SETUP_ROAD_FOUR: int[]
+  + QUICK_SETUP_ROAD_THREE: int[]
+  + messages: ResourceBundle
+  + boardDisplay: BoardDisplay
+  + MILLS_TO_WAIT: int
+  + playerRollsFinished: boolean
+  + turnDisplay: PlayerTurnDisplay
+  + inTurn: Player
+  + timer: Timer
+  + locales: Locale[]
+  + buildSettlement: boolean
+  + buildCity: boolean
+  + boardFrame: JFrame
+  + quickPlayerResources: ArrayList<ResourceType>
+  + QUICK_SETUP_SETTLEMENT_FOUR: int
+  + playerRollIndex: int
+  + gameLocale: Locale
+  + playerRolls: ArrayList<Integer>
+  + boardManager: BoardManager
+  + numPlayers: int
+  + QUICK_SETUP_ROAD_TWO: int[]
+  + cardDisplay: CardGUI
+  + TIMER_INTERVAL: int
+  + rollForPlayersFrame: JFrame
+  + QUICK_SETUP_ROAD_ONE: int[]
+  + QUICK_SETUP_SETTLEMENT_THREE: int
+  + QUICK_SETUP_SETTLEMENT_ONE: int
+  + QUICK_SETUP_SETTLEMENT_TWO: int
+  + ROBBER_ROLL: int
+  + buildRoad: boolean
+  + diceManager: DiceManager
+  + gameManager: GameManager
+  + players: Player[]
+  + dicePanel: DicePanel
+  + playersStats: PlayersStatsGUI
+  + RESOURCE_BUNDLE: String
+  + colorPickerDisplay: ColorPickerDisplay
+  + quickPlayerColors: Color[]
+  + toggleIntersectionButtons(boolean): void
+  + gameWonMessage(Player): void
+  + repaintBoardHexes(): void
+  + placeRoad(Player, int, int): boolean
+  + handleResourceDistributionOnRoll(): void
+  + getNewPlayerNameAfterErrorMessage(): String
+  + initialBoardSetupSecondSettlementAndRoadPlacement(Player[]): void
+  + buildCityMessage(): void
+  + handlePlayersRobberDiscard(): void
+  + getPlayerNumMessageAfterError(): String
+  + mainGameLoop(): void
+  + setNewPlayerOrder(ArrayList<Player>): void
+  + waitForPlayerRolls(): void
+  + handleCityAction(Player): void
+  + repaintButtons(): void
+  + setupPlayer(int): void
+  + sleepForInput(): void
+  + addPlayerLabelAndDicePanelToFrame(): void
+  + getAndTrySettlementPlacement(Player, boolean): boolean
+  + tryBuildCity(Player): void
+  + placeSecondInitialQuickSetupSettlements(): void
+  + doSingleTurnAndSetupForNextTurnIfGameNotOver(): boolean
+  + initialBoardSetup(Player[]): void
+  + getAndTryRoadPlacement(Player): boolean
+  + invalidSettlementPlacementMessage(): void
+  + doQuickOrNormalSetup(boolean): void
+  + actionPerformed(ActionEvent): void
+  + quickSetup(): void
+  + createRollForPlayerFrame(): void
+  + waitForTurnOver(Player): void
+  + handleMoveRobber(): void
+  + handleRobberActions(Player): void
+  + placeSettlement(Player, boolean, int): boolean
+  + getPlayerName(int): String
+  + addSecondaryDisplaysToFrame(): void
+  + setupTimer(): void
+  + setupPlayers(): void
+  + startPlayerRobberDiscardAndWaitForSuccess(int): void
+  + getIntersectionButtonSelection(): int
+  + handleRoadAction(Player): void
+  + getPlayerNameMessage(int): String
+  + handlePlayerRobberDiscard(int): void
+  + getUniquePlayerRoll(): void
+  + getPlayerNumMessage(): String
+  + addPlayersToStealFromToMap(Player, ArrayList<Player>, Map<String, Player>): void
+  + invalidCityPlacementMessage(): void
+  + getPlayerToStealFrom(Player): Player
+  + invalidRoadPlacementDisplay(): void
+  + runGame(): void
+  + setupLanguage(): void
+  + handleSettlementAction(Player): void
+  + initAndDisplaySecondaryDisplays(): void
+  + updatePlayerInfoForTurn(Player): void
+  + setupForFirstTurn(): void
+  + quickSetupPlayers(): void
+  + chooseQuickSetup(): boolean
+  + initialBoardSetupFirstSettlementAndRoadPlacement(Player[]): void
+  + initBoard(): void
+  + normalSetup(): void
+  + initializeRollForPlayersFrameAndDicePanel(): void
+  + addConfirmButtonToFrame(): void
+  + singleTurn(Player): void
+  + initialRoadDisplay(int, String): void
+  + placeSecondInitialQuickSetupRoads(): void
+  + moveRobberMessage(): void
+  + tryRoadPlacement(Player, int, int): boolean
+  + placeQuickSetupStructures(): void
+  + getFormattedResourceStolen(String): String
+  + placeFirstInitialQuickSetupSettlements(): void
+  + buildSettlementMessage(): void
+  + addBoardDisplayToFrame(): void
+  + tryStealResourceWithMessageToPlayers(Player, Player): void
+  + displayRobberResourceStolenMessage(String, String): void
+  + waitForHexSelection(): int
+  + tryFirstSettlementAndRoadPlacement(Player[], int): void
+  + trySecondRoadAndSettlementPlacement(Player[], int): void
+  + invalidSettlementPlacementDisplay(): void
+  + getFormattedDiscardMessage(int): String
+  + setLanguage(String): void
+  + sevenRolled(Player): void
+  + waitForActionTaken(): void
+  + initBoardDisplay(): void
+  + getPlayerToStealFromMessage(String[]): String
+  + trySettlementPlacement(Player, boolean, int): boolean
+  + initialSettlementDisplay(int, String): void
+  + hasInTurnWonTheGame(): void
+  + buildRoad(Player, int, int): void
+  + setupForNextPlayerRoll(): void
+  + placeFirstInitialQuickSetupRoads(): void
+  + rollForPlayerOrder(): void
+  + handleActionOptions(Player): void
+  + buildRoadMessage(): void
+  + getSetupStyle(String[]): String
+  + tryBuildSettlement(Player): void
+  + getNameOfPlayerToSteal(Map<String, Player>): String
+  + waitForRoadPlacement(Player): void
+  + discardCardsMessage(int): void
+  + waitForSettlementPlacement(Player, boolean): void
+  + invalidPlayerNameMessage(): void
+  + setupPlayerMap(Player): Map<String, Player>
+  + setup(boolean): void
+  + displayRobberNoPlayersToStealFrom(): void
+  + sevenRolledMessage(): void
+  + setPlayerRollsFinished(): void
+  + tryRobberMovement(): boolean
+  + quickSetupPlayer(int): void
+  + displayRobberPlacementError(): void
+  + waitForIntersectionButtonSelection(): void
+  + repaintBoard(): void
+  + initializeSecondaryDisplays(): void
+  + getFormattedStructureMessage(String, String): String
+  + initBoardFrame(): void
+  + tryBuildRoad(Player): void
+  + stealResourceWithMessageToPlayers(Player, Player): void
+  + waitForDiceRoll(GameManager): int
+  + initializeGameAndBoardManager(int): void
+  + confirmRollButtonAction(): void
+  + invalidRoadPlacementMessage(): void
+  + getPlayerByName(String): Player?
+  + getPlayerNum(): int
+  + toggleHexButtons(boolean): void
+  + handlePlayerSetup(boolean): void
+  + formatResourceStolenMessage(String, String): String
+  + getFormattedPlayerMessage(String, int): String
+  + tryMainGameLoop(): void
+}
+class GameManager {
+  + GameManager(): 
+  + GameManager(int): 
+  + GameManager(int, BoardManager, DevelopmentCardManager): 
+  + GameManager(int, BoardManager): 
+  + GameManager(Player[], BoardManager): 
+  + GameManager(DevelopmentCardManager, Player[], BoardManager, Bank): 
+  + GameManager(Player[], BoardManager, Bank): 
+  + GameManager(Player[], BoardManager, Bank, DiceManager): 
+  + diceManager: DiceManager
+  + SCORE_TO_WIN: int
+  + numPlayers: int
+  + MULTIPLE_OF_FOUR: int
+  + inTurn: Player
+  + boardManager: BoardManager
+  + MIN_PLAYERS: int
+  + inTurnIndex: int
+  + gameOver: boolean
+  + players: Player[]
+  + MAX_INTERSECTION_INDEX: int
+  + MAX_PLAYERS: int
+  + bank: Bank
+  + cardManager: DevelopmentCardManager
+  + MAX_HEX_INDEX: int
+  + getNumVictoryCards(Player): int
+  + getCurrentDiceRoll(): int
+  + setPlayer(int, Player): boolean
+  + getStructureVictoryPoints(BoardManager, Player): int
+  + buildRoad(int, int, Player): boolean
+  + playYearOfPlenty(ResourceType, ResourceType): Collection<ResourceType>
+  + reorderPlayersBasedOnDice(int[], ArrayList<Integer>, ArrayList<Player>): Player[]
+  + setBankResource(ResourceType, int): void
+  + distributeResourcesToPlayer(Player, List<ResourceType>): void
+  + removePlayerResource(ResourceType, int): void
+  + calculateVictoryPointsForPlayer(BoardManager, Player): int
+  + calculateVictoryPointsForPlayer(Player): int
+  + getFutureDevelopmentCards(): Collection<DevelopmentCards>
+  + setInTurnPlayer(int): void
+  + buyDevelopmentCard(): boolean
+  + validateIntersectionRange(int): void
+  + setTurnOrder(int[]): Player[]
+  + placeInitialSettlement(int, Player): void
+  + getNumPlayers(): int
+  + validateNumPlayerRange(int): void
+  + getRobberLocation(): int
+  + getLongestRoadPoints(Player): int
+  + buildSettlement(int, Player): boolean
+  + playerDiscardResources(Player, Collection<ResourceType>): boolean
+  + getPlayers(): Player[]
+  + placeRoad(int, int, Player): void
+  + validateDifferentIntersections(int, int): void
+  + initializeBoardStructure(boolean): Hexagon[]
+  + getUnplayableDevelopmentCards(): Collection<DevelopmentCards>
+  + getIntersections(): Intersection[]
+  + ensureNumPlayersEqualsDiceRollsLength(int[]): void
+  + tryRobberSteal(Player, Player): ResourceType
+  + isInTurnPlayer(Player): boolean
+  + setNumPlayers(int): int
+  + setNextPlayerInTurn(): int
+  + decrementResourcesFromBank(Collection<ResourceType>): void
+  + doTradeWithPort(Port, ResourceType, ResourceType, int): void
+  + distributeResourcesOnRoll(int): int
+  + playerTradeWithPort(Port, ResourceType, ResourceType, int): boolean
+  + getNumberCardsToDiscard(Player): int
+  + currentPlayerHasSufficientResources(Collection<ResourceType>): boolean
+  + getHexagonPlayers(): ArrayList<Player>
+  + portCheck(Port, ResourceType, ResourceType, int): boolean
+  + validateResourcesToDistribute(List<ResourceType>): void
+  + findLongestRoad(): void
+  + getDevelopmentCardsInBank(): Collection<DevelopmentCards>
+  + playKnight(Player, int): boolean
+  + validateRobberIsntAlreadyOnHex(int): void
+  + playerTradeWithBank(ResourceType, ResourceType, int): boolean
+  + givenPlayerHasSufficientResources(Collection<ResourceType>, Player): boolean
+  + getLargestArmyPoints(Player): int
+  + moveRobber(int): void
+  + playRoadBuildingCard(int[][]): boolean
+  + giveBackResource(ResourceType, int): boolean
+  + addPlayerResource(ResourceType, int): void
+  + doTradeWithBank(ResourceType, ResourceType, int): void
+  + playMonopolyCard(ResourceType): Collection<ResourceType>
+  + ensureNumPlayersAndDiceRollsNotZero(int[]): void
+  + getBankResource(ResourceType): int
+  + playerTrade(Player, Collection<ResourceType>, Collection<ResourceType>): boolean
+  + isGameOver(): boolean
+  + ensureValidSetTurnOrder(int[]): void
+  + validatePlayerHasResourcesToSteal(Player): void
+  + buildCity(int, Player): boolean
+  + validateMoveRobberLocation(int): void
+  + getPlayableDevelopmentCards(): Collection<DevelopmentCards>
+  + validateRobberSteal(Player): void
+  + giveInitialResources(int, Player): void
+  + isValidRatio(PortTradeRatio, int): boolean
+  + removeResourcesFromPlayerAndGiveBackToBank(Collection<ResourceType>, Player): void
+}
+class GameOverException {
+  + GameOverException(): 
+}
+class GameRunner {
+  + GameRunner(): 
+  + main(String[]): void
+}
+class HexActionListener {
+  + HexActionListener(int, HexButtonManager): 
+  + hexIndex: int
+  + manager: HexButtonManager
+  + actionPerformed(ActionEvent): void
+}
+class HexButton {
+  + HexButton(String): 
+  + hexagon: Polygon
+  + paint: boolean
+  + BORDER_WIDTH: int
+  + NUM_POINTS: int
+  + serialVersionUID: long
+  + createHexagon(int, int, int): void
+  + setBorderPathColor(Graphics): void
+  + paintBorder(Graphics): void
+  + contains(Point): boolean
+  + processMouseEvent(MouseEvent): void
+  + paintComponent(Graphics): void
+  + setBounds(Rectangle): void
+  + contains(int, int): boolean
+  + setBounds(int, int, int, int): void
+  + setSize(Dimension): void
+  + setSize(int, int): void
+  + calculateCoords(): void
+}
+class HexButtonManager {
+  + HexButtonManager(): 
+  + THREE: int
+  + selectedHex: int
+  + BUTTON_SIZE: int
+  + hexButtons: ArrayList<JButton>
+  + addButtonActionListener(int, JButton): void
+  + createHexButton(Point2D, int): JButton
+  + setSelectedHex(int): void
+  + hexButtonSetBounds(Point2D, JButton): void
+  + setButtonContents(JButton): void
+  + enableHexButtons(boolean): void
+  + getSelectedHex(): int
+}
+class Hexagon {
+  + Hexagon(Point2D, int): 
+  + hasRobber: boolean
+  + center: Point2D
+  + uniqueIndex: int
+  + intersections: Intersection[]
+  + isDesert: boolean
+  + resource: ResourceType
+  + value: int
+  + NUMBER_OF_INTERSECTIONS: int
+  + setHasRobber(boolean): void
+  + getIsDesert(): boolean
+  + setDesert(boolean): void
+  + getValue(): int
+  + getHasRobber(): boolean
+  + setIntersections(Intersection[]): void
+  + getResource(): ResourceType
+  + setValue(int): void
+  + getIntersections(): Intersection[]
+  + getUniqueIndex(): int
+  + setResource(ResourceType): void
+  + getCenter(): Point2D
+}
+class HexagonDisplay {
+  + HexagonDisplay(Hexagon, boolean): 
+  + HEX_BORDER_RADIUS: int
+  + OVAL_HEIGHT: int
+  + BOTTOM_RIGHT: int
+  + hexBoundaryPathToDraw: Polygon
+  + HEX_150_DEGREES: int
+  + HALF_CIRCLE_DEGREES: int
+  + hex: Hexagon
+  + borderColor: int[]
+  + TOP_RIGHT: int
+  + woolColor: int[]
+  + MIDDLE_LEFT: int
+  + roadsToDraw: ArrayList<Road>
+  + HEX_RADIUS: int
+  + HEX_STROKE_WIDTH: int
+  + TEXT_OFFSET_Y: int
+  + lumberColor: int[]
+  + TEXT_OFFSET_X: int
+  + OVAL_WIDTH: int
+  + TOP_LEFT: int
+  + HEXAGON_BORDER_ADDON: int
+  + hexToDraw: Polygon
+  + desertColor: int[]
+  + displayUnique: boolean
+  + OVAL_OFFSET: int
+  + BOTTOM_LEFT: int
+  + HEX_BOUNDARY_STROKE_WIDTH: int
+  + grainColor: int[]
+  + displayCenter: Point2D
+  + HEX_30_DEGREES: int
+  + MIDDLE_RIGHT: int
+  + brickColor: int[]
+  + HEX_90_DEGREES: int
+  + LABEL_FONT_SIZE: int
+  + oreColor: int[]
+  + HEX_NUM_SIDES: int
+  + getLeftHexIndex(double): Integer
+  + calculateRoadCenter(Point2D[], Point2D): Point2D
+  + findRoadsToDraw(HashSet<Road>): void
+  + findAllRoadsToDraw(): void
+  + drawHexLabel(Graphics2D): void
+  + convertValidResourceToColor(ResourceType): Color
+  + getRoadIntersectionsCenters(Road): Point2D[]
+  + drawHexShape(Graphics2D): void
+  + drawHexRobber(Graphics2D): void
+  + checkIfRoadHasIntersections(Road, boolean[]): void
+  + getHexLabelColor(String): Color
+  + initializeDisplayCenter(Hexagon): void
+  + drawRoadLineUsingHexSideIndices(Graphics2D, int, int): void
+  + drawIndividualRoadLine(Graphics2D, Road): void
+  + determineHexSideFromAveragePoint(Point2D): int
+  + generateHexagonPoints(Point2D, int, Polygon): void
+  + getRelativeRoadCenter(Graphics2D, Road): Point2D
+  + degreesToRadian(double): double
+  + generateHexagon(Point2D, int): Polygon
+  + getColorFromResource(): Color
+  + drawRoadLine(Graphics2D): void
+  + setFontAndColor(Graphics2D, Color): void
+  + displayHexText(Graphics2D, Color, String): void
+  + drawPathAroundHexagon(Graphics2D): void
+  + checkAndAddIfRoadToDraw(Road): void
+  + getRightHexIndex(double): Integer
+  + drawInnerHexagon(Graphics2D): void
+  + generateSide(Point2D, int, int): Point2D
+  + drawHexRobberIfHasRobber(Graphics2D): void
+}
+class Intersection {
+  + Intersection(Point2D, int): 
+  + center: Point2D
+  + hexagons: Hexagon[]
+  + adjacentIntersections: List<Integer>
+  + roads: HashSet<Road>
+  + uniqueIndex: int
+  + owners: HashSet<Player>
+  + port: Port
+  + structure: Structure
+  + setPort(Port): void
+  + ownedByThisPlayer(Player): boolean
+  + getCenter(): Point2D
+  + setRoads(Road): void
+  + setStructure(Structure): void
+  + setOwner(Player): void
+  + getHexagons(): Hexagon[]
+  + getPort(): Port
+  + getUniqueIndex(): int
+  + removeRoad(Road): void
+  + getAdjacentIntersections(): List<Integer>
+  + getRoads(): HashSet<Road>
+  + addAdjacentIntersection(int): void
+  + setHexagons(Hexagon[]): void
+  + getStructure(): Structure
+  + notEnemySettlement(Player): boolean
+}
+class IntersectionActionListener {
+  + IntersectionActionListener(int, IntersectionButtonManager): 
+  + intersectionIndex: int
+  + manager: IntersectionButtonManager
+  + actionPerformed(ActionEvent): void
+}
+class IntersectionButtonManager {
+  + IntersectionButtonManager(): 
+  + BUTTON_HEIGHT: int
+  + selectedIntersection: int
+  + intersectionButtons: ArrayList<JButton>
+  + BUTTON_WIDTH: int
+  + enableIntersectionButtons(boolean): void
+  + intersectionButtonSetBounds(Point2D, JButton): void
+  + setSelectedIntersection(int): void
+  + createIntersectionButton(Point2D, int): JButton
+  + getSelectedIntersection(): int
+  + intersectionButtonSetup(Point2D, int, JButton): void
+  + intersectionButtonSetupActionListener(int, JButton): void
+  + intersectionButtonSetContent(Point2D, JButton): void
+}
+class Player {
+  + Player(Color, String, Collection<ResourceType>): 
+  + SETTLEMENTS_AFTER_SETUP: int
+  + ROADS_AFTER_SETUP: int
+  + developmentCards: Collection<DevelopmentCards>
+  + numRoads: int
+  + playerColor: Color
+  + unplayableDevelopmentCards: ArrayList<DevelopmentCards>
+  + MAX_RESOURCES: int
+  + victoryPoints: int
+  + MAX_HAND_SIZE_ROBBER: int
+  + CITIES_AFTER_SETUP: int
+  + futureDevelopmentCards: ArrayList<DevelopmentCards>
+  + resources: Collection<ResourceType>
+  + playerName: String
+  + maxResources: int
+  + devCardPlayed: boolean
+  + numCities: int
+  + numSettlements: int
+  + setNumRoads(int): void
+  + getResources(): Collection<ResourceType>
+  + getNumCities(): int
+  + hasDevelopmentCard(DevelopmentCards): boolean
+  + setDevelopmentCardAsPlayed(DevelopmentCards): void
+  + checkNumResource(): int
+  + getNumRoads(): int
+  + removeResource(ResourceType): boolean
+  + getDevelopmentCards(): Collection<DevelopmentCards>
+  + getUnplayableDevelopmentCards(): Collection<DevelopmentCards>
+  + addResources(Collection<ResourceType>): void
+  + getFutureDevelopmentCards(): Collection<DevelopmentCards>
+  + getNumOwnedResource(ResourceType): int
+  + getVictoryPoints(): int
+  + setNumCities(int): void
+  + setNumSettlements(int): void
+  + getPlayerName(): String
+  + startTurn(): void
+  + isDevCardPlayed(): boolean
+  + hasUnplayableDevelopmentCard(DevelopmentCards): boolean
+  + initializeEmptyCollections(Collection<ResourceType>): void
+  + setVictoryPoints(int): void
+  + getNumSettlements(): int
+  + addResource(ResourceType): void
+  + getPlayerColor(): Color
+  + setDevCardPlayed(): void
+  + addDevelopmentCard(DevelopmentCards): void
+  + hasResources(Collection<ResourceType>): boolean
+}
+class PlayerStatsGUI {
+  + PlayerStatsGUI(Player, Locale): 
+  + messages: ResourceBundle
+  + LEFT_PANEL_ROWS: int
+  + RIGHT_PANEL_ROWS: int
+  + PLAYER_PANEL_HEIGHT: int
+  + rightPanel: JPanel
+  + RESOURCE_PANEL_WIDTH: int
+  + player: Player
+  + leftPanel: JPanel
+  + RESOUCE_PANEL_HEIGHT: int
+  + resourceDisplayPanel: JPanel
+  + PLAYER_PANEL_WIDTH: int
+  + playerNamePanel: JPanel
+  + updateRightPanel(): void
+  + initializePanels(): void
+  + updateResourcesView(): void
+  + setupPanels(): void
+  + getNumPlayedKnights(): int
+  + updatePanels(): void
+  + updateLeftPanel(): void
+  + setPanelSizes(): void
+  + updatePlayerNamePanel(): void
+  + updateLeftPanelInformation(): void
+  + getResourceOrder(): ResourceType[]
+  + initializeSetFields(Player, Locale): void
+  + updateRightPanelInformation(): void
+  + updatePlayerPanelInformation(): void
+  + buildLeftPanelString(String, ResourceType): String
+}
+class PlayerTurnDisplay {
+  + PlayerTurnDisplay(GameManager, GameDisplay, Player[], Locale): 
+  + endTurnButton: JButton
+  + players: Player[]
+  + BOTTOM_ROW_BUTTON_INDEX: int
+  + RIGHT_BUTTON_COLUMN: int
+  + END_TURN_BUTTON_WIDTH: int
+  + locale: Locale
+  + LEFT_BUTTON_COLUMN: int
+  + buildButton: JButton
+  + gameDisplay: GameDisplay
+  + frame: JPanel
+  + playerNameLabel: JLabel
+  + PLAYER_ACTION_BUTTON_WIDTH: int
+  + tradeButton: JButton
+  + CENTER_BUTTON_COLUMN_INDEX: int
+  + gameManager: GameManager
+  + TOP_ROW_BUTTON: int
+  + panel: JPanel
+  + messages: ResourceBundle
+  + PLAYER_LABEL_WIDTH: int
+  + PLAYER_LABEL_HEIGHT: int
+  + turnEnded: boolean
+  + PLAYER_SMALL_INSET_PADDING: int
+  + dicePanel: DicePanel
+  + LARGE_INSET_PADDING: int
+  + CENTER_BUTTON_WIDTH: int
+  + PLAYER_LARGE_INSET_PADDING: int
+  + playerName: String
+  + SMALL_INSET_PADDING: int
+  + buildButtonAction(): void
+  + initializeSwingUI(): void
+  + setEndTurnButtonInsetsConstraints(GridBagConstraints): void
+  + addBuildButton(GridBagConstraints): void
+  + resetDicePanel(): void
+  + setGridBagConstraints(GridBagConstraints, GridBagConstraintHelper): void
+  + resetButtons(): void
+  + setPlayerNameLabelConstraints(GridBagConstraints): void
+  + enableButtons(): void
+  + setFrameLayout(): void
+  + attachActionListeners(): void
+  + endTurnButtonAction(): void
+  + initializeFields(): void
+  + disableButtons(): void
+  + updateUIForNewPlayer(Player): void
+  + addEndTurnButton(GridBagConstraints): void
+  + addPlayerLabel(GridBagConstraints): void
+  + addPlayerButtons(GridBagConstraints): void
+  + main(String[]): void
+  + getPlayerNameTurn(String): String
+  + tradeButtonAction(): void
+  + addTradeButton(GridBagConstraints): void
+  + initialize(): void
+  + setTradeButtonAdditionalConstraints(GridBagConstraints): void
+  + initializeRemainingFields(GameManager, Locale): void
+  + resetContent(): void
+  + addDicePanel(): void
+  + isTurnOver(): boolean
+  + initializePlayerNameLabel(): void
+  + initializeConstructorFields(GameManager, GameDisplay, Player[], Locale): void
+}
+class PlayersStatsGUI {
+  + PlayersStatsGUI(Player[], Locale): 
+  + FRAME_HEIGHT: int
+  + FRAME_WIDTH: int
+  + frame: JPanel
+  + players: Player[]
+  + playerStatsGUIs: PlayerStatsGUI[]
+  + locale: Locale
+  + FRAME_X_OFFSET: int
+  + initializeSetFields(Player[], Locale): void
+  + initializeFrame(Player[]): void
+  + initializePlayerGUI(Player[], int): void
+  + updatePlayersStats(): void
+  + initializePlayerGUIs(Player[]): void
+}
+class Port {
+  + Port(PortTradeRatio, ResourceType): 
+  + ratio: PortTradeRatio
+  + resource: ResourceType
+  + getResourceType(): ResourceType
+  + getPortTradeRatio(): PortTradeRatio
+}
+enum PortTradeRatio << enumeration >> {
+  + PortTradeRatio(int): 
+  + THREE_TO_ONE: 
+  + TWO_TO_ONE: 
+  + value: int
+  + values(): PortTradeRatio[]
+  + valueOf(String): PortTradeRatio
+  + getValue(): int
+}
+enum ResourceType << enumeration >> {
+  + ResourceType(): 
+  + BRICK: 
+  + ORE: 
+  + WOOL: 
+  + GRAIN: 
+  + LUMBER: 
+  + valueOf(String): ResourceType
+  + values(): ResourceType[]
+}
+class Road {
+  + Road(): 
+  + owner: Player
+  + intersections: Intersection[]
+  + COST: List<ResourceType>
+  + isVisited: boolean
+  + getOwner(): Player
+  + getCost(): Collection<ResourceType>
+  + setVisited(boolean): void
+  + getOwnerColor(): Color
+  + getIntersections(): Intersection[]
+  + isVisited(): boolean
+  + setOwner(Player): void
+  + getIntersection(int): Intersection
+  + getOtherIntersection(Intersection): Intersection
+  + setIntersections(Intersection, Intersection): void
+}
+class Settlement {
+  + Settlement(): 
+  + COST: List<ResourceType>
+  + getVictoryPoints(): int
+  + getCost(): Collection<ResourceType>
+  + distributeResources(ResourceType): void
+}
+class Shuffler {
+  + Shuffler(): 
+  + SIX_ADJACENT: int
+  + ROBBER_TOKEN_TO_SKIP: int
+  + hexagonValues: int[][]
+  + numberTokens: ArrayList<Integer>
+  + SINGLE_TWELVE_TOKEN: int
+  + SINGLE_TWO_TOKEN: int
+  + RESOURCES_WITH_THREE_OCCURRENCES: int
+  + DUPLICATE_TOKEN_START: int
+  + EIGHT_ADJACENT: int
+  + NUM_THREE_PORT: int
+  + portTokens: ArrayList<Port>
+  + DUPLICATE_TOKEN_END: int
+  + resourceTypes: ArrayList<ResourceType>
+  + RESOURCES_WITH_FOUR_OCCURRENCES: int
+  + getValidHexagonValueSwap(Random, int[]): void
+  + createShuffledPortTokens(): ArrayList<Port>
+  + initializeHexagonValuesToNegativeOne(): void
+  + setHexagonValue(Hexagon): void
+  + addSetupNumberTokens(ArrayList<Integer>): void
+  + isValidSwap(int, int): boolean
+  + getShuffledPortTokens(): ArrayList<Port>
+  + createShuffledNumberTokens(): ArrayList<Integer>
+  + addResourceWithFourOccurences(ArrayList<ResourceType>): void
+  + addResourceWithThreeOccurrences(ArrayList<ResourceType>): void
+  + swapHexagonValues(int, int, int, int): void
+  + addTokenIfNotRobber(ArrayList<Integer>, int): void
+  + hasAdjacentSixOrEight(int, int): boolean
+  + addThreeRatioPortTokens(ArrayList<Port>): void
+  + createShuffledResourceTypes(): ArrayList<ResourceType>
+  + fixAdjacentNeighborSixOrEight(Random, int): boolean
+  + setHexagonValues(Hexagon[]): void
+  + getShuffledResourceTypes(): ArrayList<ResourceType>
+  + isValidNeighbor(int, int, int, int): boolean
+  + getShuffledNumberTokens(): ArrayList<Integer>
+  + addTwoRatioPortTokens(ArrayList<Port>): void
+  + ensureNoNeighborSixOrEight(Random): void
+  + hasAdjacentSixOrEightAndSwap(Random, int, int): boolean
+  + hasAdjacentSixOrEightCheck(int, int, int, int): boolean
+  + swapCell(Random, int, int): void
+  + fixAdjacencyIfSixOrEight(Random, int, int): boolean
+  + getHexagonValues(Hexagon[]): int[][]
+  + isHasNeighborSixOrEight(Random, boolean): boolean
+}
+class Structure {
+  + Structure(): 
+  + owner: Player
+  + getVictoryPoints(): int
+  + getOwner(): Player
+  + setOwner(Player): void
+  + distributeResources(ResourceType): void
+}
+class TradeManagerGUI {
+  + TradeManagerGUI(Player, GameManager, Locale, int): 
+  + TradeManagerGUI(Player[], GameManager, Locale): 
+  + resourcesToTradeAway: Collection<ResourceType>
+  + brickPanel: JPanel
+  + bank: Bank
+  + orePanel: JPanel
+  + tradeBank: JButton
+  + grainTradeRatio: TradeRatio
+  + enterResources: JPanel
+  + MULTIPLE_OF_FOUR: int
+  + oreLabel: JLabel
+  + validTradees: boolean[]
+  + woolTradeRatio: TradeRatio
+  + tradeOptionsLabel: JLabel
+  + tradeAway: JButton
+  + messages: ResourceBundle
+  + lumber: JTextField
+  + lumberTradeRatio: TradeRatio
+  + MULTIPLE_OF_THREE: int
+  + grainLabel: JLabel
+  + brick: JTextField
+  + brickLabel: JLabel
+  + woolPanel: JPanel
+  + grainPanel: JPanel
+  + yesButtons: JButton[]
+  + manager: GameManager
+  + grain: JTextField
+  + noButtons: JButton[]
+  + resourceOrder: ResourceType[]
+  + lumberPanel: JPanel
+  + tradeFor: JButton
+  + ore: JTextField
+  + numDiscard: int
+  + tradeOptions: JPanel
+  + players: Player[]
+  + frame: JFrame
+  + brickTradeRatio: TradeRatio
+  + MAX_SINGLE_RESOURCE: int
+  + label: JLabel
+  + oreTradeRatio: TradeRatio
+  + wool: JTextField
+  + resourcesDesired: Collection<ResourceType>
+  + lumberLabel: JLabel
+  + woolLabel: JLabel
+  + discard: JButton
+  + initializeBrickTextFieldPanel(): void
+  + refreshFrame(): void
+  + getPortIfOwnedByPlayer(Player, Port): boolean
+  + initializeMainFields(): void
+  + tradeTwoToOne(ResourceType, int, ResourceType): void
+  + setValidPersonToTradeWith(Collection<ResourceType>, boolean[], int): void
+  + displayInsufficientResourcesMessageAndDisposeFrame(): void
+  + isNoButtonSelected(ActionEvent): boolean
+  + addAmountOfResourceToCollection(ArrayList<ResourceType>, ResourceType, int): void
+  + validResourcesAndAttemptTradeWithPortOrBank(ResourceType, int): void
+  + initializeTradeOutGUI(boolean): void
+  + getSelectedYesButton(ActionEvent): JButton
+  + getPlayerByName(String): Player
+  + attemptDiscardResources(): boolean
+  + initializeJOptionsGUIComponents(int): void
+  + insufficientResourcesToTrade(): boolean
+  + getCorrespondingTradeRatio(ResourceType): TradeRatio
+  + addResourceAmountsToResources(String[], ArrayList<ResourceType>): void
+  + noResourcesSelected(): boolean
+  + displayDiscardSuccessMessageAndReturnTrue(): boolean
+  + displayInsufficientResourcesBankMessage(): void
+  + tradeThreeToOne(ResourceType, int, ResourceType): void
+  + noResourcesSelectedMessage(): void
+  + discardFailMessage(): void
+  + initializeLabels(boolean): void
+  + main(String[]): void
+  + initializeOptionalGUI(boolean): void
+  + initializeTradeAwayButton(): void
+  + nobodyWantsToTradeAndDisposeFrame(): void
+  + isShowing(): boolean
+  + displayInvalidResourceAmountMessageAndDisposeFrame(): void
+  + initializeDiscardFields(Player, GameManager, Locale, int): void
+  + addContentsToResourcePanel(JPanel, JLabel, JLabel, JTextField): void
+  + tradeBankActionPerformed(): void
+  + discardResources(): boolean
+  + initializePassedInFields(GameManager, Player[], int, Locale): void
+  + displayInsufficientResourcesMessageAndRefreshFrame(): void
+  + initializeResourceLabels(): void
+  + disableYesButtonForInvalidTradees(int, JButton): void
+  + isMultipleOfRatio(TradeRatio, int): boolean
+  + initializeGUI(boolean): void
+  + getInTurnPlayer(): Player?
+  + tradeWithBank(ResourceType, int, ResourceType): void
+  + displayFrame(): void
+  + initializeGrainTextFieldPanel(): void
+  + addDiscardComponents(): void
+  + addComponents(boolean): void
+  + initializeTradeForButton(): void
+  + tradeForActionPerformed(): void
+  + initializeWoolTextFieldPanel(): void
+  + getFormattedInsufficientResourcesMessage(int): String
+  + initializeTradeOptionsGUI(): void
+  + initializeLumberTextFieldPanel(): void
+  + yesButtonActionPerformed(ActionEvent): void
+  + displayDiscardFailMessageAndReturnFalse(): boolean
+  + initializeTradeInGUI(): void
+  + initializeDiscardButton(): void
+  + addPlayerYesButton(int, JPanel): void
+  + displayNoMoreThanOneResourceTypeSelectedForBankMessageAndDisposeFrame(): void
+  + incorrectAmountToDiscard(): boolean
+  + resetTextFields(): void
+  + initializeTextFields(): void
+  + addPlayersToTradePanel(int): void
+  + addPlayerNoButton(int, JPanel): void
+  + tradeWithPlayerFromButton(JButton): void
+  + moreThanOneResourceType(int): boolean
+  + isMultipleOf(int, int): boolean
+  + newThreePort(): Port
+  + attemptTradeWithPortOrBank(ResourceType, int, TradeRatio): void
+  + displayNobodyWantsToTradeMessage(): void
+  + initializeOreTextFieldPanel(): void
+  + initializeTextFieldPanels(): void
+  + insufficientResourcesMessage(int): void
+  + convertResourceFieldsToCollection(): Collection<ResourceType>
+  + getResourceAmountFromTextField(String): int
+  + discardSuccessMessage(): void
+  + initializeTradePanelsAndButtons(): void
+  + checkStructureIsNullBeforePort(Player, Port, Intersection, Structure): boolean
+  + addPlayerToTradePanel(int): void
+  + addResourceFromTextFieldToCollection(String[], ArrayList<ResourceType>, int): void
+  + actionPerformed(ActionEvent): void
+  + ensureResourceRatioAndSingleType(int, TradeRatio): boolean
+  + displayNotAMultipleOfTradeRatioMessageAndDisposeFrame(): void
+  + displayInvalidResourceAmountMessage(): void
+  + displayInsufficientResourcesBankMessageAndDisposeFrame(): void
+  + samePortType(Port, Port): boolean
+  + getResourceAndTradeWithBank(ResourceType, int, TradeRatio): void
+  + discardCheckPlayerHasResources(): boolean
+  + getValidPeopleToTradeWith(Collection<ResourceType>): boolean[]
+  + noButtonActionPerformed(ActionEvent): void
+  + tradeAwayActionPerformed(): void
+  + checkForStructureBeforePort(Player, Port, Intersection): boolean
+  + addTradeComponents(): void
+  + newTwoPort(ResourceType): Port
+  + displayInsufficientResourcesMessage(): void
+  + getResourceTradeRatio(ResourceType): TradeRatio
+  + notAMultipleOfRatio(int, TradeRatio): boolean
+  + discardActionPerformed(): void
+  + initializeTradeBankAndPortButton(): void
+  + isYesButtonSelected(ActionEvent): boolean
+  + tradeWithPortOrBank(ResourceType, int, TradeRatio, ResourceType): void
+  + notAMultipleOfTradeRatioMessage(): void
+  + playerOwnsStructureAndCorrectPort(Player, Port, Intersection, Structure): boolean
+  + moreThanOneResourceTypeSelectedForBankMessage(): void
+  + displayNoResourcesSelectedMessageAndDisposeFrame(): void
+}
+enum TradeRatio << enumeration >> {
+  + TradeRatio(): 
+  + FOUR_TO_ONE: 
+  + THREE_TO_ONE: 
+  + TWO_TO_ONE: 
+  + valueOf(String): TradeRatio
+  + values(): TradeRatio[]
+}
+
+City                        -[#000082,plain]-^  Structure                  
+Settlement                  -[#000082,plain]-^  Structure                  
+@enduml

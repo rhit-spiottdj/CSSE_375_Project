@@ -1,0 +1,565 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class Bank {
+  + Bank(): 
+  + MAX_KNIGHT_CARDS: int
+  + MAX_MONOPOLY_CARDS: int
+  + REQUIRE_THREE_TIMES_RESOURCES: int
+  + MAX_ROAD_CARDS: int
+  + REQUIRE_FOUR_TIMES_RESOURCES: int
+  + MAX_VICTORY_CARDS: int
+  + MAX_INDIVIDUAL_RESOURCE: int
+  + MAX_PLENTY_CARDS: int
+  + playerDiscardResources(Player, Collection<ResourceType>): boolean
+  + obtainDevelopmentCard(Player): boolean
+  + playerTrade(Player, Player, Collection<ResourceType>, Collection<ResourceType>): boolean
+  + giveBackResource(ResourceType, int): boolean
+  + obtainResource(ResourceType, int): boolean
+  + tradeResourcePort(Port, ResourceType, ResourceType, int): boolean
+  + tradeResourceBank(ResourceType, ResourceType, int): boolean
+}
+class BoardDisplay {
+  + Y_CENTER_MULT: int
+  + BROWN: Color
+  + Y_CENTER_OFFSET: int
+  + X_CENTER_OFFSET: int
+  + BRIDGE_STROKE: BasicStroke
+  + X_CENTER_MULT: int
+  + VECTOR_MAGNITUDE_SCALER: double
+  + redrawButtons(BoardManager): void
+  + upgradeToCityButton(int): void
+  + paintComponent(Graphics): void
+  + toggleIntersectionButtons(boolean): void
+  + getPreferredSize(): Dimension
+  + main(String[]): void
+  + toggleHexButtons(boolean): void
+}
+class BoardManager {
+  + BoardManager(): 
+  + NUM_THREE_TO_ONE_PORTS: int
+  + getPorts(): ArrayList<Port>
+  + placeSettlementSetup(int, Player, Settlement): boolean
+  + removeRoad(int, int): boolean
+  + buildSettlement(int, Player): boolean
+  + getIntersectionSettlement(int): Structure
+  + getRoadsOnBoard(): ArrayList<Road>
+  + placeRoad(int, int, Player): boolean
+  + getHexagons(): Hexagon[]
+  + initializeBoardStructure(boolean): Hexagon[]
+  + peekIntersectionSelection(): int
+  + stealResource(Player, Player): ResourceType
+  + getRoad(int, int): Road
+  + getHexagonPlayers(): ArrayList<Player>
+  + getHexSelection(): int
+  + getPortIntersections(): int[][]
+  + getIntersectionSettlementColor(int): Color
+  + buildRoad(int, int, Player): boolean
+  + distributeResourcesOnRoll(int, Bank): int
+  + setIntersectionSelection(int): void
+  + setHexSelection(int): void
+  + buildCity(int, Player): boolean
+  + getRobberLocation(): int
+  + getIntersectionSelection(): int
+  + getIntersections(): Intersection[]
+  + setIntersection(int, Intersection): void
+  + moveRobber(int): void
+  + peekHexSelection(): int
+  + tryDistributeResources(int): List<ResourceType>
+}
+class BuildManagerGUI {
+  + FRAME_WIDTH: int
+  + FRAME_HEIGHT: int
+  + actionPerformed(ActionEvent): void
+}
+class CardButton {
+  + CardButton(String, DevelopmentCards): 
+  + getCardType(): DevelopmentCards
+}
+class CardGUI {
+  + CardGUI(Player[], GameManager, GameDisplay, Locale): 
+  + FRAME_HEIGHT: int
+  + MAIN_PANEL_WIDTH: int
+  + FRAME_WIDTH: int
+  + MAIN_PANEL_HEIGHT: int
+  + drawMainPanel(): void
+  + actionPerformed(ActionEvent): void
+}
+class City {
+  + City(): 
+  + distributeResources(ResourceType): void
+  + getVictoryPoints(): int
+  + getCost(): Collection<ResourceType>
+}
+class ColorPickerDisplay {
+  + ColorPickerDisplay(int, Locale): 
+  + colorArray: Color[]
+  + chooseColor(): Color
+  + colorArrayContains(Color): boolean
+}
+class DevelopmentCardManager {
+  + MAX_HEX_INDEX: int
+  + playYearOfPlenty(Player, ResourceType, ResourceType): Collection<ResourceType>
+  + findLongestRoad(Player[], Road[]): boolean
+  + playKnight(Player, Player, int): ResourceType
+  + playRoadBuilding(Player, int[][]): boolean
+  + playMonopoly(Player, ResourceType): Collection<ResourceType>
+}
+enum DevelopmentCards << enumeration >> {
+  + DevelopmentCards(): 
+  + KNIGHT: 
+  + ROAD: 
+  + PLENTY: 
+  + MONOPOLY: 
+  + VICTORY: 
+  + valueOf(String): DevelopmentCards
+  + values(): DevelopmentCards[]
+}
+class DiceManager {
+  + DiceManager(int): 
+  + DICE_MAX_ROLL: int
+  + DICE_MIN_ROLL: int
+  + getCurrentDiceRoll(Random): int
+  + getDie(int): int
+  + rollAllDice(Random): int
+  + getIndividualDiceRolls(): int[]
+  + hasPlayerRolledDice(): boolean
+  + rollAllDice(): int
+  + getNumDice(): int
+  + getCurrentDiceRoll(): int
+  + getDie(int, Random): int
+  + invalidateDice(): void
+}
+class DicePanel {
+  + updateDiceImages(): void
+  + main(String[]): void
+  + addButtonsToEnable(JButton[]): void
+}
+class GameDisplay {
+  + GameDisplay(boolean): 
+  + TIMER_START_AFTER: int
+  + boardFrame: JFrame
+  + QUICK_SETUP_SETTLEMENT_FOUR: int
+  + TIMER_INTERVAL: int
+  + QUICK_SETUP_SETTLEMENT_THREE: int
+  + QUICK_SETUP_SETTLEMENT_ONE: int
+  + QUICK_SETUP_SETTLEMENT_TWO: int
+  + gameManager: GameManager
+  + colorPickerDisplay: ColorPickerDisplay
+  + toggleIntersectionButtons(boolean): void
+  + initialBoardSetup(Player[]): void
+  + actionPerformed(ActionEvent): void
+  + setupPlayers(): void
+  + getPlayerToStealFrom(Player): Player
+  + chooseQuickSetup(): boolean
+  + moveRobberMessage(): void
+  + displayRobberResourceStolenMessage(String, String): void
+  + displayRobberPlacementError(): void
+}
+class GameManager {
+  + GameManager(int): 
+  + GameManager(int, BoardManager): 
+  + diceManager: DiceManager
+  + SCORE_TO_WIN: int
+  + MULTIPLE_OF_FOUR: int
+  + boardManager: BoardManager
+  + MIN_PLAYERS: int
+  + MAX_PLAYERS: int
+  + getCurrentDiceRoll(): int
+  + setPlayer(int, Player): boolean
+  + buildRoad(int, int, Player): boolean
+  + playYearOfPlenty(ResourceType, ResourceType): Collection<ResourceType>
+  + calculateVictoryPointsForPlayer(BoardManager, Player): int
+  + calculateVictoryPointsForPlayer(Player): int
+  + getFutureDevelopmentCards(): Collection<DevelopmentCards>
+  + setInTurnPlayer(int): void
+  + buyDevelopmentCard(): boolean
+  + setTurnOrder(int[]): Player[]
+  + placeInitialSettlement(int, Player): void
+  + getNumPlayers(): int
+  + getRobberLocation(): int
+  + buildSettlement(int, Player): boolean
+  + playerDiscardResources(Player, Collection<ResourceType>): boolean
+  + getPlayers(): Player[]
+  + placeRoad(int, int, Player): void
+  + initializeBoardStructure(boolean): Hexagon[]
+  + getUnplayableDevelopmentCards(): Collection<DevelopmentCards>
+  + getIntersections(): Intersection[]
+  + tryRobberSteal(Player, Player): ResourceType
+  + isInTurnPlayer(Player): boolean
+  + setNextPlayerInTurn(): int
+  + decrementResourcesFromBank(Collection<ResourceType>): void
+  + distributeResourcesOnRoll(int): int
+  + playerTradeWithPort(Port, ResourceType, ResourceType, int): boolean
+  + getNumberCardsToDiscard(Player): int
+  + currentPlayerHasSufficientResources(Collection<ResourceType>): boolean
+  + getHexagonPlayers(): ArrayList<Player>
+  + findLongestRoad(): void
+  + getDevelopmentCardsInBank(): Collection<DevelopmentCards>
+  + playKnight(Player, int): boolean
+  + playerTradeWithBank(ResourceType, ResourceType, int): boolean
+  + givenPlayerHasSufficientResources(Collection<ResourceType>, Player): boolean
+  + moveRobber(int): void
+  + playRoadBuildingCard(int[][]): boolean
+  + giveBackResource(ResourceType, int): boolean
+  + playMonopolyCard(ResourceType): Collection<ResourceType>
+  + playerTrade(Player, Collection<ResourceType>, Collection<ResourceType>): boolean
+  + isGameOver(): boolean
+  + buildCity(int, Player): boolean
+  + getPlayableDevelopmentCards(): Collection<DevelopmentCards>
+  + giveInitialResources(int, Player): void
+}
+class GameOverException {
+  + GameOverException(): 
+}
+class GameRunner {
+  + GameRunner(): 
+  + main(String[]): void
+}
+class HexActionListener {
+  + actionPerformed(ActionEvent): void
+}
+class HexButton {
+  + HexButton(String): 
+  + BORDER_WIDTH: int
+  + contains(Point): boolean
+  + setBounds(Rectangle): void
+  + contains(int, int): boolean
+  + setBounds(int, int, int, int): void
+  + setSize(Dimension): void
+  + setSize(int, int): void
+}
+class HexButtonManager {
+  + HexButtonManager(): 
+  + createHexButton(Point2D, int): JButton
+  + setSelectedHex(int): void
+  + enableHexButtons(boolean): void
+  + getSelectedHex(): int
+}
+class Hexagon {
+  + NUMBER_OF_INTERSECTIONS: int
+  + setHasRobber(boolean): void
+  + getIsDesert(): boolean
+  + setDesert(boolean): void
+  + getValue(): int
+  + getHasRobber(): boolean
+  + getResource(): ResourceType
+  + setValue(int): void
+  + getIntersections(): Intersection[]
+  + getUniqueIndex(): int
+  + setResource(ResourceType): void
+  + getCenter(): Point2D
+}
+class HexagonDisplay {
+  + HEX_BORDER_RADIUS: int
+  + BOTTOM_RIGHT: int
+  + HEX_150_DEGREES: int
+  + HALF_CIRCLE_DEGREES: int
+  + TOP_RIGHT: int
+  + MIDDLE_LEFT: int
+  + TOP_LEFT: int
+  + BOTTOM_LEFT: int
+  + HEX_30_DEGREES: int
+  + MIDDLE_RIGHT: int
+  + HEX_90_DEGREES: int
+  + drawHexLabel(Graphics2D): void
+  + drawHexShape(Graphics2D): void
+  + drawHexRobberIfHasRobber(Graphics2D): void
+}
+class Intersection {
+  + structure: Structure
+  + setPort(Port): void
+  + getCenter(): Point2D
+  + getPort(): Port
+  + getUniqueIndex(): int
+  + removeRoad(Road): void
+  + getRoads(): HashSet<Road>
+  + getStructure(): Structure
+  + notEnemySettlement(Player): boolean
+}
+class IntersectionActionListener {
+  + actionPerformed(ActionEvent): void
+}
+class IntersectionButtonManager {
+  + IntersectionButtonManager(): 
+  + enableIntersectionButtons(boolean): void
+  + setSelectedIntersection(int): void
+  + createIntersectionButton(Point2D, int): JButton
+  + getSelectedIntersection(): int
+}
+class Player {
+  + Player(Color, String, Collection<ResourceType>): 
+  + MAX_HAND_SIZE_ROBBER: int
+  + setNumRoads(int): void
+  + getResources(): Collection<ResourceType>
+  + getNumCities(): int
+  + hasDevelopmentCard(DevelopmentCards): boolean
+  + setDevelopmentCardAsPlayed(DevelopmentCards): void
+  + checkNumResource(): int
+  + getNumRoads(): int
+  + removeResource(ResourceType): boolean
+  + getDevelopmentCards(): Collection<DevelopmentCards>
+  + getUnplayableDevelopmentCards(): Collection<DevelopmentCards>
+  + addResources(Collection<ResourceType>): void
+  + getFutureDevelopmentCards(): Collection<DevelopmentCards>
+  + getNumOwnedResource(ResourceType): int
+  + getVictoryPoints(): int
+  + setNumCities(int): void
+  + setNumSettlements(int): void
+  + getPlayerName(): String
+  + startTurn(): void
+  + isDevCardPlayed(): boolean
+  + hasUnplayableDevelopmentCard(DevelopmentCards): boolean
+  + setVictoryPoints(int): void
+  + getNumSettlements(): int
+  + addResource(ResourceType): void
+  + getPlayerColor(): Color
+  + setDevCardPlayed(): void
+  + addDevelopmentCard(DevelopmentCards): void
+  + hasResources(Collection<ResourceType>): boolean
+}
+class PlayerStatsGUI {
+  + LEFT_PANEL_ROWS: int
+  + RIGHT_PANEL_ROWS: int
+  + PLAYER_PANEL_HEIGHT: int
+  + rightPanel: JPanel
+  + RESOURCE_PANEL_WIDTH: int
+  + leftPanel: JPanel
+  + RESOUCE_PANEL_HEIGHT: int
+  + resourceDisplayPanel: JPanel
+  + PLAYER_PANEL_WIDTH: int
+}
+class PlayerTurnDisplay {
+  + END_TURN_BUTTON_WIDTH: int
+  + frame: JPanel
+  + resetDicePanel(): void
+  + enableButtons(): void
+  + disableButtons(): void
+  + updateUIForNewPlayer(Player): void
+  + main(String[]): void
+  + initialize(): void
+  + resetContent(): void
+  + isTurnOver(): boolean
+}
+class PlayersStatsGUI {
+  + PlayersStatsGUI(Player[], Locale): 
+  + FRAME_HEIGHT: int
+  + FRAME_WIDTH: int
+  + frame: JPanel
+  + players: Player[]
+  + playerStatsGUIs: PlayerStatsGUI[]
+  + FRAME_X_OFFSET: int
+  + updatePlayersStats(): void
+}
+class Port {
+  + Port(PortTradeRatio, ResourceType): 
+  + getResourceType(): ResourceType
+  + getPortTradeRatio(): PortTradeRatio
+}
+enum PortTradeRatio << enumeration >> {
+  + THREE_TO_ONE: 
+  + TWO_TO_ONE: 
+  + values(): PortTradeRatio[]
+  + valueOf(String): PortTradeRatio
+  + getValue(): int
+}
+enum ResourceType << enumeration >> {
+  + ResourceType(): 
+  + BRICK: 
+  + ORE: 
+  + WOOL: 
+  + GRAIN: 
+  + LUMBER: 
+  + valueOf(String): ResourceType
+  + values(): ResourceType[]
+}
+class Road {
+  + Road(): 
+  + intersections: Intersection[]
+  + getCost(): Collection<ResourceType>
+  + setVisited(boolean): void
+  + getOwnerColor(): Color
+  + getIntersections(): Intersection[]
+  + isVisited(): boolean
+  + getIntersection(int): Intersection
+  + getOtherIntersection(Intersection): Intersection
+  + setIntersections(Intersection, Intersection): void
+}
+class Settlement {
+  + Settlement(): 
+  + getVictoryPoints(): int
+  + getCost(): Collection<ResourceType>
+  + distributeResources(ResourceType): void
+}
+class Shuffler {
+  + Shuffler(): 
+  + RESOURCES_WITH_THREE_OCCURRENCES: int
+  + NUM_THREE_PORT: int
+  + RESOURCES_WITH_FOUR_OCCURRENCES: int
+  + getShuffledPortTokens(): ArrayList<Port>
+  + getShuffledResourceTypes(): ArrayList<ResourceType>
+  + getShuffledNumberTokens(): ArrayList<Integer>
+  + ensureNoNeighborSixOrEight(Random): void
+}
+class Structure {
+  + Structure(): 
+  + owner: Player
+  + getVictoryPoints(): int
+  + getOwner(): Player
+  + distributeResources(ResourceType): void
+}
+class TradeManagerGUI {
+  + MULTIPLE_OF_FOUR: int
+  + MULTIPLE_OF_THREE: int
+  + MAX_SINGLE_RESOURCE: int
+  + getPortIfOwnedByPlayer(Player, Port): boolean
+  + initializeLabels(boolean): void
+  + main(String[]): void
+  + isShowing(): boolean
+  + initializeTradeOptionsGUI(): void
+  + initializeTradeInGUI(): void
+  + resetTextFields(): void
+  + actionPerformed(ActionEvent): void
+}
+enum TradeRatio << enumeration >> {
+  + TradeRatio(): 
+  + FOUR_TO_ONE: 
+  + THREE_TO_ONE: 
+  + TWO_TO_ONE: 
+  + valueOf(String): TradeRatio
+  + values(): TradeRatio[]
+}
+
+Bank                       "1" *-[#595959,plain]-> "developmentCards\n*" DevelopmentCards           
+Bank                       "1" *-[#595959,plain]-> "resources\n*" ResourceType               
+Bank                        -[#595959,dashed]->  ResourceType               : "«create»"
+BoardDisplay                -[#595959,dashed]->  BoardManager               : "«create»"
+BoardDisplay               "1" *-[#595959,plain]-> "boardManager\n1" BoardManager               
+BoardDisplay               "1" *-[#595959,plain]-> "hexButtonManager\n1" HexButtonManager           
+BoardDisplay                -[#595959,dashed]->  HexButtonManager           : "«create»"
+BoardDisplay               "1" *-[#595959,plain]-> "hexDisplays\n*" HexagonDisplay             
+BoardDisplay                -[#595959,dashed]->  HexagonDisplay             : "«create»"
+BoardDisplay                -[#595959,dashed]->  IntersectionButtonManager  : "«create»"
+BoardDisplay               "1" *-[#595959,plain]-> "intersectionButtonManager\n1" IntersectionButtonManager  
+BoardManager                -[#595959,dashed]->  City                       : "«create»"
+BoardManager               "1" *-[#595959,plain]-> "hexagons\n*" Hexagon                    
+BoardManager                -[#595959,dashed]->  Hexagon                    : "«create»"
+BoardManager                -[#595959,dashed]->  Intersection               : "«create»"
+BoardManager               "1" *-[#595959,plain]-> "intersections\n*" Intersection               
+BoardManager                -[#595959,dashed]->  Port                       : "«create»"
+BoardManager               "1" *-[#595959,plain]-> "ports\n*" Port                       
+BoardManager                -[#595959,dashed]->  ResourceType               : "«create»"
+BoardManager               "1" *-[#595959,plain]-> "roadsOnBoard\n*" Road                       
+BoardManager                -[#595959,dashed]->  Road                       : "«create»"
+BoardManager                -[#595959,dashed]->  Settlement                 : "«create»"
+BoardManager                -[#595959,dashed]->  Shuffler                   : "«create»"
+BoardManager               "1" *-[#595959,plain]-> "shuffler\n1" Shuffler                   
+BoardManager               "1" *-[#595959,plain]-> "structures\n*" Structure                  
+BuildManagerGUI            "1" *-[#595959,plain]-> "gameDisplay\n1" GameDisplay                
+CardButton                 "1" *-[#595959,plain]-> "devCard\n1" DevelopmentCards           
+CardGUI                     -[#595959,dashed]->  CardButton                 : "«create»"
+CardGUI                    "1" *-[#595959,plain]-> "display\n1" GameDisplay                
+CardGUI                    "1" *-[#595959,plain]-> "gameManager\n1" GameManager                
+CardGUI                    "1" *-[#595959,plain]-> "players\n*" Player                     
+City                       "1" *-[#595959,plain]-> "COST\n*" ResourceType               
+City                        -[#000082,plain]-^  Structure                  
+DevelopmentCardManager     "1" *-[#595959,plain]-> "bank\n1" Bank                       
+DevelopmentCardManager     "1" *-[#595959,plain]-> "board\n1" BoardManager               
+DevelopmentCardManager     "1" *-[#595959,plain]-> "players\n*" Player                     
+DicePanel                  "1" *-[#595959,plain]-> "diceManager\n1" DiceManager                
+DicePanel                  "1" *-[#595959,plain]-> "gameManager\n1" GameManager                
+DicePanel                   -[#595959,dashed]->  GameManager                : "«create»"
+DicePanel                  "1" *-[#595959,plain]-> "players\n*" Player                     
+DicePanel                   -[#595959,dashed]->  Player                     : "«create»"
+GameDisplay                 -[#595959,dashed]->  BoardDisplay               : "«create»"
+GameDisplay                "1" *-[#595959,plain]-> "boardDisplay\n1" BoardDisplay               
+GameDisplay                "1" *-[#595959,plain]-> "boardManager\n1" BoardManager               
+GameDisplay                 -[#595959,dashed]->  BoardManager               : "«create»"
+GameDisplay                 -[#595959,dashed]->  CardGUI                    : "«create»"
+GameDisplay                "1" *-[#595959,plain]-> "cardDisplay\n1" CardGUI                    
+GameDisplay                 -[#595959,dashed]->  ColorPickerDisplay         : "«create»"
+GameDisplay                "1" *-[#595959,plain]-> "colorPickerDisplay\n1" ColorPickerDisplay         
+GameDisplay                "1" *-[#595959,plain]-> "diceManager\n1" DiceManager                
+GameDisplay                 -[#595959,dashed]->  DicePanel                  : "«create»"
+GameDisplay                "1" *-[#595959,plain]-> "dicePanel\n1" DicePanel                  
+GameDisplay                 -[#595959,dashed]->  GameManager                : "«create»"
+GameDisplay                "1" *-[#595959,plain]-> "gameManager\n1" GameManager                
+GameDisplay                 -[#595959,dashed]->  GameOverException          : "«create»"
+GameDisplay                "1" *-[#595959,plain]-> "players\n*" Player                     
+GameDisplay                 -[#595959,dashed]->  Player                     : "«create»"
+GameDisplay                "1" *-[#595959,plain]-> "turnDisplay\n1" PlayerTurnDisplay          
+GameDisplay                 -[#595959,dashed]->  PlayerTurnDisplay          : "«create»"
+GameDisplay                "1" *-[#595959,plain]-> "playersStats\n1" PlayersStatsGUI            
+GameDisplay                 -[#595959,dashed]->  PlayersStatsGUI            : "«create»"
+GameDisplay                "1" *-[#595959,plain]-> "quickPlayerResources\n*" ResourceType               
+GameDisplay                 -[#595959,dashed]->  TradeManagerGUI            : "«create»"
+GameManager                 -[#595959,dashed]->  Bank                       : "«create»"
+GameManager                "1" *-[#595959,plain]-> "bank\n1" Bank                       
+GameManager                 -[#595959,dashed]->  BoardManager               : "«create»"
+GameManager                "1" *-[#595959,plain]-> "boardManager\n1" BoardManager               
+GameManager                "1" *-[#595959,plain]-> "cardManager\n1" DevelopmentCardManager     
+GameManager                 -[#595959,dashed]->  DevelopmentCardManager     : "«create»"
+GameManager                 -[#595959,dashed]->  DiceManager                : "«create»"
+GameManager                "1" *-[#595959,plain]-> "diceManager\n1" DiceManager                
+GameManager                 -[#595959,dashed]->  Player                     : "«create»"
+GameManager                "1" *-[#595959,plain]-> "players\n*" Player                     
+GameManager                 -[#595959,dashed]->  Road                       : "«create»"
+GameManager                 -[#595959,dashed]->  Settlement                 : "«create»"
+GameRunner                  -[#595959,dashed]->  GameDisplay                : "«create»"
+HexActionListener          "1" *-[#595959,plain]-> "manager\n1" HexButtonManager           
+HexButtonManager            -[#595959,dashed]->  HexActionListener          : "«create»"
+HexButtonManager            -[#595959,dashed]->  HexButton                  : "«create»"
+Hexagon                    "1" *-[#595959,plain]-> "intersections\n*" Intersection               
+Hexagon                    "1" *-[#595959,plain]-> "resource\n1" ResourceType               
+HexagonDisplay             "1" *-[#595959,plain]-> "hex\n1" Hexagon                    
+HexagonDisplay             "1" *-[#595959,plain]-> "roadsToDraw\n*" Road                       
+Intersection               "1" *-[#595959,plain]-> "hexagons\n1" Hexagon                    
+Intersection               "1" *-[#595959,plain]-> "owners\n*" Player                     
+Intersection               "1" *-[#595959,plain]-> "port\n1" Port                       
+Intersection               "1" *-[#595959,plain]-> "roads\n*" Road                       
+Intersection               "1" *-[#595959,plain]-> "structure\n1" Structure                  
+IntersectionActionListener "1" *-[#595959,plain]-> "manager\n1" IntersectionButtonManager  
+IntersectionButtonManager   -[#595959,dashed]->  IntersectionActionListener : "«create»"
+Player                     "1" *-[#595959,plain]-> "futureDevelopmentCards\n*" DevelopmentCards           
+Player                     "1" *-[#595959,plain]-> "resources\n*" ResourceType               
+PlayerStatsGUI             "1" *-[#595959,plain]-> "player\n1" Player                     
+PlayerStatsGUI              -[#595959,dashed]->  ResourceType               : "«create»"
+PlayerTurnDisplay           -[#595959,dashed]->  BuildManagerGUI            : "«create»"
+PlayerTurnDisplay          "1" *-[#595959,plain]-> "dicePanel\n1" DicePanel                  
+PlayerTurnDisplay           -[#595959,dashed]->  DicePanel                  : "«create»"
+PlayerTurnDisplay           -[#595959,dashed]->  GameDisplay                : "«create»"
+PlayerTurnDisplay          "1" *-[#595959,plain]-> "gameDisplay\n1" GameDisplay                
+PlayerTurnDisplay          "1" *-[#595959,plain]-> "gameManager\n1" GameManager                
+PlayerTurnDisplay           -[#595959,dashed]->  GameManager                : "«create»"
+PlayerTurnDisplay           -[#595959,dashed]->  Player                     : "«create»"
+PlayerTurnDisplay          "1" *-[#595959,plain]-> "players\n*" Player                     
+PlayerTurnDisplay           -[#595959,dashed]->  TradeManagerGUI            : "«create»"
+PlayersStatsGUI            "1" *-[#595959,plain]-> "players\n*" Player                     
+PlayersStatsGUI             -[#595959,dashed]->  PlayerStatsGUI             : "«create»"
+PlayersStatsGUI            "1" *-[#595959,plain]-> "playerStatsGUIs\n1" PlayerStatsGUI             
+Port                       "1" *-[#595959,plain]-> "ratio\n1" PortTradeRatio             
+Port                       "1" *-[#595959,plain]-> "resource\n1" ResourceType               
+Road                       "1" *-[#595959,plain]-> "intersections\n*" Intersection               
+Road                        -[#595959,dashed]->  Intersection               : "«create»"
+Road                       "1" *-[#595959,plain]-> "owner\n1" Player                     
+Road                       "1" *-[#595959,plain]-> "COST\n*" ResourceType               
+Settlement                 "1" *-[#595959,plain]-> "COST\n*" ResourceType               
+Settlement                  -[#000082,plain]-^  Structure                  
+Shuffler                   "1" *-[#595959,plain]-> "portTokens\n*" Port                       
+Shuffler                    -[#595959,dashed]->  Port                       : "«create»"
+Shuffler                   "1" *-[#595959,plain]-> "resourceTypes\n*" ResourceType               
+Structure                  "1" *-[#595959,plain]-> "owner\n1" Player                     
+TradeManagerGUI            "1" *-[#595959,plain]-> "bank\n1" Bank                       
+TradeManagerGUI             -[#595959,dashed]->  Bank                       : "«create»"
+TradeManagerGUI            "1" *-[#595959,plain]-> "manager\n1" GameManager                
+TradeManagerGUI             -[#595959,dashed]->  GameManager                : "«create»"
+TradeManagerGUI            "1" *-[#595959,plain]-> "players\n*" Player                     
+TradeManagerGUI             -[#595959,dashed]->  Player                     : "«create»"
+TradeManagerGUI             -[#595959,dashed]->  Port                       : "«create»"
+TradeManagerGUI             -[#595959,dashed]->  ResourceType               : "«create»"
+TradeManagerGUI            "1" *-[#595959,plain]-> "resourceOrder\n*" ResourceType               
+TradeManagerGUI            "1" *-[#595959,plain]-> "brickTradeRatio\n1" TradeRatio                 
+@enduml

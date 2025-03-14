@@ -1,0 +1,1 @@
+This is a data class and doesn't need a BVA.

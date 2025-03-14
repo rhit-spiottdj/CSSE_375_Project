@@ -1,0 +1,185 @@
+@startuml
+'note "Some example plantUML code for a class diagram." as N1
+
++enum ResourceType{
++ BRICK
++ LUMBER
++ WOOL
++ GRAIN
++ ORE
++ GOLD
+}
+
++class Player{
+-playerColor: Color
+-playerName: String
+-resources: Collection<ResourceType>
+}
+
++class GameManager{
+- players: List<Player>
+- activePlayerIndex: int
+-
+}
+
++class Intersection{
+- connectedPaths: Path[]
+- numConnectedPaths: int
+}
+
++class Path{
+- hasRoad: boolean
+-intersection1: Intersection
+-intersection2: Intersection
++ boolean hasRoad()
++ boolean addRoad()
+}
+
++enum Port {
++ THREE_TO_ONE
++ TWO_TO_ONE
+}
+
++class Bank {
+- resources: HashMap<ResourceType, int>
+- DevelopmentCards: HashMap<DevelopmentCard, LinkedList<DevelopmentCard>>
++ Bank()
++ obtainResource(ResourceType taking, int quantity) : boolean
++ spendResource(ResourceType giving, int quantity) : void
++ tradeResourcePort(Port type, ResourceType giving, ResourceType taking, int quantity) : boolean
++ tradeResourceBank(ResourceType giving, ResourceType taking, int quantity) : boolean
++ obtainKnight() : boolean
++ obtainVictory() : boolean
++ obtainRoad() : boolean
++ obtainPlenty() : boolean
++ obtainMonopoly() : boolean
+- obtainDevelopmentCard(String card) : boolean
+- setupResources() : void
++ setupDevelopmentCards(HashMap<DevelopmentCard, LinkedList<DevelopmentCard>>)) : void
+- doWeHaveEnoughResources(ResourceType type, int quantity) : boolean
+- doWeHaveEnoughDevelopmentCards(DevelopmentCard card) : boolean
+}
+
++abstract Structure{
+- owner: Player
+- location: Intersection
+- structureType : int
++ //void distributeResources(ResourceType type)//
++ void setOwner()
++ Player getOwner()
++ void getLocation()
++ void setLocation(Intersection intersect)
++ void setType()
++ int getType()
+}
+
++class Settlement{
++ Settlement(Intersection location, Player owner)
++ void distributeResources(ResourceType type)
+}
+
++class City{
++ City(Intersection location, Player owner)
++ void distributeResources(ResourceType type)
+}
+
+City -u-|> Structure
+Settlement -u-|> Structure
+
++abstract DevelopmentCard{
+}
+
++class TradingManager{
++
+}
+
++class Hexagon{
++ center: Point2D.Double
++ intersections: Intersection[]
++ resource: ResourceType
+}
+
+'+class BoardTile{
+'}
+
++class Robber{
++ void moveRobber()
++ int getLocation()
+}
+
++class DiceManager{
+
+- lastDiceRolls: int[]
+- RNG: Random
+- playerHasRolledDice: boolean
+- numDice: int
+
++ DiceManager(int numDice)
++ void endTurnAndInvalidateDice()
++ void setRandom(Random rand)
++ int rollAllDice()
++ int getCurrentDiceTotal()
++ int getDie(int index)
++ int getNumDice()
+}
+
+note right of DiceManager:I prefer not passing Rand and using setRandom, could swap or add alternate constructor
+
++interface DevelopmentCard {
+    + //playCard(Player player): void//
+}
+
++class KnightCard {
+    + playCard(Player player): void
+}
+
++class VictoryPointCard {
+    + playCard(Player player): void
+}
+
++class RoadBuildingCard {
+    + playCard(Player player): void
+}
+
++class MonopolyCard {
+    + playCard(Player player): void
+}
+
++class YearOfPlentyCard {
+    + playCard(Player player): void
+}
+
+DevelopmentCard <|-- KnightCard
+DevelopmentCard <|-- VictoryPointCard
+DevelopmentCard <|-- RoadBuildingCard
+DevelopmentCard <|-- MonopolyCard
+DevelopmentCard <|-- YearOfPlentyCard
+
+
+'+abstract Player{
+'# wealth: int
+'+{abstract} someMethodWhoseImplementationDiffersByPlayerType(): some_return_type
+'+someMethodWhoseImplementationSameForAllPlayerType(): some_return_type
+'-maybeSomePrivateMethod(): some_return_type
+'}
+'
+'+class PlayerTypeA{
+'+ someMethodWhoseImplementationDiffersByPlayerType(): some_return_type
+'}
+'
+'note left of PlayerTypeA::someMethodWhoseImplementationDiffersByPlayerType
+'override this method here
+'end note
+'
+'+class PlayerTypeB{
+'+ someMethodWhoseImplementationDiffersByPlayerType(): some_return_type
+'}
+
+'Game -r->"*" Player
+'PlayerTypeA -u-|> Player
+'PlayerTypeB -u-|> Player
+'
+'note "See documentation at https://plantuml.com/class-diagram" as N2
+
+
+@enduml

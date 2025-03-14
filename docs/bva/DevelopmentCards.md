@@ -1,0 +1,1 @@
+This is an enum with no functions and therefore doesn't need BVA.

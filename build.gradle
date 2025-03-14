@@ -1,0 +1,125 @@
+plugins {
+    id 'java'
+    id 'info.solidsoft.pitest' version '1.15.0'
+    id "com.github.spotbugs" version "5.0.13"
+    id 'checkstyle'
+    id 'jacoco'
+}
+
+build.dependsOn 'pitest'
+build.dependsOn 'cucumber'
+check.dependsOn 'pitest'
+check.dependsOn 'cucumber'
+
+
+pitest {
+    outputFormats = ['XML', 'HTML']
+    timestampedReports = false
+    junit5PluginVersion = '1.2.1'
+    pitestVersion = '1.15.0'
+    targetClasses = ['domain.*,presentation.*']
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+}
+
+checkstyle {
+    ignoreFailures = false // warn, but do not fail build, on checkstyle errors
+    sourceSets = [project.sourceSets.main] //Temporarily ignore test files
+}
+
+group 'edu.rose-hulman.csse'
+version '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.1'
+    testImplementation 'io.cucumber:cucumber-java:5.6.0'
+    testImplementation 'io.cucumber:cucumber-junit:5.6.0'
+    testImplementation 'io.cucumber:cucumber-picocontainer:5.6.0'
+    testImplementation 'org.easymock:easymock:4.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+spotbugsMain {
+    reports {
+        html {
+            required = true
+            outputLocation = file("$buildDir/reports/spotbugs/main/spotbugs.html")
+            stylesheet = 'fancy-hist.xsl'
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+// Append the rest at the end of your build script
+jacoco {
+    toolVersion = "0.8.8"
+}
+jacocoTestReport {
+    dependsOn test
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports after running tests."
+    reports {
+        xml.enabled true
+        csv.enabled false
+        10
+        html.enabled true
+    }
+}
+test.finalizedBy(jacocoTestReport)
+task codeCoverageInfo (dependsOn: jacocoTestReport) {
+    ext.srcFile = file("${reportsDir}/jacoco/test/jacocoTestReport.xml")
+    doLast {
+        println "Transforming source file."
+
+        def parser = new XmlParser()
+        parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl",
+                false);
+        parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        parser.setFeature("http://xml.org/sax/features/namespaces", false)
+
+        def reportNode = parser.parse(srcFile)
+        reportNode.children().each {
+            if(it.name() == 'counter') {
+                String type = it.@type
+                float missed = it.@missed as float
+                float covered = it.@covered as float
+                float percentage = covered / (missed + covered) * 100
+                println "Code Coverage[$type]: $percentage%"
+            }
+        }
+    }
+}
+jacocoTestReport.finalizedBy(codeCoverageInfo)
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
+}
+
+task cucumber() {
+    dependsOn assemble, testClasses
+    doLast {
+        javaexec {
+            main = "io.cucumber.core.cli.Main"
+            classpath = configurations.testRuntimeClasspath + sourceSets.main.output + sourceSets.test.output
+            args = ['--plugin', 'pretty',
+                    '--glue', 'domain',
+                    'src/test/resources']
+        }
+    }
+}

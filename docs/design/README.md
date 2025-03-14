@@ -1,0 +1,1 @@
+We couldn't create a .pluml file, intellij only created a .plantuml or .svg file from our understanding. Therefore classes.pluml is a copy and paste of the UMLDiagram.plantuml file with the extension changed. 
