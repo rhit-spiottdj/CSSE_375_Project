@@ -1,5 +1,5 @@
 ![Gradle Build](https://github.com/rhit-csse376/project-202430-s1-team03-202430/actions/workflows/main.yml/badge.svg)
-# CSSE376 Project: Catan
+# CSSE376 Project: Catan (Now our CSSE 375 project)
 
 ## Contributors
 Team 3: Christian Beadling, Andrew Kosikowski, Dom Spiotta, Brady Veal
