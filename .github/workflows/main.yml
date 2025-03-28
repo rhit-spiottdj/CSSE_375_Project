@@ -17,6 +17,7 @@ jobs:
         java-version: 11
     - name: Run chmod to make gradlew executable
       run: chmod +x ./gradlew
+      shell: bash
     - name: Setup Gradle
       uses: gradle/gradle-build-action@v2
       with:
@@ -24,4 +25,20 @@ jobs:
     
     - name: Execute Gradle build
       run: ./gradlew build
-      
+    
+    - name: Run tests
+      run: ./gradlew test
+    
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      if: always() && runner.os == 'Linux'
+      with:
+        files: |
+          build/test-results/**/*.xml
+    
+    - name: Upload test reports
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-reports-${{ matrix.os }}
+        path: build/reports/tests/
