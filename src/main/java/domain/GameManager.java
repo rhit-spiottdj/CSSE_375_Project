@@ -4,7 +4,7 @@ import java.util.*;
 
 public class GameManager {
 
-    public final static int MAX_PLAYERS = 4;
+    public final static int MAX_PLAYERS = 6;
 
     public final static int MIN_PLAYERS = 2;
     private static final int MAX_INTERSECTION_INDEX = 53;
@@ -96,7 +96,7 @@ public class GameManager {
 
     private void validateNumPlayerRange(int numPlayers) {
         if (numPlayers > MAX_PLAYERS) {
-            throw new IllegalArgumentException("Maximum amount of players allowed is 4");
+            throw new IllegalArgumentException("Maximum amount of players allowed is 6");
         } else if (numPlayers < MIN_PLAYERS) {
             throw new IllegalArgumentException("Minimum amount of players allowed is 2");
         }

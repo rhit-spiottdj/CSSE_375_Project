@@ -27,6 +27,8 @@ public class TestGameManager {
     Player player2;
     Player player3;
     Player player4;
+    Player player5;
+    Player player6;
 
     Player[] players;
     ArrayList<DevelopmentCards> cards;
@@ -51,6 +53,21 @@ public class TestGameManager {
     public void testGameManager_setNumPlayers4_expect4() {
         GameManager manager = new GameManager();
         assertEquals(4, manager.setNumPlayers(4));
+    }
+
+    @Test
+    public void testGameManager_setNumPlayers6_expect6() {
+        GameManager manager = new GameManager();
+        assertEquals(6, manager.setNumPlayers(6));
+    }
+
+    @Test
+    public void testGameManager_setNumPlayers7_expectException() {
+        GameManager manager = new GameManager();
+        String expectedMessage = "Maximum amount of players allowed is 6";
+        String actualMessage = assertThrows(IllegalArgumentException.class,
+                () -> manager.setNumPlayers(7)).getMessage();
+        assertEquals(expectedMessage, actualMessage);
     }
 
     @Test
@@ -1005,6 +1022,47 @@ public class TestGameManager {
     }
 
     @Test
+    public void testGameManager_getHexagonPlayers_ExpectFive() {
+        BoardManager boardManager = EasyMock.createMock(BoardManager.class);
+        GameManager manager = new GameManager(6,boardManager);
+        Player player1 = EasyMock.createMock(Player.class);
+        Player player2 = EasyMock.createMock(Player.class);
+        Player player3 = EasyMock.createMock(Player.class);
+        Player player4 = EasyMock.createMock(Player.class);
+        Player player5 = EasyMock.createMock(Player.class);
+        Player[] players = new Player[]{player1, player2, player3, player4, player5};
+        manager.players = players;
+
+        EasyMock.expect(boardManager.getHexagonPlayers())
+                .andReturn(new ArrayList<>(List.of(player1, player2, player3, player4, player5)));
+        EasyMock.replay(boardManager);
+        ArrayList<Player> actual = manager.getHexagonPlayers();
+        assertEquals(5, actual.size());
+        EasyMock.verify(boardManager);
+    }
+
+    @Test
+    public void testGameManager_getHexagonPlayers_ExpectSix() {
+        BoardManager boardManager = EasyMock.createMock(BoardManager.class);
+        GameManager manager = new GameManager(6,boardManager);
+        Player player1 = EasyMock.createMock(Player.class);
+        Player player2 = EasyMock.createMock(Player.class);
+        Player player3 = EasyMock.createMock(Player.class);
+        Player player4 = EasyMock.createMock(Player.class);
+        Player player5 = EasyMock.createMock(Player.class);
+        Player player6 = EasyMock.createMock(Player.class);
+        Player[] players = new Player[]{player1, player2, player3, player4, player5, player6};
+        manager.players = players;
+
+        EasyMock.expect(boardManager.getHexagonPlayers())
+                .andReturn(new ArrayList<>(List.of(player1, player2, player3, player4, player5, player6)));
+        EasyMock.replay(boardManager);
+        ArrayList<Player> actual = manager.getHexagonPlayers();
+        assertEquals(6, actual.size());
+        EasyMock.verify(boardManager);
+    }
+
+    @Test
     public void testGameManager_tryRobberSteal_expectException() {
         Player player1Mock = EasyMock.createMock(Player.class);
         Player player2Mock = EasyMock.createMock(Player.class);
@@ -1155,7 +1213,7 @@ public class TestGameManager {
 
 
     @ParameterizedTest
-    @ValueSource(ints = {2,3,4})
+    @ValueSource(ints = {2,3,4,5,6})
     public void testGameManager_setInTurnPlayer_negativeIndex(int numPlayers){
         setupPlayers(numPlayers);
         String actualMessage = assertThrows(IndexOutOfBoundsException.class,
@@ -1165,7 +1223,7 @@ public class TestGameManager {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {2,3,4})
+    @ValueSource(ints = {2,3,4,5,6})
     public void testGameManager_setInTurnPlayer_zeroIndex(int numPlayers){
         setupPlayers(numPlayers);
         manager.setInTurnPlayer(0);
@@ -1173,7 +1231,7 @@ public class TestGameManager {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {2,3,4})
+    @ValueSource(ints = {2,3,4,5,6})
     public void testGameManager_setInTurnPlayer_maxIndex(int numPlayers){
         setupPlayers(numPlayers);
         manager.setInTurnPlayer(numPlayers-1);
@@ -1181,7 +1239,7 @@ public class TestGameManager {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {2,3,4})
+    @ValueSource(ints = {2,3,4,5,6})
     public void testGameManager_setInTurnPlayer_overMaxIndex(int numPlayers){
         setupPlayers(numPlayers);
         String actualMessage = assertThrows(IndexOutOfBoundsException.class,
@@ -1196,8 +1254,10 @@ public class TestGameManager {
         player2 = EasyMock.createMock(Player.class);
         player3 = EasyMock.createMock(Player.class);
         player4 = EasyMock.createMock(Player.class);
+        player5 = EasyMock.createMock(Player.class);
+        player6 = EasyMock.createMock(Player.class);
 
-        players = new Player[]{player1,player2,player3,player4};
+        players = new Player[]{player1,player2,player3,player4,player5,player6};
         for(int i = 0; i < numPlayers; i++){
             manager.setPlayer(i,players[i]);
         }
@@ -1432,7 +1492,7 @@ public class TestGameManager {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {2,3,4})
+    @ValueSource(ints = {2,3,4,5,6})
     public void testGameManager_setNextPlayerInTurn_setPlayerTwo(int numPlayers){
         setupPlayers(numPlayers);
 
@@ -1456,7 +1516,7 @@ public class TestGameManager {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {2,3,4})
+    @ValueSource(ints = {2,3,4,5,6})
     public void testGameManager_setNextPlayerInTurn_setFirstPlayer(int numPlayers){
         setupPlayers(numPlayers);
 
@@ -1468,7 +1528,7 @@ public class TestGameManager {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {2,3,4})
+    @ValueSource(ints = {2,3,4,5,6})
     public void testGameManager_setNextPlayerInTurn_firstCall(int numPlayers){
         setupPlayers(numPlayers);
 
@@ -1925,7 +1985,7 @@ public class TestGameManager {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {2,3,4})
+    @ValueSource(ints = {2,3,4,5,6})
     public void testGameManager_getNumPlayers(int numPlayers){
         GameManager manager = new GameManager(numPlayers);
 
@@ -1933,7 +1993,7 @@ public class TestGameManager {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {2,3,4})
+    @ValueSource(ints = {2,3,4,5,6})
     public void testGameManager_getPlayers(int numPlayers){
         GameManager manager = new GameManager(numPlayers);
 
