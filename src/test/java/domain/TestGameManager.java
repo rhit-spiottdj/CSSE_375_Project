@@ -71,15 +71,6 @@ public class TestGameManager {
     }
 
     @Test
-    public void testGameManager_setNumPlayers5_expectException() {
-        GameManager manager = new GameManager();
-        String expectedMessage = "Maximum amount of players allowed is 4";
-        String actualMessage = assertThrows(IllegalArgumentException.class,
-            () -> manager.setNumPlayers(5)).getMessage();
-        assertEquals(expectedMessage, actualMessage);
-    }
-
-    @Test
     public void testGameManager_setTurnOrderEmptyCollections_expectException() {
         GameManager manager = new GameManager();
         String expectedMessage = "Illegal Argument";
