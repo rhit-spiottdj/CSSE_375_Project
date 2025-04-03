@@ -3,7 +3,7 @@ import java.util.Collection;
 public class ProgressCardManager {
     Bank bank;
 
-    ProgressCardManager(Bank bank){
+    ProgressCardManager(Bank bank) {
         this.bank = bank;
     }
 
@@ -19,30 +19,33 @@ public class ProgressCardManager {
     private boolean checkSufficientResources(ResourceType resourceOne, ResourceType resourceTwo) {
         if (resourceOne.equals(resourceTwo)) {
             return !bank.noMoreResource(resourceOne, 2);
-        } else {
-            return !(bank.noMoreResource(resourceOne, 1) ||
-                    bank.noMoreResource(resourceTwo, 1));
         }
+        return !(bank.noMoreResource(resourceOne, 1) ||
+                bank.noMoreResource(resourceTwo, 1));
     }
 
     private void addResourcesToPlayer(Player player, ResourceType resourceOne, ResourceType resourceTwo) {
         try {
             player.addResource(resourceOne);
             player.addResource(resourceTwo);
-        } catch(IllegalStateException e) {
+        } catch (IllegalStateException e) {
             // Original code swallows the exception
         }
     }
 
     public Collection<ResourceType> playMonopoly(
             Collection<Player> players, Player player, ResourceType resource) {
-        for (Player checkPlayer : players) {
-            if (checkPlayer.equals(player)) {
-                continue;
-            }
-            transferResources(checkPlayer, player, resource);
-        }
+        collectResourcesFromPlayers(players, player, resource);
         return player.getResources();
+    }
+
+    private void collectResourcesFromPlayers(
+            Collection<Player> players, Player player, ResourceType resource) {
+        for (Player checkPlayer : players) {
+            if (!checkPlayer.equals(player)) {
+                transferResources(checkPlayer, player, resource);
+            }
+        }
     }
 
     private void transferResources(Player fromPlayer, Player toPlayer, ResourceType resource) {
