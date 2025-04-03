@@ -28,7 +28,7 @@ public class TestPlayer {
 
         assertTrue(player.getResources().contains(resource));
         assertEquals(1, player.getResources().size());
-    }
+    } 
 
 
     @EnumSource (ResourceType.class)
