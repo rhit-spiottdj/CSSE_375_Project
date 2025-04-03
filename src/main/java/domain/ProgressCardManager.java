@@ -26,7 +26,8 @@ public class ProgressCardManager {
                 bank.noMoreResource(resourceTwo, 1));
     }
 
-    private void addResourcesToPlayer(Player player, ResourceType resourceOne, ResourceType resourceTwo) {
+    private void addResourcesToPlayer(Player player, ResourceType resourceOne, 
+                                      ResourceType resourceTwo) {
         try {
             player.addResource(resourceOne);
             player.addResource(resourceTwo);
