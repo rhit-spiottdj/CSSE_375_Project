@@ -1,5 +1,7 @@
 package domain;
+
 import java.util.Collection;
+
 public class ProgressCardManager {
     Bank bank;
 
