@@ -29,7 +29,6 @@ public class ProgressCardManager {
             player.addResource(resourceOne);
             player.addResource(resourceTwo);
         } catch (IllegalStateException e) {
-            // Original code swallows the exception
         }
     }
 
