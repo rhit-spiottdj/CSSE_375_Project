@@ -137,7 +137,7 @@ public class BoardDisplay extends JPanel {
     private void paintBridges(Graphics2D g2) {
         Intersection[] intersections = boardManager.getIntersections();
         ArrayList<Port> ports = boardManager.getPorts();
-        for(int i = 0; i < boardManager.getPortIntersections().length; i++){
+        for(int i = 0; i < boardManager.getPortLocations().length; i++){
             setGraphicsAndDrawBridgesAtPort(g2, intersections, ports, i);
         }
     }
@@ -149,9 +149,9 @@ public class BoardDisplay extends JPanel {
     }
 
     private void drawBridgesAtPort(Graphics2D g2, Intersection[] intersections, int i, Port port) {
-        Intersection current = intersections[boardManager.getPortIntersections()[i][0]];
+        Intersection current = intersections[boardManager.getPortLocations()[i].getIndex1()];
         int[] bridgeEndPoint = calculatePortBridgeLocationAndDraw(g2, current.getCenter());
-        current = intersections[boardManager.getPortIntersections()[i][1]];
+        current = intersections[boardManager.getPortLocations()[i].getIndex2()];
         int[] otherBridgeEndPoint = calculatePortBridgeLocationAndDraw(g2, current.getCenter());
         drawPortLabel(g2, bridgeEndPoint, otherBridgeEndPoint, port);
     }

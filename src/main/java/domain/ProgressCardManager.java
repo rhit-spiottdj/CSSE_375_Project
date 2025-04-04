@@ -1,47 +1,58 @@
 package domain;
 
-
 import java.util.Collection;
 
 public class ProgressCardManager {
-
     Bank bank;
 
-    ProgressCardManager(Bank bank){
+    ProgressCardManager(Bank bank) {
         this.bank = bank;
     }
 
-
     public Collection<ResourceType> playYearOfPlenty(
-        Player player, ResourceType resourceOne, ResourceType resourceTwo) {
-
-        boolean insufficientResources = false;
-        if(resourceOne.equals(resourceTwo)){
-            insufficientResources = bank.noMoreResource(resourceOne,2);
-        }else{
-            insufficientResources = bank.noMoreResource(resourceOne, 1) ||
-                bank.noMoreResource(resourceTwo, 1);
+            Player player, ResourceType resourceOne, ResourceType resourceTwo) {
+        if (!checkSufficientResources(resourceOne, resourceTwo)) {
+            return player.getResources();
         }
-        if(!insufficientResources){
-            try {
-                player.addResource(resourceOne);
-                player.addResource(resourceTwo);
-            }catch(IllegalStateException e){
-            }
-        }
+        addResourcesToPlayer(player, resourceOne, resourceTwo);
         return player.getResources();
     }
 
+    private boolean checkSufficientResources(ResourceType resourceOne, ResourceType resourceTwo) {
+        if (resourceOne.equals(resourceTwo)) {
+            return !bank.noMoreResource(new ResourceTransaction(resourceOne, 2));
+        }
+        return !(bank.noMoreResource(new ResourceTransaction(resourceOne, 1)) ||
+                bank.noMoreResource(new ResourceTransaction(resourceTwo, 1)));
+    }
+
+    private void addResourcesToPlayer(Player player, ResourceType resourceOne, 
+                                      ResourceType resourceTwo) {
+        try {
+            player.addResource(resourceOne);
+            player.addResource(resourceTwo);
+        } catch (IllegalStateException e) {
+        }
+    }
+
     public Collection<ResourceType> playMonopoly(
-        Collection<Player> players, Player player, ResourceType resource) {
-        for(Player checkPlayer: players){
-            if(checkPlayer.equals(player)){
-                continue;
-            }
-            while (checkPlayer.removeResource(resource)){
-                player.addResource(resource);
+            Collection<Player> players, Player player, ResourceType resource) {
+        collectResourcesFromPlayers(players, player, resource);
+        return player.getResources();
+    }
+
+    private void collectResourcesFromPlayers(
+            Collection<Player> players, Player player, ResourceType resource) {
+        for (Player checkPlayer : players) {
+            if (!checkPlayer.equals(player)) {
+                transferResources(checkPlayer, player, resource);
             }
         }
-        return player.getResources();
+    }
+
+    private void transferResources(Player fromPlayer, Player toPlayer, ResourceType resource) {
+        while (fromPlayer.removeResource(resource)) {
+            toPlayer.addResource(resource);
+        }
     }
 }

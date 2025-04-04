@@ -4,7 +4,7 @@ import java.util.*;
 
 public class GameManager {
 
-    public final static int MAX_PLAYERS = 4;
+    public final static int MAX_PLAYERS = 6;
 
     public final static int MIN_PLAYERS = 2;
     private static final int MAX_INTERSECTION_INDEX = 53;
@@ -24,66 +24,47 @@ public class GameManager {
     Bank bank;
     private boolean gameOver = false;
 
-    //This one is for testing only
-    protected GameManager() {
+    private GameManager(Player[] players, int numPlayers, BoardManager boardManager, Bank bank,
+                        DiceManager diceManager, DevelopmentCardManager cardManager) {
+        this.numPlayers = (players != null) ? players.length : numPlayers;
+        this.players = (players != null) ? players : new Player[this.numPlayers];  // Ensure players is initialized
+        this.boardManager = (boardManager != null) ? boardManager : new BoardManager();
+        this.bank = (bank != null) ? bank : new Bank();
+        this.diceManager = (diceManager != null) ? diceManager : new DiceManager(2);
+        this.cardManager = (cardManager != null) ? cardManager : new DevelopmentCardManager(this.players, this.bank, this.boardManager);
     }
 
+    //This one is for testing only
+    protected GameManager() {
+        this(null, 0, null, null, null, null);
+    }
 
     public GameManager(int numPlayers) {
-        diceManager = new DiceManager(2);
-        bank = new Bank();
-        setNumPlayers(numPlayers);
-        this.boardManager = new BoardManager();
-        cardManager = new DevelopmentCardManager(players,bank,boardManager);
-
+        this(null, numPlayers, null, null, null, null);
     }
 
     public GameManager(int numPlayers, BoardManager boardManager) {
-        diceManager = new DiceManager(2);
-        bank = new Bank();
-        this.boardManager = boardManager;
-        setNumPlayers(numPlayers);
-        cardManager = new DevelopmentCardManager(players,bank,boardManager);
+        this(null, numPlayers, boardManager, null, null, null);
     }
 
-    //This one is for testing only
-    protected GameManager(int numPlayers, BoardManager boardManager,
-        DevelopmentCardManager cardManager) {
-        setNumPlayers(numPlayers);
-        this.boardManager = boardManager;
-        this.cardManager = cardManager;
+    protected GameManager(int numPlayers, BoardManager boardManager, DevelopmentCardManager cardManager) {
+        this(null, numPlayers, boardManager, null, null, cardManager);
     }
 
     protected GameManager(Player[] players, BoardManager boardManager) {
-        this.players = players;
-        this.numPlayers = players.length;
-        this.boardManager = boardManager;
-
+        this(players, 0, boardManager, null, null, null);
     }
 
     protected GameManager(Player[] players, BoardManager boardManager, Bank bank) {
-        this.players = players;
-        this.numPlayers = players.length;
-        this.boardManager = boardManager;
-        this.bank = bank;
+        this(players, 0, boardManager, bank, null, null);
     }
 
-    protected GameManager(DevelopmentCardManager cardManager, Player[] players,
-        BoardManager boardManager, Bank bank) {
-        this.players = players;
-        this.numPlayers = players.length;
-        this.boardManager = boardManager;
-        this.bank = bank;
-        this.cardManager = cardManager;
+    protected GameManager(DevelopmentCardManager cardManager, Player[] players, BoardManager boardManager, Bank bank) {
+        this(players, 0, boardManager, bank, null, cardManager);
     }
 
-    protected GameManager(Player[] players, BoardManager boardManager, Bank bank,
-        DiceManager diceManager) {
-        this.players = players;
-        this.numPlayers = players.length;
-        this.boardManager = boardManager;
-        this.bank = bank;
-        this.diceManager = diceManager;
+    protected GameManager(Player[] players, BoardManager boardManager, Bank bank, DiceManager diceManager) {
+        this(players, 0, boardManager, bank, diceManager, null);
     }
 
 
@@ -96,7 +77,7 @@ public class GameManager {
 
     private void validateNumPlayerRange(int numPlayers) {
         if (numPlayers > MAX_PLAYERS) {
-            throw new IllegalArgumentException("Maximum amount of players allowed is 4");
+            throw new IllegalArgumentException("Maximum amount of players allowed is 6");
         } else if (numPlayers < MIN_PLAYERS) {
             throw new IllegalArgumentException("Minimum amount of players allowed is 2");
         }
@@ -209,7 +190,7 @@ public class GameManager {
 
     private void distributeResourcesToPlayer(Player player, List<ResourceType> resourcesToDist) {
         for (ResourceType resource : resourcesToDist) {
-            if (bank.obtainResource(resource, 1)) {
+            if (bank.obtainResource(new ResourceTransaction(resource, 1))) {
                 player.addResource(resource);
             }
         }
@@ -229,7 +210,7 @@ public class GameManager {
 
     public void decrementResourcesFromBank(Collection<ResourceType> resourcesToRemove) {
         for (ResourceType resource : resourcesToRemove) {
-            bank.obtainResource(resource, 1);
+            bank.obtainResource(new ResourceTransaction(resource, 1));
         }
     }
 
@@ -389,7 +370,7 @@ public class GameManager {
         Player player) {
         for (ResourceType resource : resourceCost) {
             player.removeResource(resource);
-            bank.giveBackResource(resource, 1);
+            bank.giveBackResource(new ResourceTransaction(resource, 1));
         }
     }
 

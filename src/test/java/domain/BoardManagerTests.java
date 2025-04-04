@@ -1384,7 +1384,7 @@ public class BoardManagerTests {
 
         EasyMock.expect(hex1.getIntersections()).andReturn(new Intersection[]{inter1});
 
-        EasyMock.expect(bank.obtainResource(ResourceType.BRICK, 1)).andReturn(true);
+        EasyMock.expect(bank.obtainResource(new ResourceTransaction(ResourceType.BRICK, 1))).andReturn(true);
 
         player.addResource(ResourceType.BRICK);
 
@@ -1420,7 +1420,7 @@ public class BoardManagerTests {
 
         EasyMock.expect(hex1.getIntersections()).andReturn(new Intersection[]{inter1});
 
-        EasyMock.expect(bank.obtainResource(ResourceType.BRICK, 1)).andReturn(true);
+        EasyMock.expect(bank.obtainResource(new ResourceTransaction(ResourceType.BRICK, 1))).andReturn(true);
 
         player.addResource(ResourceType.BRICK);
 
@@ -1441,7 +1441,7 @@ public class BoardManagerTests {
 
         EasyMock.expect(hex2.getIntersections()).andReturn(new Intersection[]{inter2});
 
-        EasyMock.expect(bank.obtainResource(ResourceType.BRICK, 1)).andReturn(true);
+        EasyMock.expect(bank.obtainResource(new ResourceTransaction(ResourceType.BRICK, 1))).andReturn(true);
 
         player2.addResource(ResourceType.BRICK);
 
@@ -1502,7 +1502,7 @@ public class BoardManagerTests {
 
         EasyMock.expect(hex1.getIntersections()).andReturn(new Intersection[]{inter1});
 
-        EasyMock.expect(bank.obtainResource(ResourceType.BRICK, 1)).andReturn(false);
+        EasyMock.expect(bank.obtainResource(new ResourceTransaction(ResourceType.BRICK, 1))).andReturn(false);
 
         EasyMock.replay(hex1, inter1, settlement, player, bank);
 
@@ -1534,7 +1534,7 @@ public class BoardManagerTests {
 
         EasyMock.expect(hex1.getIntersections()).andReturn(new Intersection[]{inter1});
 
-        EasyMock.expect(bank.obtainResource(ResourceType.BRICK, 2)).andReturn(false);
+        EasyMock.expect(bank.obtainResource(new ResourceTransaction(ResourceType.BRICK, 2))).andReturn(false);
 
         EasyMock.replay(hex1, inter1, city, player, bank);
 
@@ -1566,7 +1566,7 @@ public class BoardManagerTests {
 
         EasyMock.expect(hex1.getIntersections()).andReturn(new Intersection[]{inter1});
 
-        EasyMock.expect(bank.obtainResource(ResourceType.BRICK, 2)).andReturn(true);
+        EasyMock.expect(bank.obtainResource(new ResourceTransaction(ResourceType.BRICK, 2))).andReturn(true);
 
         player.addResource(ResourceType.BRICK);
         player.addResource(ResourceType.BRICK);
@@ -1893,13 +1893,15 @@ public class BoardManagerTests {
     }
 
     @Test
-    public void testBoardManager_getPortIntersections() {
+    public void testBoardManager_getPortLocations() {
         BoardManager boardManager = new BoardManager();
-
-        int[][] locations = boardManager.getPortIntersections();
+        Coordinate[] locations = boardManager.getPortLocations();
 
         assertEquals(9, locations.length);
-        assertEquals(2, locations[0].length);
+        assertEquals(BoardManager.PORT_ONE, locations[0]);
+        assertEquals(BoardManager.PORT_NINE, locations[8]);
+        assertEquals(10, locations[0].getIndex1());
+        assertEquals(4, locations[0].getIndex2());
     }
 
     @Test
