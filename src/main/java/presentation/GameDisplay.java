@@ -757,16 +757,8 @@ public class GameDisplay implements ActionListener {
         return MessageFormat.format(messageTemplate, formattedResourceStolen, playerToStealFrom);
     }
 
-    @SuppressWarnings("methodlength")
     private static String getFormattedResourceStolen(String resourceStolen) {
-        switch (resourceStolen) {
-            case "BRICK": return messages.getString("brick");
-            case "LUMBER": return messages.getString("lumber");
-            case "GRAIN": return messages.getString("grain");
-            case "WOOL": return messages.getString("wool");
-            case "ORE": return messages.getString("ore");
-            default: return "";
-        }
+    	return messages.getString(resourceStolen.toLowerCase());
     }
 
     private static String getNameOfPlayerToSteal(Map<String, Player> playerMap) {
