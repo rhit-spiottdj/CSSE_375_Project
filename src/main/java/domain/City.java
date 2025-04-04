@@ -8,13 +8,16 @@ public class City extends Structure {
 
 
     private static final List<ResourceType>
-        COST = List.of(ResourceType.ORE, ResourceType.ORE, ResourceType.ORE,
-        ResourceType.GRAIN, ResourceType.GRAIN);
+            COST = List.of(ResourceType.ORE, ResourceType.ORE, ResourceType.ORE,
+            ResourceType.GRAIN, ResourceType.GRAIN);
 
     @Override
     public void distributeResources(ResourceType resourceType) {
-        super.getOwner().addResource(resourceType);
-        super.getOwner().addResource(resourceType);
+        Player p = super.getOwner();
+        if (p != null) {
+            p.addResource(resourceType);
+            p.addResource(resourceType);
+        }
     }
 
     @Override

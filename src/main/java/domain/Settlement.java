@@ -8,8 +8,8 @@ public class Settlement extends Structure {
 
 
     private static final List<ResourceType>
-        COST = List.of(ResourceType.BRICK, ResourceType.LUMBER, ResourceType.GRAIN,
-        ResourceType.WOOL);
+            COST = List.of(ResourceType.BRICK, ResourceType.LUMBER, ResourceType.GRAIN,
+            ResourceType.WOOL);
 
     public Settlement() {
     }
@@ -21,7 +21,9 @@ public class Settlement extends Structure {
     @Override
     public void distributeResources(ResourceType resourceType) {
         Player p = super.getOwner();
-        p.addResource(resourceType);
+        if (p != null) {
+            p.addResource(resourceType);
+        }
     }
 
     @Override
