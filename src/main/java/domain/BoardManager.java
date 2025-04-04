@@ -59,51 +59,56 @@ public class BoardManager {
 
     private Random rand;
 
+    // Private constructor to handle all assignments
+    private BoardManager(Random rand, Hexagon[] hexagons, Intersection[] intersections,
+                         List<Intersection> structureLocations, List<Intersection> roads,
+                         List<Road> roadsOnBoard, Shuffler shuffler) {
+        this.rand = (rand != null) ? rand : new Random();
+        this.hexagons = (hexagons != null) ? hexagons : new Hexagon[0];  // Initialize empty array
+        this.intersections = (intersections != null) ? intersections : new Intersection[2]; // Provide expected size
+        this.structureLocations = (structureLocations != null) ? structureLocations : new ArrayList<>();
+        this.roads = (roads != null) ? roads : new ArrayList<>();
+        this.roadsOnBoard = (roadsOnBoard != null) ? roadsOnBoard : new ArrayList<>();
+        this.shuffler = shuffler;
+    }
+
+    // Public constructors delegating to the main constructor
     public BoardManager() {
-        this.rand = new Random();
+        this(new Random(), null, null, null, null, null, null);
     }
 
     protected BoardManager(Hexagon[] hexagons) {
-        this.hexagons = hexagons;
+        this(null, hexagons, null, null, null, null, null);
     }
 
     protected BoardManager(Random rand) {
-        this.rand = rand;
+        this(rand, null, null, null, null, null, null);
     }
 
     protected BoardManager(Intersection[] intersections) {
-        this.intersections = intersections;
+        this(null, null, intersections, null, null, null, null);
     }
 
     protected BoardManager(Intersection[] intersections, List<Intersection> structureLocations) {
-        this.intersections = intersections;
-        this.structureLocations = structureLocations;
+        this(null, null, intersections, structureLocations, null, null, null);
     }
 
-    protected BoardManager(Intersection[] intersections, List<Intersection> structureLocations,
-        ArrayList<Intersection> roads) {
-        this.intersections = intersections;
-        this.structureLocations = structureLocations;
-        this.roads = roads;
+    protected BoardManager(Intersection[] intersections, List<Intersection> structureLocations,ArrayList<Intersection> roads) {
+        this(null, null, intersections, structureLocations, roads, null, null);
     }
 
     protected BoardManager(Hexagon[] hexagons, Intersection[] intersections) {
-        this.hexagons = hexagons;
-        this.intersections = intersections;
+        this(null, hexagons, intersections, null, null, null, null);
     }
 
     protected BoardManager(Intersection[] intersections, List<Intersection> roads,
-        List<Road> roadsOnBoard) {
-        this.intersections = intersections;
-        this.roads = roads;
-        this.roadsOnBoard = roadsOnBoard;
+                           List<Road> roadsOnBoard) {
+        this(null, null, intersections, null, roads, roadsOnBoard, null);
     }
 
     protected BoardManager(Shuffler shuffler, Intersection[] intersections) {
-        this.shuffler = shuffler;
-        this.intersections = intersections;
+        this(null, null, intersections, null, null, null, shuffler);
     }
-
 
     Hexagon[] generateHexagons(boolean randomize) {
         shuffler = new Shuffler();
