@@ -59,51 +59,56 @@ public class BoardManager {
 
     private Random rand;
 
+    // Private constructor to handle all assignments
+    private BoardManager(Random rand, Hexagon[] hexagons, Intersection[] intersections,
+                         List<Intersection> structureLocations, List<Intersection> roads,
+                         List<Road> roadsOnBoard, Shuffler shuffler) {
+        this.rand = (rand != null) ? rand : new Random();
+        this.hexagons = (hexagons != null) ? hexagons : new Hexagon[0];  // Initialize empty array
+        this.intersections = (intersections != null) ? intersections : new Intersection[2]; // Provide expected size
+        this.structureLocations = (structureLocations != null) ? structureLocations : new ArrayList<>();
+        this.roads = (roads != null) ? roads : new ArrayList<>();
+        this.roadsOnBoard = (roadsOnBoard != null) ? roadsOnBoard : new ArrayList<>();
+        this.shuffler = shuffler;
+    }
+
+    // Public constructors delegating to the main constructor
     public BoardManager() {
-        this.rand = new Random();
+        this(new Random(), null, null, null, null, null, null);
     }
 
     protected BoardManager(Hexagon[] hexagons) {
-        this.hexagons = hexagons;
+        this(null, hexagons, null, null, null, null, null);
     }
 
     protected BoardManager(Random rand) {
-        this.rand = rand;
+        this(rand, null, null, null, null, null, null);
     }
 
     protected BoardManager(Intersection[] intersections) {
-        this.intersections = intersections;
+        this(null, null, intersections, null, null, null, null);
     }
 
     protected BoardManager(Intersection[] intersections, List<Intersection> structureLocations) {
-        this.intersections = intersections;
-        this.structureLocations = structureLocations;
+        this(null, null, intersections, structureLocations, null, null, null);
     }
 
-    protected BoardManager(Intersection[] intersections, List<Intersection> structureLocations,
-                           ArrayList<Intersection> roads) {
-        this.intersections = intersections;
-        this.structureLocations = structureLocations;
-        this.roads = roads;
+    protected BoardManager(Intersection[] intersections, List<Intersection> structureLocations,ArrayList<Intersection> roads) {
+        this(null, null, intersections, structureLocations, roads, null, null);
     }
 
     protected BoardManager(Hexagon[] hexagons, Intersection[] intersections) {
-        this.hexagons = hexagons;
-        this.intersections = intersections;
+        this(null, hexagons, intersections, null, null, null, null);
     }
 
     protected BoardManager(Intersection[] intersections, List<Intersection> roads,
                            List<Road> roadsOnBoard) {
-        this.intersections = intersections;
-        this.roads = roads;
-        this.roadsOnBoard = roadsOnBoard;
+        this(null, null, intersections, null, roads, roadsOnBoard, null);
     }
 
     protected BoardManager(Shuffler shuffler, Intersection[] intersections) {
-        this.shuffler = shuffler;
-        this.intersections = intersections;
+        this(null, null, intersections, null, null, null, shuffler);
     }
-
 
     Hexagon[] generateHexagons(boolean randomize) {
         shuffler = new Shuffler();
@@ -142,7 +147,7 @@ public class BoardManager {
     }
 
     private void addMirroredHexagonsIfNotMiddle(HexagonHelper helper, int i,
-                                                int numInRightHalfOfRow) {
+        int numInRightHalfOfRow) {
         if (i != 0) {
             for (int j = 0; j < numInRightHalfOfRow; j++) {
                 addHexagonsToBottom(helper, j);
@@ -189,7 +194,7 @@ public class BoardManager {
     }
 
     private void randomizeAndReassignBoard(Shuffler shuffler, Hexagon[] hexagons,
-                                           int[][] hexagonValues, Random rand) {
+        int[][] hexagonValues, Random rand) {
         shuffler.ensureNoNeighborSixOrEight(rand);
 
         randomizeDesert(hexagonValues, rand);
@@ -254,7 +259,7 @@ public class BoardManager {
     }
 
     void loadPredeterminedBoardLayout(Hexagon[] hexagons, int[][] hexagonValues,
-                                      ResourceType[] resourceTypes) {
+        ResourceType[] resourceTypes) {
         assignPredeterminedResources(hexagons, resourceTypes);
 
         reassignValue(hexagons, hexagonValues);
@@ -306,7 +311,7 @@ public class BoardManager {
     }
 
     private void reassignValueAtHexAndUpdateInfo(Hexagon hexagon, boolean isDesert,
-                                                 int[][] hexagonValues, int[] rowCol) {
+        int[][] hexagonValues, int[] rowCol) {
         hexagon.setDesert(isDesert);
         hexagon.setHasRobber(isDesert);
         hexagon.setValue(hexagonValues[rowCol[0] + 2][rowCol[1] + 2]);
@@ -314,6 +319,7 @@ public class BoardManager {
 
     private void reassignResource(Hexagon[] hexagons) {
 
+        //find hexagon with value 0 and get its resource
         for (Hexagon hex : hexagons) {
             reassignResourceIfValueIsZero(hexagons, hex);
         }
@@ -323,6 +329,7 @@ public class BoardManager {
     void reassignResourceIfValueIsZero(Hexagon[] hexagons, Hexagon hex) {
         if (hex.getValue() == 0) {
             ResourceType resourceToSwap = hex.getResource();
+            //find null resource hex and reassign
             swapWithHexIfNullFound(hexagons, resourceToSwap);
             hex.setResource(null);
         }
@@ -351,7 +358,7 @@ public class BoardManager {
     }
 
     protected void ifHexValueZeroSetDesert(int[][] hexagonValues, int[] desertRowAndCol,
-                                           int i, int j) {
+        int i, int j) {
         if (hexagonValues[i][j] == 0) {
             desertRowAndCol[0] = i;
             desertRowAndCol[1] = j;
@@ -375,7 +382,7 @@ public class BoardManager {
     }
 
     private void ensureNewLocation(int[][] hexagonValues, Random rand, int[] desertIndex,
-                                   int[] newRowAndCol) {
+        int[] newRowAndCol) {
         while (newRowAndCol[0] == desertIndex[0] && newRowAndCol[1] == desertIndex[1] ||
                 hexagonValues[newRowAndCol[0]][newRowAndCol[1]] == -1) {
             newRowAndCol[0] = rand.nextInt(RANDOM_BOUND);
@@ -433,7 +440,7 @@ public class BoardManager {
     }
 
     private void addNormalIntersectionsInRow(IntersectionHelper helper,
-                                             int i, int numInRightHalfOfRow) {
+        int i, int numInRightHalfOfRow) {
         for (int j = 0; j < numInRightHalfOfRow; j++) {
             addIntersectionsThatSubtractFromY(helper, i, j);
             addIntersectionsThatAddToY(helper, i, j);
@@ -441,7 +448,7 @@ public class BoardManager {
     }
 
     private void addFlippedIntersectionsInRow(IntersectionHelper helper,
-                                              int i, int numInRightHalfOfRow) {
+        int i, int numInRightHalfOfRow) {
         for (int j = 0; j < numInRightHalfOfRow; j++) {
             addIntersectionsThatSubtractFromAndFlipY(helper, i, j);
             addIntersectionsThatAddToAndFlipY(helper, i, j);
@@ -464,7 +471,7 @@ public class BoardManager {
     }
 
     private void addIntersectionsThatSubtractFromAndFlipY(IntersectionHelper helper, int row,
-                                                          int column) {
+        int column) {
         if (row != 0) {
             addIntersection(helper, helper.offsetX + column,
                     -1 * (helper.offsetY - INTERSECTION_HEIGHT_DIFF));
@@ -473,7 +480,7 @@ public class BoardManager {
     }
 
     private void addSubtractFlipIntersectionIfNotHorizontallyCentered(IntersectionHelper helper,
-                                                                      int column) {
+        int column) {
         if (column != 0 || helper.currentRowSize % 2 == 0) {
             addIntersection(helper, -1 * (helper.offsetX + column),
                     -1 * (helper.offsetY - INTERSECTION_HEIGHT_DIFF));
@@ -503,7 +510,7 @@ public class BoardManager {
     }
 
     private void addSubtractIntersectionIfNotHorizontallyCentered(IntersectionHelper helper,
-                                                                  int column) {
+        int column) {
         if (column != 0 || helper.currentRowSize % 2 == 0) {
             addIntersection(helper, -1 * (helper.offsetX + column),
                     helper.offsetY - INTERSECTION_HEIGHT_DIFF);
@@ -528,14 +535,14 @@ public class BoardManager {
     }
 
     private void setAllIntersectionsAsAdjacent(Intersection[] intersections,
-                                               int i, Point2D center) {
+        int i, Point2D center) {
         for (int j = 0; j < intersections.length; j++) {
             setIntersectionAsAdjacent(intersections, i, center, j);
         }
     }
 
     void setIntersectionAsAdjacent(Intersection[] intersections, int i, Point2D center,
-                                   int j) {
+        int j) {
         if (i != j && !intersections[i].getAdjacentIntersections().contains(j)) {
             Point2D otherCenter = intersections[j].getCenter();
             double distance = center.distance(otherCenter);
@@ -579,14 +586,14 @@ public class BoardManager {
     }
 
     private void addAllAdjacentHexagons(Hexagon[] hexagons, ArrayList<Hexagon> relatedHexagons,
-                                        Point2D interCenter) {
+        Point2D interCenter) {
         for (Hexagon hex : hexagons) {
             addHexagonIfAdjacent(relatedHexagons, interCenter, hex);
         }
     }
 
     void addHexagonIfAdjacent(ArrayList<Hexagon> relatedHexagons,
-                              Point2D interCenter, Hexagon hex) {
+        Point2D interCenter, Hexagon hex) {
         Point2D hexCenter = hex.getCenter();
         double distance = interCenter.distance(hexCenter);
         if (distance < ADJ_DISTANCE) {
@@ -608,14 +615,14 @@ public class BoardManager {
     }
 
     private void addAllAdjacentIntersections(Intersection[] intersections,
-                                             ArrayList<Intersection> relatedIntersections, Point2D hexCenter) {
+        ArrayList<Intersection> relatedIntersections, Point2D hexCenter) {
         for (Intersection inter : intersections) {
             addIntersectionIfAdjacent(relatedIntersections, hexCenter, inter);
         }
     }
 
     void addIntersectionIfAdjacent(ArrayList<Intersection> relatedIntersections,
-                                   Point2D hexCenter, Intersection inter) {
+        Point2D hexCenter, Intersection inter) {
         Point2D interCenter = inter.getCenter();
         double distance = hexCenter.distance(interCenter);
         if (distance < ADJ_DISTANCE) {
@@ -677,7 +684,7 @@ public class BoardManager {
     }
 
     private void intersectionSetStructureAndAddOwner(int index, Player player,
-                                                     Settlement settlement) {
+        Settlement settlement) {
         intersections[index].setStructure(settlement);
         intersections[index].setOwner(player);
     }
@@ -867,7 +874,7 @@ public class BoardManager {
     }
 
     private void distributeResourcesAtEachHex(Hexagon[] hexesToDistribute,
-                                              ArrayList<ResourceType> resources) {
+        ArrayList<ResourceType> resources) {
         for (Hexagon hex : hexesToDistribute) {
             distributeResourcesAtHex(hex, resources);
         }
@@ -946,7 +953,7 @@ public class BoardManager {
     }
 
     private ResourceType swapRandomResource(Player currentPlayer, Player selectedPlayerToSteal,
-                                            ArrayList<ResourceType> resources) {
+        ArrayList<ResourceType> resources) {
         int index = rand.nextInt(resources.size());
         ResourceType resource = resources.get(index);
         swapResourceBetweenPlayers(currentPlayer, selectedPlayerToSteal, resource);
@@ -954,7 +961,7 @@ public class BoardManager {
     }
 
     private void swapResourceBetweenPlayers(Player currentPlayer, Player selectedPlayerToSteal,
-                                            ResourceType resource) {
+        ResourceType resource) {
         selectedPlayerToSteal.removeResource(resource);
         currentPlayer.addResource(resource);
     }
