@@ -24,7 +24,7 @@ public class TestBank {
     @BeforeEach
     private void setup(){
         bank = new Bank();
-        threePort = new Port(PortTradeRatio.THREE_TO_ONE, ResourceType.LUMBER);
+        threePort = new Port(3, ResourceType.LUMBER);
     }
 
     @Test
@@ -193,7 +193,7 @@ public class TestBank {
     @Test
     public void testTradePort_TwoGWNine() {
         bank.obtainResource(ResourceType.GRAIN,18);
-        Port twoPort = new Port(PortTradeRatio.TWO_TO_ONE, ResourceType.GRAIN);
+        Port twoPort = new Port(2, ResourceType.GRAIN);
         assertTrue(bank.tradeResourcePort(twoPort, ResourceType.GRAIN, ResourceType.WOOL, 9));
         assertEquals(19, bank.resources.get(ResourceType.GRAIN));
         assertEquals(10, bank.resources.get(ResourceType.WOOL));
@@ -203,7 +203,7 @@ public class TestBank {
     @EnumSource(names = {"GRAIN", "WOOL", "LUMBER", "ORE"})
     public void testTradePort_twoResourceEachTypeBrickOne(ResourceType giveAway){
         bank.obtainResource(giveAway,2);
-        Port twoPort = new Port(PortTradeRatio.TWO_TO_ONE, giveAway);
+        Port twoPort = new Port(2, giveAway);
         assertTrue(bank.tradeResourcePort(twoPort, giveAway, ResourceType.BRICK, 1));
         assertEquals(19, bank.resources.get(giveAway));
         assertEquals(18, bank.resources.get(ResourceType.BRICK));
@@ -212,7 +212,7 @@ public class TestBank {
     @Test
     public void testTradePort_twoResourceBrickGrainOne(){
         bank.obtainResource(ResourceType.BRICK,2);
-        Port twoPort = new Port(PortTradeRatio.TWO_TO_ONE, ResourceType.BRICK);
+        Port twoPort = new Port(2, ResourceType.BRICK);
         assertTrue(bank.tradeResourcePort(twoPort, ResourceType.BRICK, ResourceType.GRAIN, 1));
         assertEquals(19, bank.resources.get(ResourceType.BRICK));
         assertEquals(18, bank.resources.get(ResourceType.GRAIN));
@@ -220,7 +220,7 @@ public class TestBank {
 
     @Test
     public void testTradePort_twoInvalidGive(){
-        Port twoPort = new Port(PortTradeRatio.TWO_TO_ONE, ResourceType.GRAIN);
+        Port twoPort = new Port(2, ResourceType.GRAIN);
         assertFalse(bank.tradeResourcePort(twoPort, ResourceType.LUMBER, ResourceType.BRICK, 1));
     }
 
@@ -228,7 +228,7 @@ public class TestBank {
     public void testTradePort_emptyGiveOneTake(){
         bank.obtainResource(ResourceType.GRAIN,19);
         bank.obtainResource(ResourceType.BRICK,18);
-        Port twoPort = new Port(PortTradeRatio.TWO_TO_ONE, ResourceType.GRAIN);
+        Port twoPort = new Port(2, ResourceType.GRAIN);
         assertTrue(bank.tradeResourcePort(twoPort, ResourceType.GRAIN, ResourceType.BRICK, 1));
         assertEquals(2, bank.resources.get(ResourceType.GRAIN));
         assertEquals(0, bank.resources.get(ResourceType.BRICK));
@@ -238,7 +238,7 @@ public class TestBank {
     public void testTradePort_oneGiveTwoTake(){
         bank.obtainResource(ResourceType.GRAIN,18);
         bank.obtainResource(ResourceType.BRICK,17);
-        Port twoPort = new Port(PortTradeRatio.TWO_TO_ONE, ResourceType.GRAIN);
+        Port twoPort = new Port(2, ResourceType.GRAIN);
         assertTrue(bank.tradeResourcePort(twoPort, ResourceType.GRAIN, ResourceType.BRICK, 1));
         assertEquals(3, bank.resources.get(ResourceType.GRAIN));
         assertEquals(1, bank.resources.get(ResourceType.BRICK));

@@ -1531,31 +1531,31 @@ public class TestGameManager {
 
     @ParameterizedTest
     @EnumSource()
-    public void testGameManager_isValidRatio_zero(PortTradeRatio ratio){
+    public void testGameManager_isValidRatio_zero(int ratio){
         assertTrue(GameManager.isValidRatio(ratio, 0));
     }
 
     @ParameterizedTest
     @EnumSource()
-    public void testGameManager_isValidRatio_one(PortTradeRatio ratio){
+    public void testGameManager_isValidRatio_one(int ratio){
         assertFalse(GameManager.isValidRatio(ratio, 1));
     }
 
     @ParameterizedTest
     @ValueSource(ints = {2,4,6})
     public void testGameManager_isValidRatio_twoRatios(int amount){
-        assertTrue(GameManager.isValidRatio(PortTradeRatio.TWO_TO_ONE, amount));
+        assertTrue(GameManager.isValidRatio(2, amount));
     }
 
     @ParameterizedTest
     @ValueSource(ints = {3,6})
     public void testGameManager_isValidRatio_threeRatios(int amount){
-        assertTrue(GameManager.isValidRatio(PortTradeRatio.THREE_TO_ONE, amount));
+        assertTrue(GameManager.isValidRatio(3, amount));
     }
 
     @Test
     public void testGameManager_isValidRatio_maxResource(){
-        assertFalse(GameManager.isValidRatio(PortTradeRatio.THREE_TO_ONE, 19));
+        assertFalse(GameManager.isValidRatio(3, 19));
     }
 
     @ParameterizedTest
@@ -1569,7 +1569,7 @@ public class TestGameManager {
         Bank bank = EasyMock.createMock(Bank.class);
         Port port = EasyMock.createMock(Port.class);
         BoardManager bmanager = EasyMock.createMock(BoardManager.class);
-        EasyMock.expect(port.getPortTradeRatio()).andReturn(PortTradeRatio.TWO_TO_ONE).anyTimes();
+        EasyMock.expect(port.getPortTradeRatio()).andReturn(2).anyTimes();
         EasyMock.expect(bank.tradeResourcePort(port, ResourceType.LUMBER, BRICK,
         val / 2)).andReturn(true);
         EasyMock.replay(port, bank);
@@ -1604,7 +1604,7 @@ public class TestGameManager {
         Bank bank = EasyMock.createMock(Bank.class);
         Port port = EasyMock.createMock(Port.class);
         BoardManager bmanager = EasyMock.createMock(BoardManager.class);
-        EasyMock.expect(port.getPortTradeRatio()).andReturn(PortTradeRatio.TWO_TO_ONE).anyTimes();
+        EasyMock.expect(port.getPortTradeRatio()).andReturn(2).anyTimes();
 
         EasyMock.replay(port, bank);
         GameManager manager = new GameManager(new Player[]{player}, bmanager, bank);
@@ -1651,7 +1651,7 @@ public class TestGameManager {
         Bank bank = EasyMock.createMock(Bank.class);
         Port port = EasyMock.createMock(Port.class);
         BoardManager bmanager = EasyMock.createMock(BoardManager.class);
-        EasyMock.expect(port.getPortTradeRatio()).andReturn(PortTradeRatio.THREE_TO_ONE).anyTimes();
+        EasyMock.expect(port.getPortTradeRatio()).andReturn(3).anyTimes();
         EasyMock.expect(bank.tradeResourcePort(port, ResourceType.LUMBER, BRICK,
                 val / 3)).andReturn(true);
         EasyMock.replay(port, bank);
@@ -1686,7 +1686,7 @@ public class TestGameManager {
         Bank bank = EasyMock.createMock(Bank.class);
         Port port = EasyMock.createMock(Port.class);
         BoardManager bmanager = EasyMock.createMock(BoardManager.class);
-        EasyMock.expect(port.getPortTradeRatio()).andReturn(PortTradeRatio.THREE_TO_ONE).anyTimes();
+        EasyMock.expect(port.getPortTradeRatio()).andReturn(3).anyTimes();
 
         EasyMock.replay(port, bank);
         GameManager manager = new GameManager(new Player[]{player}, bmanager, bank);
@@ -1711,7 +1711,7 @@ public class TestGameManager {
         Bank bank = EasyMock.createMock(Bank.class);
         Port port = EasyMock.createMock(Port.class);
         BoardManager bmanager = EasyMock.createMock(BoardManager.class);
-        EasyMock.expect(port.getPortTradeRatio()).andReturn(PortTradeRatio.TWO_TO_ONE).anyTimes();
+        EasyMock.expect(port.getPortTradeRatio()).andReturn(2).anyTimes();
         EasyMock.expect(bank.tradeResourcePort(port, ResourceType.LUMBER, BRICK,
                 val / 2)).andReturn(false);
         EasyMock.replay(port, bank);

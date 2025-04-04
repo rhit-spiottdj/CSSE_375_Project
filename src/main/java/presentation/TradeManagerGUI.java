@@ -209,11 +209,11 @@ public class TradeManagerGUI {
     }
 
     private Port newTwoPort(ResourceType resource){
-        return new Port(PortTradeRatio.TWO_TO_ONE, resource);
+        return new Port(2, resource);
     }
 
     private Port newThreePort(){
-        return new Port(PortTradeRatio.THREE_TO_ONE, GRAIN);
+        return new Port(3, GRAIN);
     }
 
     public boolean getPortIfOwnedByPlayer(Player player, Port toCompare) {
@@ -251,8 +251,8 @@ public class TradeManagerGUI {
 
     private boolean samePortType(Port port, Port toCompare) {
         if(port == null) return false;
-        return (port.getPortTradeRatio() == PortTradeRatio.THREE_TO_ONE &&
-               toCompare.getPortTradeRatio() == PortTradeRatio.THREE_TO_ONE) ||
+        return (port.getPortTradeRatio() == 3 &&
+               toCompare.getPortTradeRatio() == 3) ||
                port.getResourceType() == toCompare.getResourceType() &&
                port.getPortTradeRatio() == toCompare.getPortTradeRatio();
     }
@@ -577,14 +577,14 @@ public class TradeManagerGUI {
 
     private void tradeThreeToOne(ResourceType resourceToTrade, int numResource,
         ResourceType taking) {
-        if (!manager.playerTradeWithPort(new Port(PortTradeRatio.THREE_TO_ONE,
+        if (!manager.playerTradeWithPort(new Port(3,
             resourceToTrade), resourceToTrade, taking, numResource)) {
             displayInsufficientResourcesBankMessageAndDisposeFrame();
         }
     }
 
     private void tradeTwoToOne(ResourceType resourceToTrade, int numResource, ResourceType taking) {
-        if (!manager.playerTradeWithPort(new Port(PortTradeRatio.TWO_TO_ONE,
+        if (!manager.playerTradeWithPort(new Port(2,
             resourceToTrade), resourceToTrade, taking, numResource)) {
             displayInsufficientResourcesBankMessageAndDisposeFrame();
         }

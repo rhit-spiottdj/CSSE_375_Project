@@ -11,6 +11,4 @@ public enum PortTradeRatio {
     public int getValue() {
         return value;
     }
-
-
 }

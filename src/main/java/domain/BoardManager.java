@@ -222,7 +222,7 @@ public class BoardManager {
     }
 
     private int addPredeterminedTwoToOnePort(int i, ResourceType resource) {
-        Port port = new Port(PortTradeRatio.TWO_TO_ONE, resource);
+        Port port = new Port(2, resource);
         intersections[PORT_INTERSECTIONS[i][0]].setPort(port);
         intersections[PORT_INTERSECTIONS[i++][1]].setPort(port);
         ports.add(port);
@@ -238,7 +238,7 @@ public class BoardManager {
     }
 
     private void addPredeterminedThreeToOnePort(int i) {
-        Port port = new Port(PortTradeRatio.THREE_TO_ONE, ResourceType.GRAIN);
+        Port port = new Port(3, ResourceType.GRAIN);
         intersections[PORT_INTERSECTIONS[i][0]].setPort(port);
         intersections[PORT_INTERSECTIONS[i][1]].setPort(port);
         ports.add(port);

@@ -469,18 +469,18 @@ public class GameManager {
     private boolean portCheck(Port port, ResourceType giving, ResourceType taking,
         int numResources) {
         return isValidRatio(port.getPortTradeRatio(), numResources) && bank.tradeResourcePort(port,
-            giving, taking, numResources / port.getPortTradeRatio().getValue());
+            giving, taking, numResources / port.getPortTradeRatio());
     }
 
     private void doTradeWithPort(Port port, ResourceType giving, ResourceType taking,
         int numResources) {
         removePlayerResource(giving, numResources);
-        addPlayerResource(taking, numResources / port.getPortTradeRatio().getValue());
+        addPlayerResource(taking, numResources / port.getPortTradeRatio());
     }
 
-    static boolean isValidRatio(PortTradeRatio portTradeRatio, int numResources) {
-        int base = numResources/portTradeRatio.getValue();
-        return numResources == base * portTradeRatio.getValue();
+    static boolean isValidRatio(int portTradeRatio, int numResources) {
+        int base = numResources/portTradeRatio;
+        return numResources == base * portTradeRatio;
     }
 
     private void removePlayerResource(ResourceType resource, int amount){

@@ -109,13 +109,13 @@ public class Shuffler {
 
     private void addTwoRatioPortTokens(ArrayList<Port> portTokens) {
         for(ResourceType resource: ResourceType.values()){
-            portTokens.add(new Port(PortTradeRatio.TWO_TO_ONE, resource));
+            portTokens.add(new Port(2, resource));
         }
     }
 
     private void addThreeRatioPortTokens(ArrayList<Port> portTokens) {
         for(int i = 0; i < NUM_THREE_PORT; i++){
-            portTokens.add(new Port(PortTradeRatio.THREE_TO_ONE, ResourceType.GRAIN));
+            portTokens.add(new Port(3, ResourceType.GRAIN));
         }
     }
 

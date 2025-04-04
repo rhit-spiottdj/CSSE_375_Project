@@ -56,13 +56,13 @@ public class Bank {
     }
 
     private boolean isTwoToOnePortOfDifferentResource(Port port, ResourceType giving){
-        return port.getPortTradeRatio() == PortTradeRatio.TWO_TO_ONE &&
+        return port.getPortTradeRatio() == 2 &&
                port.getResourceType() != giving;
     }
 
     private void tradeResourcePortExchangeResources(Port port,
         ResourceType giving, ResourceType taking, int amount) {
-        if (port.getPortTradeRatio() == PortTradeRatio.THREE_TO_ONE) {
+        if (port.getPortTradeRatio() == 3) {
             exchangeResourcesInBank(giving, taking, amount, REQUIRE_THREE_TIMES_RESOURCES);
         } else {
             exchangeResourcesInBank(giving, taking, amount, 2);
