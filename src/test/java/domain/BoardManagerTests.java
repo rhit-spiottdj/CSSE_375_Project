@@ -1893,13 +1893,15 @@ public class BoardManagerTests {
     }
 
     @Test
-    public void testBoardManager_getPortIntersections() {
+    public void testBoardManager_getPortLocations() {
         BoardManager boardManager = new BoardManager();
-
-        int[][] locations = boardManager.getPortIntersections();
+        Coordinate[] locations = boardManager.getPortLocations();
 
         assertEquals(9, locations.length);
-        assertEquals(2, locations[0].length);
+        assertEquals(BoardManager.PORT_ONE, locations[0]);
+        assertEquals(BoardManager.PORT_NINE, locations[8]);
+        assertEquals(10, locations[0].getIndex1());
+        assertEquals(4, locations[0].getIndex2());
     }
 
     @Test
