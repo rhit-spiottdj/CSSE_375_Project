@@ -1002,12 +1002,14 @@ public class BoardManager {
     private int tryToAddFromCityOrSettlement(Bank bank, Intersection inter,
                                              ResourceType resource, Structure structure) {
         int numResourcesToGet = (structure instanceof City) ? 2 : 1;
-        if (bank.obtainResource(resource, numResourcesToGet)) {
-            structure.distributeResources(resource)
+        ResourceTransaction transaction = new ResourceTransaction(resource, numResourcesToGet);
+        if (bank.obtainResource(transaction)) {
+            structure.distributeResources(resource);
         } else {
             return 1;
         }
-        
+        return numResourcesToGet;
+    }
     public ArrayList<Port> getPorts(){
         return new ArrayList<>(ports);
     }
