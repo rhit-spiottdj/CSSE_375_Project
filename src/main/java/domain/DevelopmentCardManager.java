@@ -39,13 +39,16 @@ public class DevelopmentCardManager {
 
     private boolean checkIfInsufficientResources(ResourceType resource1, ResourceType resource2) {
         boolean insufficient;
-        if (resource1.equals(resource2))    insufficient = bank.noMoreResource(resource1, 2);
-        else insufficient = checkNoMoreResourceForEach(resource1, resource2);
+        if (resource1.equals(resource2)) {
+            ResourceTransaction transaction = new ResourceTransaction(resource1, 1);
+            insufficient = bank.noMoreResource(transaction);
+        } else insufficient = checkNoMoreResourceForEach(resource1, resource2);
         return insufficient;
     }
 
     private boolean checkNoMoreResourceForEach(ResourceType resource1, ResourceType resource2) {
-        return bank.noMoreResource(resource1, 1) || bank.noMoreResource(resource2, 1);
+        return bank.noMoreResource(new ResourceTransaction(resource1, 1)) ||
+                bank.noMoreResource(new ResourceTransaction(resource2, 1));
     }
 
     private void addResourcesToPlayer(Player player, ResourceType resourceOne,

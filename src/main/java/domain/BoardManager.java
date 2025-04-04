@@ -59,7 +59,6 @@ public class BoardManager {
 
     private Random rand;
 
-    // Private constructor to handle all assignments
     private BoardManager(Random rand, Hexagon[] hexagons, Intersection[] intersections,
                          List<Intersection> structureLocations, List<Intersection> roads,
                          List<Road> roadsOnBoard, Shuffler shuffler) {
@@ -995,11 +994,11 @@ public class BoardManager {
     private int tryToAddFromCityOrSettlement(Bank bank, Intersection inter,
         ResourceType resource, Player player) {
         if (inter.getStructure() instanceof City) {
-            if (bank.obtainResource(resource, 2)) {
+            if (bank.obtainResource(new ResourceTransaction(resource, 2))) {
                 player.addResource(resource);
                 player.addResource(resource);
             } else  return 1;
-        } else if (bank.obtainResource(resource, 1))    player.addResource(resource);
+        } else if (bank.obtainResource(new ResourceTransaction(resource, 1)))    player.addResource(resource);
         else  return 1;
         return 0;
     }

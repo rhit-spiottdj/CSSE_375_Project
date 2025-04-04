@@ -38,7 +38,7 @@ public class PlayerTrade {
             }
             else {
                 players[playerIndex].addResource(resource);
-                gameManager.bank.giveBackResource(resource,1);
+                gameManager.bank.giveBackResource(new ResourceTransaction(resource, 1));
             }
         }
     }

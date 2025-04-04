@@ -190,7 +190,7 @@ public class GameManager {
 
     private void distributeResourcesToPlayer(Player player, List<ResourceType> resourcesToDist) {
         for (ResourceType resource : resourcesToDist) {
-            if (bank.obtainResource(resource, 1)) {
+            if (bank.obtainResource(new ResourceTransaction(resource, 1))) {
                 player.addResource(resource);
             }
         }
@@ -210,7 +210,7 @@ public class GameManager {
 
     public void decrementResourcesFromBank(Collection<ResourceType> resourcesToRemove) {
         for (ResourceType resource : resourcesToRemove) {
-            bank.obtainResource(resource, 1);
+            bank.obtainResource(new ResourceTransaction(resource, 1));
         }
     }
 
@@ -370,7 +370,7 @@ public class GameManager {
         Player player) {
         for (ResourceType resource : resourceCost) {
             player.removeResource(resource);
-            bank.giveBackResource(resource, 1);
+            bank.giveBackResource(new ResourceTransaction(resource, 1));
         }
     }
 

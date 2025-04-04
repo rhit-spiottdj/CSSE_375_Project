@@ -28,7 +28,8 @@ public class BankTrade {
 
     @Given("the bank does not have sufficient {string}")
     public void the_bank_does_not_have_sufficient(String resource) {
-        gameManager.bank.setBankResource(ResourceType.valueOf(resource), 0);
+        ResourceTransaction transaction = new ResourceTransaction(ResourceType.valueOf(resource), 0);
+        gameManager.bank.setBankResource(transaction);
     }
 
     @Given("the player has {int} {string}")

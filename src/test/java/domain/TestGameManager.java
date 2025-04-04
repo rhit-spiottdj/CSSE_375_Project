@@ -373,7 +373,7 @@ public class TestGameManager {
 
         Bank bank = EasyMock.createMock(Bank.class);
 
-        EasyMock.expect(bank.obtainResource(BRICK, 1)).andReturn(true);
+        EasyMock.expect(bank.obtainResource(new ResourceTransaction(BRICK, 1))).andReturn(true);
 
         GameManager manager = new GameManager(new Player[]{player}, boardManager, bank);
 
@@ -393,7 +393,7 @@ public class TestGameManager {
 
         Bank bank = EasyMock.createMock(Bank.class);
 
-        EasyMock.expect(bank.obtainResource(BRICK, 1)).andReturn(false);
+        EasyMock.expect(bank.obtainResource(new ResourceTransaction(BRICK, 1))).andReturn(false);
 
         GameManager manager = new GameManager(new Player[]{player}, boardManager, bank);
 
@@ -1303,7 +1303,7 @@ public class TestGameManager {
 
         for(ResourceType resource : Settlement.getCost()){
             EasyMock.expect(player1.removeResource(resource)).andReturn(true);
-            EasyMock.expect(bank.giveBackResource(resource, 1)).andReturn(true);
+            EasyMock.expect(bank.giveBackResource(new ResourceTransaction(resource, 1))).andReturn(true);
         }
         EasyMock.replay(boardManager, player1, bank);
 
@@ -1361,8 +1361,8 @@ public class TestGameManager {
 
         EasyMock.expect(player1.removeResource(BRICK)).andReturn(true);
         EasyMock.expect(player1.removeResource(ResourceType.LUMBER)).andReturn(true);
-        EasyMock.expect(bank.giveBackResource(BRICK, 1)).andReturn(true);
-        EasyMock.expect(bank.giveBackResource(ResourceType.LUMBER, 1)).andReturn(true);
+        EasyMock.expect(bank.giveBackResource(new ResourceTransaction(BRICK, 1))).andReturn(true);
+        EasyMock.expect(bank.giveBackResource(new ResourceTransaction(ResourceType.LUMBER, 1))).andReturn(true);
 
         EasyMock.replay(boardManager, player1, bank);
 
@@ -1419,7 +1419,7 @@ public class TestGameManager {
 
         for(ResourceType resource : City.getCost()){
             EasyMock.expect(player1.removeResource(resource)).andReturn(true);
-            EasyMock.expect(bank.giveBackResource(resource, 1)).andReturn(true);
+            EasyMock.expect(bank.giveBackResource(new ResourceTransaction(resource, 1))).andReturn(true);
         }
         EasyMock.replay(boardManager, player1, bank);
 
@@ -1927,11 +1927,11 @@ public class TestGameManager {
         resources.add(ResourceType.GRAIN);
         resources.add(ResourceType.WOOL);
 
-        EasyMock.expect(bank.obtainResource(BRICK, 1)).andReturn(true);
-        EasyMock.expect(bank.obtainResource(ResourceType.LUMBER, 1)).andReturn(true);
-        EasyMock.expect(bank.obtainResource(ORE, 1)).andReturn(true);
-        EasyMock.expect(bank.obtainResource(ResourceType.GRAIN, 1)).andReturn(true);
-        EasyMock.expect(bank.obtainResource(ResourceType.WOOL, 1)).andReturn(true);
+        EasyMock.expect(bank.obtainResource(new ResourceTransaction(BRICK, 1))).andReturn(true);
+        EasyMock.expect(bank.obtainResource(new ResourceTransaction(ResourceType.LUMBER, 1))).andReturn(true);
+        EasyMock.expect(bank.obtainResource(new ResourceTransaction(ORE, 1))).andReturn(true);
+        EasyMock.expect(bank.obtainResource(new ResourceTransaction(ResourceType.GRAIN, 1))).andReturn(true);
+        EasyMock.expect(bank.obtainResource(new ResourceTransaction(ResourceType.WOOL, 1))).andReturn(true);
 
         EasyMock.replay(bm, bank, player, dcm);
 
@@ -1959,11 +1959,11 @@ public class TestGameManager {
         }
 
         for(int i = 0; i < 19; i++){
-            EasyMock.expect(bank.obtainResource(BRICK, 1)).andReturn(true);
-            EasyMock.expect(bank.obtainResource(ResourceType.LUMBER, 1)).andReturn(true);
-            EasyMock.expect(bank.obtainResource(ORE, 1)).andReturn(true);
-            EasyMock.expect(bank.obtainResource(ResourceType.GRAIN, 1)).andReturn(true);
-            EasyMock.expect(bank.obtainResource(ResourceType.WOOL, 1)).andReturn(true);
+            EasyMock.expect(bank.obtainResource(new ResourceTransaction(BRICK, 1))).andReturn(true);
+            EasyMock.expect(bank.obtainResource(new ResourceTransaction(ResourceType.LUMBER, 1))).andReturn(true);
+            EasyMock.expect(bank.obtainResource(new ResourceTransaction(ORE, 1))).andReturn(true);
+            EasyMock.expect(bank.obtainResource(new ResourceTransaction(ResourceType.GRAIN, 1))).andReturn(true);
+            EasyMock.expect(bank.obtainResource(new ResourceTransaction(ResourceType.WOOL, 1))).andReturn(true);
         }
 
         EasyMock.replay(bm, bank, player, dcm);
@@ -2289,7 +2289,7 @@ public class TestGameManager {
         GameManager manager = new GameManager(2);
         Bank bank = EasyMock.createMock(Bank.class);
         manager.bank = bank;
-        EasyMock.expect(bank.obtainResource(type,1)).andReturn(true);
+        EasyMock.expect(bank.obtainResource(new ResourceTransaction(type,1))).andReturn(true);
 
         EasyMock.replay(bank);
 
@@ -2309,7 +2309,7 @@ public class TestGameManager {
 
         Collection<ResourceType> resources = new ArrayList<>();
         for(int i = 0; i <numOfResource; i++){
-            EasyMock.expect(bank.obtainResource(GRAIN,1)).andReturn(true);
+            EasyMock.expect(bank.obtainResource(new ResourceTransaction(GRAIN,1))).andReturn(true);
             resources.add(GRAIN);
         }
 
@@ -2329,8 +2329,8 @@ public class TestGameManager {
         manager.bank = bank;
 
         Collection<ResourceType> resources = new ArrayList<>();
-        EasyMock.expect(bank.obtainResource(GRAIN,1)).andReturn(true);
-        EasyMock.expect(bank.obtainResource(ORE,1)).andReturn(true);
+        EasyMock.expect(bank.obtainResource(new ResourceTransaction(GRAIN,1))).andReturn(true);
+        EasyMock.expect(bank.obtainResource(new ResourceTransaction(ORE,1))).andReturn(true);
         resources.add(GRAIN);
         resources.add(ORE);
 
