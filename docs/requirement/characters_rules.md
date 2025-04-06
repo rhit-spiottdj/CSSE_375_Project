@@ -1,4 +1,4 @@
-# Character and Card Definitions
+# Character and Card Definitions - Base Catan
 
 ## Game Pieces
 - Roads
@@ -72,6 +72,43 @@
 - Players can only build a city if it is on a settlement
 
 
+# Character and Card Definitions - Cities and Knights Expansion
+- Carries over from base game implementing the new changes and additions below
+
+## Game Pieces
+- Barbarian Tile with spaces for the barbarian ship
+- 12 City Walls (3 of each color)
+- 24 Knights (6 of each color with 2 of each power)
+- 3 Metropolis Pieces (city gate)
+- 3 Metropolis Tokens
+- Barbarian ship
+- Merchant
+- Picture Die
+
+## Cards
+- 36 commodity cards
+	- 12 paper (forest)
+	- 12 cloth (pasture)
+	- 12 coin (mtns)
+- 54 progress cards
+	- 18 trade progress (yellow)
+	- 18 politics progress (blue)
+	- 18 science (green)
+- 6 Victory Point Cards
+- 4 flip Charts (city calendars)
+
+## General Rules
+- 13 Victory Points to win
+- Robber cannot be moved until first barbarian attack
+- Walls can only be built in a location with an existing city
+- Knights can only be placed on an unoccupied road intersection
+
+### Don't Need
+- Development Cards
+- Largest Army Card
+
+
 ### Resources
 - Numbers of Catan objects found [here](https://setupcatan.com/)
 - Rules found [here](https://www.catan.com/sites/default/files/2021-06/catan_base_rules_2020_200707.pdf)
+- Cities & Knights Expansion Rules (https://www.catan.com/sites/default/files/2025-03/CN3087%20CATAN%E2%80%93Cities%26Knights_%20Rulebook.pdf)

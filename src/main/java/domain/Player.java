@@ -49,7 +49,7 @@ public class Player {
     public Collection<DevelopmentCards> getFutureDevelopmentCards(){
         return new ArrayList<>(futureDevelopmentCards);
     }
-
+ 
     public void startTurn(){
         while(!futureDevelopmentCards.isEmpty()){
             developmentCards.add(futureDevelopmentCards.remove(0));
@@ -121,10 +121,18 @@ public class Player {
 
     public boolean hasResources(Collection<ResourceType> resourcesToCheck) {
         Collection<ResourceType> resourcesDuplicate = new ArrayList<>(resources);
+        if (!validateResourcesNotBlank(resourcesToCheck)) return false;
         for (ResourceType resourceType : resourcesToCheck) {
             if (!resourcesDuplicate.remove(resourceType))   return false;
         }
         return true;
+    }
+    
+    public boolean validateResourcesNotBlank(Collection<ResourceType> resourcesToCheck) {
+    	if (resourcesToCheck.size() <= 0) {
+    		return false;
+    	}
+    	return true;
     }
 
     public Color getPlayerColor() {

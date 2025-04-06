@@ -91,7 +91,7 @@ public class BankTrade {
     public void thePlayerHasAThreePort() {
         Settlement settlement = new Settlement();
         settlement.setOwner(player);
-        port = new Port(PortTradeRatio.THREE_TO_ONE,
+        port = new Port(3,
             ResourceType.GRAIN);
         gameManager.boardManager.intersections[20].setStructure(settlement);
         gameManager.boardManager.intersections[20].setPort(port);
@@ -112,7 +112,7 @@ public class BankTrade {
     public void thePlayerHasATwoPort(String resource) {
         Settlement settlement = new Settlement();
         settlement.setOwner(player);
-        port = new Port(PortTradeRatio.TWO_TO_ONE,
+        port = new Port(2,
             ResourceType.valueOf(resource));
         gameManager.boardManager.intersections[20].setStructure(settlement);
         gameManager.boardManager.intersections[20].setPort(port);

@@ -19,6 +19,7 @@ public class GameManager {
     int inTurnIndex = -1;
     private int numPlayers;
     public BoardManager boardManager;
+    private BonusManager bonusManager;
     private DevelopmentCardManager cardManager;
 
     Bank bank;
@@ -31,7 +32,8 @@ public class GameManager {
         this.boardManager = (boardManager != null) ? boardManager : new BoardManager();
         this.bank = (bank != null) ? bank : new Bank();
         this.diceManager = (diceManager != null) ? diceManager : new DiceManager(2);
-        this.cardManager = (cardManager != null) ? cardManager : new DevelopmentCardManager(this.players, this.bank, this.boardManager);
+        this.bonusManager = (bonusManager != null) ? bonusManager : new BonusManager();
+        this.cardManager = (cardManager != null) ? cardManager : new DevelopmentCardManager(this.players, this.bank, this.boardManager, this.bonusManager);
     }
 
     //This one is for testing only
@@ -222,12 +224,6 @@ public class GameManager {
         }
     }
 
-    public void findLongestRoad() {
-        cardManager.findLongestRoad(players, boardManager.getRoadsOnBoard().toArray(new Road[0]));
-        calculateVictoryPointsForPlayer(inTurn);
-    }
-
-
     public int calculateVictoryPointsForPlayer(Player player) {
         int amount = calculateVictoryPointsForPlayer(boardManager, player);
         player.setVictoryPoints(amount);
@@ -245,7 +241,7 @@ public class GameManager {
 
     private int getLongestRoadPoints(Player player) {
         int longestRoadPoints = 0;
-        if (player.equals(cardManager.getLongestRoadOwner())) {
+        if (player.equals(bonusManager.getLongestRoadOwner())) {
             longestRoadPoints = 2;
         }
         return longestRoadPoints;
@@ -253,7 +249,7 @@ public class GameManager {
 
     private int getLargestArmyPoints(Player player) {
         int largestArmyPoints = 0;
-        if (player.equals(cardManager.getLargestArmyOwner())) {
+        if (player.equals(bonusManager.getLargestArmyOwner())) {
             largestArmyPoints = 2;
         }
         return largestArmyPoints;
@@ -386,7 +382,10 @@ public class GameManager {
 
     public boolean playRoadBuildingCard(int[][] intersections){
         boolean success = cardManager.playRoadBuilding(inTurn, intersections);
-        if(success) findLongestRoad();
+        if(success) {
+            bonusManager.findLongestRoad(players, boardManager.getRoadsOnBoard().toArray(new Road[0]));
+            calculateVictoryPointsForPlayer(inTurn);
+        }
         return success;
     }
 
@@ -450,18 +449,18 @@ public class GameManager {
     private boolean portCheck(Port port, ResourceType giving, ResourceType taking,
         int numResources) {
         return isValidRatio(port.getPortTradeRatio(), numResources) && bank.tradeResourcePort(port,
-            giving, taking, numResources / port.getPortTradeRatio().getValue());
+            giving, taking, numResources / port.getPortTradeRatio());
     }
 
     private void doTradeWithPort(Port port, ResourceType giving, ResourceType taking,
         int numResources) {
         removePlayerResource(giving, numResources);
-        addPlayerResource(taking, numResources / port.getPortTradeRatio().getValue());
+        addPlayerResource(taking, numResources / port.getPortTradeRatio());
     }
 
-    static boolean isValidRatio(PortTradeRatio portTradeRatio, int numResources) {
-        int base = numResources/portTradeRatio.getValue();
-        return numResources == base * portTradeRatio.getValue();
+    static boolean isValidRatio(int portTradeRatio, int numResources) {
+        int base = numResources/portTradeRatio;
+        return numResources == base * portTradeRatio;
     }
 
     private void removePlayerResource(ResourceType resource, int amount){

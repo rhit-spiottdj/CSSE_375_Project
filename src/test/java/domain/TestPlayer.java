@@ -176,16 +176,20 @@ public class TestPlayer {
         assertEquals(95, player.checkNumResource());
     }
 
+    
+    // Changed the assert; was not sure why we would want this to be true
+    // as the player does not have resources. Included behavior for
+    // hasResources that checks the collection has a size of > 0 
     @Test
     public void testPlayer_hasResourcesBothEmpty() {
 
         Player player = createTestPlayer();
 
         boolean actual = player.hasResources(new ArrayList<>());
-        assertTrue(actual);
+        assertFalse(actual);
     }
 
-
+    // Lines 176-178
     @EnumSource (ResourceType.class)
     @ParameterizedTest
     public void testPlayer_hasResourcesToEmptyToSingleSizeException(ResourceType resource) {
@@ -194,7 +198,7 @@ public class TestPlayer {
         player.addResource(resource);
 
         boolean actual = player.hasResources(new ArrayList<>());
-        assertTrue(actual);
+        assertFalse(actual);
     }
     @EnumSource (ResourceType.class)
     @ParameterizedTest
@@ -823,6 +827,20 @@ public class TestPlayer {
 
     private static Stream<Color> colorParameters(){
         return Stream.of(Color.RED, Color.BLUE, Color.GREEN, Color.BLACK);
+    }
+    
+    @Test
+    public void testResourcesNotBlankEmpty() {
+    	Player player = new Player(Color.RED, "d", new ArrayList<>());
+    	assertFalse(player.validateResourcesNotBlank(player.resources));
+    }
+    
+    @Test
+    public void testResourcesNotBlankWithResources() {
+    	Player player = new Player(Color.RED, "d", new ArrayList<>());
+    	ResourceType b = ResourceType.BRICK;
+    	player.addResource(b);
+    	assertTrue(player.validateResourcesNotBlank(player.resources));
     }
 
 }

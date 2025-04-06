@@ -7,6 +7,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import presentation.GameDisplay;
+
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.*;
@@ -2372,8 +2374,8 @@ public class BoardManagerTests {
 
         //only verify the intersections of the values in the PORT_INTERSECTIONS array
         for (int i = 0; i < 9; i++) {
-            EasyMock.verify(intersections[BoardManager.PORT_INTERSECTIONS[i][0]]);
-            EasyMock.verify(intersections[BoardManager.PORT_INTERSECTIONS[i][1]]);
+            EasyMock.verify(intersections[BoardManager.PORT_LOCATIONS[i].getIndex1()]);
+            EasyMock.verify(intersections[BoardManager.PORT_LOCATIONS[i].getIndex2()]);
         }
 
     }
@@ -2417,8 +2419,8 @@ public class BoardManagerTests {
 
         //only verify the intersections of the values in the PORT_INTERSECTIONS array
         for (int i = 0; i < 9; i++) {
-            EasyMock.verify(intersections[BoardManager.PORT_INTERSECTIONS[i][0]]);
-            EasyMock.verify(intersections[BoardManager.PORT_INTERSECTIONS[i][1]]);
+            EasyMock.verify(intersections[BoardManager.PORT_LOCATIONS[i].getIndex1()]);
+            EasyMock.verify(intersections[BoardManager.PORT_LOCATIONS[i].getIndex2()]);
         }
     }
 
@@ -2459,8 +2461,8 @@ public class BoardManagerTests {
 
         //only verify the intersections of the values in the PORT_INTERSECTIONS array
         for (int i = 0; i < 9; i++) {
-            EasyMock.verify(intersections[BoardManager.PORT_INTERSECTIONS[i][0]]);
-            EasyMock.verify(intersections[BoardManager.PORT_INTERSECTIONS[i][1]]);
+            EasyMock.verify(intersections[BoardManager.PORT_LOCATIONS[i].getIndex1()]);
+            EasyMock.verify(intersections[BoardManager.PORT_LOCATIONS[i].getIndex2()]);
         }
     }
 
@@ -3338,5 +3340,62 @@ public class BoardManagerTests {
         EasyMock.verify(road);
 
     }
+    
+// Need to complete and finish with EasyMock for automatic testing
+// and CI implementation; tests pass when gd has manual intervention
+    
+//    @Test
+//    public void testGetFormattedResourceStolenBrick() {
+//    	GameDisplay gd = new GameDisplay(true);
+//    	String resource = "BRICK";
+//    	@SuppressWarnings("static-access")
+//		String s = gd.getFormattedResourceStolen(resource);
+//    	assertEquals(s, "Brick");
+//    }
+//    
+//    @Test
+//    public void testGetFormattedResourceStolenGrain() {
+//    	GameDisplay gd = new GameDisplay(true);
+//    	String resource = "GRAIN";
+//    	@SuppressWarnings("static-access")
+//		String s = gd.getFormattedResourceStolen(resource);
+//    	assertEquals(s, "Grain");
+//    }
+//    
+//    @Test
+//    public void testGetFormattedResourceStolenLumber() {
+//    	GameDisplay gd = new GameDisplay(true);
+//    	String resource = "LUMBER";
+//    	@SuppressWarnings("static-access")
+//		String s = gd.getFormattedResourceStolen(resource);
+//    	assertEquals(s, "Lumber");
+//    }
+//    
+//    @Test
+//    public void testGetFormattedResourceStolenWool() {
+//    	GameDisplay gd = new GameDisplay(true);
+//    	String resource = "WOOL";
+//    	@SuppressWarnings("static-access")
+//		String s = gd.getFormattedResourceStolen(resource);
+//    	assertEquals(s, "Wool");
+//    }
+//    
+//    @Test
+//    public void testGetFormattedResourceStolenOre() {
+//    	GameDisplay gd = new GameDisplay(true);
+//    	String resource = "ORE";
+//    	@SuppressWarnings("static-access")
+//		String s = gd.getFormattedResourceStolen(resource);
+//    	assertEquals(s, "Ore");
+//    }
+//    
+//    @Test
+//    public void testGetFormattedResourceStolenRandom() {
+//    	GameDisplay gd = new GameDisplay(true);
+//    	String resource = "QWERTY";
+//    	@SuppressWarnings("static-access")
+//		String s = gd.getFormattedResourceStolen(resource);
+//    	assertEquals(s, "");
+//    }
 }
 

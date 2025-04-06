@@ -9,7 +9,6 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,6 +28,7 @@ public class DevelopmentCardManagerTests {
     Player[] players;
 
     DevelopmentCardManager manager;
+    BonusManager bonusManager;
 
     BoardManager boardManager;
 
@@ -38,9 +38,10 @@ public class DevelopmentCardManagerTests {
         player = EasyMock.createMock(Player.class);
         player2 = EasyMock.createMock(Player.class);
         boardManager = EasyMock.createMock(BoardManager.class);
+        bonusManager = EasyMock.createMock(BonusManager.class);
         players = new Player[]{player,player2};
 
-        manager = new DevelopmentCardManager(players, bank, boardManager);
+        manager = new DevelopmentCardManager(players, bank, boardManager, bonusManager);
     }
 
     @ParameterizedTest
@@ -359,7 +360,7 @@ public class DevelopmentCardManagerTests {
 
         Player player3 = EasyMock.createMock(Player.class);
         players = new Player[]{player,player2,player3};
-        manager = new DevelopmentCardManager(players, bank, boardManager);
+        manager = new DevelopmentCardManager(players, bank, boardManager, bonusManager);
 
         EasyMock.expect(player2.removeResource(resource)).andReturn(true);
         EasyMock.expect(player3.removeResource(resource)).andReturn(true);
@@ -396,7 +397,7 @@ public class DevelopmentCardManagerTests {
         Player player3 = EasyMock.createMock(Player.class);
         Player player4 = EasyMock.createMock(Player.class);
         players = new Player[]{player,player2,player3,player4};
-        manager = new DevelopmentCardManager(players, bank, boardManager);
+        manager = new DevelopmentCardManager(players, bank, boardManager, bonusManager);
 
         EasyMock.expect(player2.removeResource(resource)).andReturn(true);
         EasyMock.expect(player3.removeResource(resource)).andReturn(true);
@@ -434,7 +435,7 @@ public class DevelopmentCardManagerTests {
         Player player3 = EasyMock.createMock(Player.class);
         Player player4 = EasyMock.createMock(Player.class);
         players = new Player[]{player,player2,player3,player4};
-        manager = new DevelopmentCardManager(players, bank, boardManager);
+        manager = new DevelopmentCardManager(players, bank, boardManager, bonusManager);
 
         EasyMock.expect(player2.removeResource(lumber)).andReturn(false);
         EasyMock.expect(player3.removeResource(lumber)).andReturn(false);
@@ -580,218 +581,6 @@ public class DevelopmentCardManagerTests {
 
     }
 
-    private Road[] setupRoads(Player owner, int numberOfRoads, Intersection startingPoint) {
-        Road[] roads = new Road[numberOfRoads];
-        Intersection a;
-        if (startingPoint == null) {
-            a = new Intersection(null, 0);
-        }
-        else {
-            a = startingPoint;
-        }
-        Intersection b = null;
-        for (int i = 0; i < numberOfRoads; i++) {
-            a.setOwner(owner);
-            roads[i] = new Road();
-            roads[i].setOwner(owner);
-            a.setRoads(roads[i]);
-            b = new Intersection(null, i + 1);
-            roads[i].setIntersections(a, b);
-            a = b;
-        }
-        if (b != null) {
-            b.setOwner(owner);
-        }
-        return roads;
-    }
-
-//### Test Value 1
-//Input: 2 players, |5| roads, no settlements
-//Output: false
-
-    @Test
-    public void testLongestRoadTwoFiveContinuousRoads() {
-        player = EasyMock.createMock(Player.class);
-        Road[] roads1 = setupRoads(player, 5, null);
-        Player[] players = new Player[2];
-        player2 = EasyMock.createMock(Player.class);
-        Road[] roads2 = setupRoads(player2, 5, null);
-        Road[] roads = new Road[10];
-        System.arraycopy(roads1, 0, roads, 0, 5);
-        System.arraycopy(roads2, 0, roads, 5, 5);
-        players[0] = player;
-        players[1] = player2;
-
-        boolean actual = manager.findLongestRoad(players, roads);
-
-        assertFalse(actual);
-        assertNull(manager.getLongestRoadOwner());
-    }
-
-//### Test Value 2
-//Input: 2 players, |5| road, no settlements
-//Output: true, Player1
-
-    @Test
-    public void testLongestRoadFiveContinuousRoads() {
-        player = EasyMock.createMock(Player.class);
-        Road[] roads = setupRoads(player, 5, null);
-        Player[] players = new Player[2];
-        player2 = EasyMock.createMock(Player.class);
-        players[0] = player;
-        players[1] = player2;
-
-        boolean actual = manager.findLongestRoad(players, roads);
-
-        assertTrue(actual);
-        assertEquals(player, manager.getLongestRoadOwner());
-    }
-
-    @Test
-    public void testLongestRoadFiveContinuousRoadsTwice() {
-        player = EasyMock.createMock(Player.class);
-        Road[] roads = setupRoads(player, 5, null);
-        Road[] roads2 = setupRoads(player, 5, null);
-        Player[] players = new Player[2];
-        player2 = EasyMock.createMock(Player.class);
-        players[0] = player;
-        players[1] = player2;
-
-        Road[] roads3 = new Road[10];
-        System.arraycopy(roads, 0, roads3, 0, 5);
-        System.arraycopy(roads2, 0, roads3, 5, 5);
-
-        boolean actual = manager.findLongestRoad(players, roads3);
-
-        assertTrue(actual);
-        assertEquals(player, manager.getLongestRoadOwner());
-    }
-
-//### Test Value 3
-//Input: 2 players, |5| road, friend settlement
-//Output: true, Player1
-
-    @Test
-    public void testLongestRoadFiveContinuousRoadsFriendSettlement() {
-        player = EasyMock.createMock(Player.class);
-        Road[] roads = setupRoads(player, 5, null);
-        Settlement settlement = new Settlement();
-        settlement.setOwner(player);
-        roads[2].getIntersections()[1].setStructure(settlement);
-        Player[] players = new Player[2];
-        player2 = EasyMock.createMock(Player.class);
-        players[0] = player;
-        players[1] = player2;
-
-        boolean actual = manager.findLongestRoad(players, roads);
-
-        assertTrue(actual);
-        assertEquals(player, manager.getLongestRoadOwner());
-    }
-
-//### Test Value 4
-//Input: 2 players, |5| road, enemy settlement
-//Output: false
-
-    @Test
-    public void testLongestRoadFiveContinuousRoadsEnemySettlement() {
-        player = EasyMock.createMock(Player.class);
-        Road[] roads = setupRoads(player, 5, null);
-        Player[] players = new Player[2];
-        player2 = EasyMock.createMock(Player.class);
-        Settlement settlement = new Settlement();
-        settlement.setOwner(player2);
-        roads[2].getIntersections()[1].setStructure(settlement);
-        players[0] = player;
-        players[1] = player2;
-
-        boolean actual = manager.findLongestRoad(players, roads);
-
-        assertFalse(actual);
-        assertNull(manager.getLongestRoadOwner());
-    }
-
-//### Test Value 5
-//Input: 4 players, three roads |5|, one |6|, no settlements
-//Output: true, Player4
-
-    @Test
-    public void testLongestRoadFiveContinuousRoadsOneSix() {
-        player = EasyMock.createMock(Player.class);
-        Road[] roads1 = setupRoads(player, 5, null);
-        player2 = EasyMock.createMock(Player.class);
-        Road[] roads2 = setupRoads(player2, 5, null);
-        player3 = EasyMock.createMock(Player.class);
-        Road[] roads3 = setupRoads(player3, 6, null);
-        player4 = EasyMock.createMock(Player.class);
-        Road[] roads4 = setupRoads(player4, 5, null);
-        Player[] players = new Player[4];
-        players[0] = player;
-        players[1] = player2;
-        players[2] = player3;
-        players[3] = player4;
-
-        Road[] roads = new Road[21];
-        System.arraycopy(roads1, 0, roads, 0, 5);
-        System.arraycopy(roads2, 0, roads, 5, 5);
-        System.arraycopy(roads3, 0, roads, 10, 6);
-        System.arraycopy(roads4, 0, roads, 16, 5);
-
-        boolean actual = manager.findLongestRoad(players, roads);
-
-        assertTrue(actual);
-        assertEquals(player3, manager.getLongestRoadOwner());
-    }
-
-//### Test Value 6
-//Input: 2 players, one road splits into two |4|, no settlements
-//Output: false
-
-    @Test
-    public void testLongestRoadFourContinuousSplitRoads() {
-        player = EasyMock.createMock(Player.class);
-        Road[] roads1 = setupRoads(player, 4, null);
-        Intersection a = roads1[3].getIntersections()[0];
-        Road[] roads2 = setupRoads(player, 1, a);
-        Player[] players = new Player[2];
-        player2 = EasyMock.createMock(Player.class);
-        players[0] = player;
-        players[1] = player2;
-
-        Road[] roads = new Road[5];
-        System.arraycopy(roads1, 0, roads, 0, 4);
-        System.arraycopy(roads2, 0, roads, 4, 1);
-
-        boolean actual = manager.findLongestRoad(players, roads);
-
-        assertFalse(actual);
-        assertNull(manager.getLongestRoadOwner());
-    }
-
-//### Test Value 7
-//Input: 2 players, one road splits into two |5|, no settlements
-//Output: true, player1
-
-    @Test
-    public void testLongestRoadFiveContinuousSplitRoads() {
-        player = EasyMock.createMock(Player.class);
-        Road[] roads1 = setupRoads(player, 5, null);
-        Intersection a = roads1[4].getIntersections()[0];
-        Road[] roads2 = setupRoads(player, 1, a);
-        Player[] players = new Player[2];
-        player2 = EasyMock.createMock(Player.class);
-        players[0] = player;
-        players[1] = player2;
-
-        Road[] roads = new Road[6];
-        System.arraycopy(roads1, 0, roads, 0, 5);
-        System.arraycopy(roads2, 0, roads, 5, 1);
-
-        boolean actual = manager.findLongestRoad(players, roads);
-
-        assertTrue(actual);
-        assertEquals(player, manager.getLongestRoadOwner());
-    }
 
     @Test
     public void testPlayKnight_playerHasKnight_simpleValidPlay() {
@@ -808,8 +597,8 @@ public class DevelopmentCardManagerTests {
         ResourceType stolen = manager.playKnight(player,player2,0);
         assertEquals(ResourceType.GRAIN, stolen);
 
-        EasyMock.verify(player,boardManager);
-        assertNull(manager.largestArmyOwner);
+        EasyMock.verify(player,boardManager, bonusManager);
+        assertNull(bonusManager.largestArmyOwner);
     }
 
     @Test
@@ -826,7 +615,7 @@ public class DevelopmentCardManagerTests {
         assertEquals(expectedMessage, actualMessage);
 
         EasyMock.verify(player,boardManager);
-        assertNull(manager.largestArmyOwner);
+        assertNull(bonusManager.largestArmyOwner);
     }
 
     @Test
@@ -849,7 +638,7 @@ public class DevelopmentCardManagerTests {
         assertEquals(expectedMessage, actualMessage);
 
         EasyMock.verify(player,boardManager);
-        assertNull(manager.largestArmyOwner);
+        assertNull(bonusManager.largestArmyOwner);
     }
 
 
@@ -868,7 +657,7 @@ public class DevelopmentCardManagerTests {
         assertEquals(expectedMessage, actualMessage);
 
         EasyMock.verify(player,boardManager);
-        assertNull(manager.largestArmyOwner);
+        assertNull(bonusManager.largestArmyOwner);
     }
 
     @ParameterizedTest
@@ -892,7 +681,7 @@ public class DevelopmentCardManagerTests {
         assertEquals(ResourceType.GRAIN, stolen);
 
         EasyMock.verify(player,boardManager);
-        assertNull(manager.largestArmyOwner);
+        assertNull(bonusManager.largestArmyOwner);
     }
 
     @Test
@@ -914,14 +703,14 @@ public class DevelopmentCardManagerTests {
         assertEquals(ResourceType.GRAIN, stolen);
 
         EasyMock.verify(player,player2, boardManager);
-        assertEquals(manager.largestArmyOwner,player);
+        assertEquals(bonusManager.largestArmyOwner,player);
     }
 
     @Test
     public void testPlayKnight_playerHasKnight_tiedLargestArmy() {
 
         playKnight_expectStandardErrorChecks();
-        manager.largestArmyOwner = player2;
+        bonusManager.largestArmyOwner = player2;
         DevelopmentCards[] cardArray =
             new DevelopmentCards[]{DevelopmentCards.KNIGHT, DevelopmentCards.KNIGHT};
         ArrayList<DevelopmentCards> cards = new ArrayList<>(List.of(cardArray));
@@ -942,14 +731,14 @@ public class DevelopmentCardManagerTests {
         assertEquals(ResourceType.GRAIN, stolen);
 
         EasyMock.verify(player,player2, boardManager);
-        assertEquals(manager.largestArmyOwner,player2);
+        assertEquals(bonusManager.largestArmyOwner,player2);
     }
 
     @Test
     public void testPlayKnight_playerHasKnight_stealLargestArmy() {
 
         playKnight_expectStandardErrorChecks();
-        manager.largestArmyOwner = player2;
+        bonusManager.largestArmyOwner = player2;
         DevelopmentCards[] cardArray = new DevelopmentCards[]{DevelopmentCards.KNIGHT,
             DevelopmentCards.KNIGHT, DevelopmentCards.KNIGHT};
         ArrayList<DevelopmentCards> cards = new ArrayList<>(List.of(cardArray));
@@ -965,7 +754,7 @@ public class DevelopmentCardManagerTests {
         ResourceType stolen = manager.playKnight(player,player2,0);
         assertEquals(ResourceType.GRAIN, stolen);
         EasyMock.verify(player,player2, boardManager);
-        assertEquals(manager.largestArmyOwner,player);
+        assertEquals(bonusManager.largestArmyOwner,player);
     }
 
     @Test
@@ -984,7 +773,7 @@ public class DevelopmentCardManagerTests {
         assertEquals(null, stolen);
 
         EasyMock.verify(player,boardManager);
-        assertNull(manager.largestArmyOwner);
+        assertNull(bonusManager.largestArmyOwner);
     }
 
     private void playKnight_expectStandardErrorChecks(){
@@ -1036,7 +825,7 @@ public class DevelopmentCardManagerTests {
         assertEquals(null, stolen);
 
         EasyMock.verify(player,boardManager);
-        assertNull(manager.largestArmyOwner);
+        assertNull(bonusManager.largestArmyOwner);
     }
 
     @Test
@@ -1060,29 +849,7 @@ public class DevelopmentCardManagerTests {
         assertEquals(expectedMessage, actualMessage);
 
         EasyMock.verify(player,boardManager);
-        assertNull(manager.largestArmyOwner);
-    }
-
-    @ParameterizedTest
-    @ValueSource(ints = {0,1})
-    public void testDevelopmentCardManager_getAndSetLargestArmyOwner(int playerIndex){
-
-        manager.setLargestArmyOwner(players[playerIndex]);
-
-
-        assertEquals(players[playerIndex], manager.largestArmyOwner);
-        assertEquals(players[playerIndex], manager.getLargestArmyOwner());
-    }
-
-    @ParameterizedTest
-    @ValueSource(ints = {0,1})
-    public void testDevelopmentCardManager_getAndSetLongestRoadOwner(int playerIndex){
-
-        manager.setLongestRoadOwner(players[playerIndex]);
-
-
-        assertEquals(players[playerIndex], manager.longestRoadOwner);
-        assertEquals(players[playerIndex], manager.getLongestRoadOwner());
+        assertNull(bonusManager.largestArmyOwner);
     }
 
     private static Stream<Arguments> returnTwoResources() {

@@ -169,7 +169,7 @@ public class BoardDisplay extends JPanel {
     }
 
     private String portDisplay(Port port) {
-        if(port.getPortTradeRatio() == PortTradeRatio.THREE_TO_ONE){
+        if(port.getPortTradeRatio() == 3){
             return "3:1";
         }else{
             return "2:1, " + getFormattedResource(port.getResourceType().toString());

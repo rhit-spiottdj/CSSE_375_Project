@@ -22,6 +22,7 @@ public class TestGameManager {
 
     GameManager manager;
     BoardManager boardManager;
+    BonusManager bonusManager;
     DevelopmentCardManager cardManager;
     Player player1;
     Player player2;
@@ -801,6 +802,7 @@ public class TestGameManager {
 
     private void calculateVictoryPointsForPlayer_setupStandard() {
         boardManager = EasyMock.createMock(BoardManager.class);
+        bonusManager = EasyMock.createMock(BonusManager.class);
         cardManager = EasyMock.createMock(DevelopmentCardManager.class);
         manager = new GameManager(2, boardManager, cardManager);
         player1 = EasyMock.createMock(Player.class);
@@ -831,17 +833,17 @@ public class TestGameManager {
 
     private void calculateVictoryPointsForPlayer_expectLongestRoad(boolean hasRoad) {
         if (hasRoad) {
-            EasyMock.expect(cardManager.getLongestRoadOwner()).andReturn(player1);
+            EasyMock.expect(bonusManager.getLongestRoadOwner()).andReturn(player1);
         } else {
-            EasyMock.expect(cardManager.getLongestRoadOwner()).andReturn(null);
+            EasyMock.expect(bonusManager.getLongestRoadOwner()).andReturn(null);
         }
     }
 
     private void calculateVictoryPointsForPlayer_expectLargestArmy(boolean hasRoad) {
         if (hasRoad) {
-            EasyMock.expect(cardManager.getLargestArmyOwner()).andReturn(player1);
+            EasyMock.expect(bonusManager.getLargestArmyOwner()).andReturn(player1);
         } else {
-            EasyMock.expect(cardManager.getLargestArmyOwner()).andReturn(null);
+            EasyMock.expect(bonusManager.getLargestArmyOwner()).andReturn(null);
         }
     }
 
@@ -1531,31 +1533,31 @@ public class TestGameManager {
 
     @ParameterizedTest
     @EnumSource()
-    public void testGameManager_isValidRatio_zero(PortTradeRatio ratio){
+    public void testGameManager_isValidRatio_zero(int ratio){
         assertTrue(GameManager.isValidRatio(ratio, 0));
     }
 
     @ParameterizedTest
     @EnumSource()
-    public void testGameManager_isValidRatio_one(PortTradeRatio ratio){
+    public void testGameManager_isValidRatio_one(int ratio){
         assertFalse(GameManager.isValidRatio(ratio, 1));
     }
 
     @ParameterizedTest
     @ValueSource(ints = {2,4,6})
     public void testGameManager_isValidRatio_twoRatios(int amount){
-        assertTrue(GameManager.isValidRatio(PortTradeRatio.TWO_TO_ONE, amount));
+        assertTrue(GameManager.isValidRatio(2, amount));
     }
 
     @ParameterizedTest
     @ValueSource(ints = {3,6})
     public void testGameManager_isValidRatio_threeRatios(int amount){
-        assertTrue(GameManager.isValidRatio(PortTradeRatio.THREE_TO_ONE, amount));
+        assertTrue(GameManager.isValidRatio(3, amount));
     }
 
     @Test
     public void testGameManager_isValidRatio_maxResource(){
-        assertFalse(GameManager.isValidRatio(PortTradeRatio.THREE_TO_ONE, 19));
+        assertFalse(GameManager.isValidRatio(3, 19));
     }
 
     @ParameterizedTest
@@ -1569,7 +1571,7 @@ public class TestGameManager {
         Bank bank = EasyMock.createMock(Bank.class);
         Port port = EasyMock.createMock(Port.class);
         BoardManager bmanager = EasyMock.createMock(BoardManager.class);
-        EasyMock.expect(port.getPortTradeRatio()).andReturn(PortTradeRatio.TWO_TO_ONE).anyTimes();
+        EasyMock.expect(port.getPortTradeRatio()).andReturn(2).anyTimes();
         EasyMock.expect(bank.tradeResourcePort(port, ResourceType.LUMBER, BRICK,
         val / 2)).andReturn(true);
         EasyMock.replay(port, bank);
@@ -1604,7 +1606,7 @@ public class TestGameManager {
         Bank bank = EasyMock.createMock(Bank.class);
         Port port = EasyMock.createMock(Port.class);
         BoardManager bmanager = EasyMock.createMock(BoardManager.class);
-        EasyMock.expect(port.getPortTradeRatio()).andReturn(PortTradeRatio.TWO_TO_ONE).anyTimes();
+        EasyMock.expect(port.getPortTradeRatio()).andReturn(2).anyTimes();
 
         EasyMock.replay(port, bank);
         GameManager manager = new GameManager(new Player[]{player}, bmanager, bank);
@@ -1651,7 +1653,7 @@ public class TestGameManager {
         Bank bank = EasyMock.createMock(Bank.class);
         Port port = EasyMock.createMock(Port.class);
         BoardManager bmanager = EasyMock.createMock(BoardManager.class);
-        EasyMock.expect(port.getPortTradeRatio()).andReturn(PortTradeRatio.THREE_TO_ONE).anyTimes();
+        EasyMock.expect(port.getPortTradeRatio()).andReturn(3).anyTimes();
         EasyMock.expect(bank.tradeResourcePort(port, ResourceType.LUMBER, BRICK,
                 val / 3)).andReturn(true);
         EasyMock.replay(port, bank);
@@ -1686,7 +1688,7 @@ public class TestGameManager {
         Bank bank = EasyMock.createMock(Bank.class);
         Port port = EasyMock.createMock(Port.class);
         BoardManager bmanager = EasyMock.createMock(BoardManager.class);
-        EasyMock.expect(port.getPortTradeRatio()).andReturn(PortTradeRatio.THREE_TO_ONE).anyTimes();
+        EasyMock.expect(port.getPortTradeRatio()).andReturn(3).anyTimes();
 
         EasyMock.replay(port, bank);
         GameManager manager = new GameManager(new Player[]{player}, bmanager, bank);
@@ -1711,7 +1713,7 @@ public class TestGameManager {
         Bank bank = EasyMock.createMock(Bank.class);
         Port port = EasyMock.createMock(Port.class);
         BoardManager bmanager = EasyMock.createMock(BoardManager.class);
-        EasyMock.expect(port.getPortTradeRatio()).andReturn(PortTradeRatio.TWO_TO_ONE).anyTimes();
+        EasyMock.expect(port.getPortTradeRatio()).andReturn(2).anyTimes();
         EasyMock.expect(bank.tradeResourcePort(port, ResourceType.LUMBER, BRICK,
                 val / 2)).andReturn(false);
         EasyMock.replay(port, bank);
@@ -1784,17 +1786,17 @@ public class TestGameManager {
         EasyMock.expect(dcm.playRoadBuilding(player, intersections)).andReturn(true);
         EasyMock.expect(bm.getRoadsOnBoard()).andReturn(new ArrayList<>());
 
-        EasyMock.expect(dcm.findLongestRoad(EasyMock.anyObject(), EasyMock.anyObject())).andReturn(true);
+        EasyMock.expect(bonusManager.findLongestRoad(EasyMock.anyObject(), EasyMock.anyObject())).andReturn(true);
 
         EasyMock.expect(player.getUnplayableDevelopmentCards()).andReturn(new ArrayList<>());
 
         EasyMock.expect(bm.getStructures()).andReturn(new ArrayList<>());
 
-        EasyMock.expect(dcm.getLongestRoadOwner()).andReturn(null);
-        EasyMock.expect(dcm.getLargestArmyOwner()).andReturn(null);
+        EasyMock.expect(bonusManager.getLongestRoadOwner()).andReturn(null);
+        EasyMock.expect(bonusManager.getLargestArmyOwner()).andReturn(null);
         player.setVictoryPoints(0);
 
-        EasyMock.replay(bm, bank, player, dcm);
+        EasyMock.replay(bm, bank, player, dcm, bonusManager);
 
         GameManager gm = new GameManager(dcm, new Player[]{player}, bm, bank);
 

@@ -2,16 +2,16 @@ package domain;
 
 public class Port {
 
-    PortTradeRatio ratio;
+    int ratio;
 
     ResourceType resource;
 
-    public Port(PortTradeRatio ratio, ResourceType resource){
+    public Port(int ratio, ResourceType resource){
         this.ratio = ratio;
         this.resource = resource;
     }
 
-    public PortTradeRatio getPortTradeRatio(){
+    public int getPortTradeRatio(){
         return ratio;
     }
 

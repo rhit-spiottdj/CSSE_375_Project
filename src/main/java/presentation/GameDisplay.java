@@ -43,7 +43,7 @@ public class GameDisplay implements ActionListener {
 
     private String[] quickPlayerNames = new String[]{"Player1", "Player2", "Player3", "Player4"};
     private Color[] quickPlayerColors =
-        new Color[]{Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW};
+            new Color[]{Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW};
 
     protected Player[] players;
 
@@ -70,9 +70,9 @@ public class GameDisplay implements ActionListener {
     boolean buildCity = false;
     private boolean playerRollsFinished = false;
     private ArrayList<ResourceType> quickPlayerResources = new ArrayList<>(
-        Arrays.asList(ResourceType.BRICK, ResourceType.LUMBER, ResourceType.GRAIN,
-        ResourceType.WOOL, ResourceType.ORE, ResourceType.BRICK, ResourceType.LUMBER,
-        ResourceType.GRAIN, ResourceType.ORE, ResourceType.ORE, ResourceType.ORE));
+            Arrays.asList(ResourceType.BRICK, ResourceType.LUMBER, ResourceType.GRAIN,
+                    ResourceType.WOOL, ResourceType.ORE, ResourceType.BRICK, ResourceType.LUMBER,
+                    ResourceType.GRAIN, ResourceType.ORE, ResourceType.ORE, ResourceType.ORE));
     private JButton confirmButton;
 
     public GameDisplay(boolean quickSetup) {
@@ -94,8 +94,11 @@ public class GameDisplay implements ActionListener {
     private void setup(boolean quickSetup) {
         doQuickOrNormalSetup(quickSetup);
 
-        initBoard();
+        initBoardDisplay();
 
+        initBoardFrame();
+
+        addBoardDisplayToFrame();
         handlePlayerSetup(quickSetup);
     }
 
@@ -113,13 +116,13 @@ public class GameDisplay implements ActionListener {
         addSecondaryDisplaysToFrame();
     }
 
-    private void initBoard() {
-        initBoardDisplay();
-
-        initBoardFrame();
-
-        addBoardDisplayToFrame();
-    }
+//    private void initBoard() {
+//        initBoardDisplay();
+//
+//        initBoardFrame();
+//
+//        addBoardDisplayToFrame();
+//    }
 
     private void addSecondaryDisplaysToFrame() {
         JPanel verticalPanel = new JPanel(new GridLayout(2,1));
@@ -148,35 +151,36 @@ public class GameDisplay implements ActionListener {
         placeSecondInitialQuickSetupSettlements();
         placeFirstInitialQuickSetupRoads();
         placeSecondInitialQuickSetupRoads();
-        repaintBoard();
+        repaintButtons();
+        repaintBoardHexes();;
     }
 
     private void placeSecondInitialQuickSetupRoads() {
         gameManager.placeRoad(QUICK_SETUP_ROAD_THREE[0], QUICK_SETUP_ROAD_THREE[1],
-            gameManager.getPlayers()[0], true);
+                gameManager.getPlayers()[0], true);
         gameManager.placeRoad(QUICK_SETUP_ROAD_FOUR[0], QUICK_SETUP_ROAD_FOUR[1],
-            gameManager.getPlayers()[1], true);
+                gameManager.getPlayers()[1], true);
     }
 
     private void placeFirstInitialQuickSetupRoads() {
         gameManager.placeRoad(QUICK_SETUP_ROAD_ONE[0], QUICK_SETUP_ROAD_ONE[1],
-            gameManager.getPlayers()[0], true);
+                gameManager.getPlayers()[0], true);
         gameManager.placeRoad(QUICK_SETUP_ROAD_TWO[0], QUICK_SETUP_ROAD_TWO[1],
-            gameManager.getPlayers()[1],true);
+                gameManager.getPlayers()[1],true);
     }
 
     private void placeSecondInitialQuickSetupSettlements() {
         gameManager.placeInitialSettlement(QUICK_SETUP_SETTLEMENT_THREE,
-            gameManager.getPlayers()[0]);
+                gameManager.getPlayers()[0]);
         gameManager.placeInitialSettlement(QUICK_SETUP_SETTLEMENT_FOUR,
-            gameManager.getPlayers()[1]);
+                gameManager.getPlayers()[1]);
     }
 
     private void placeFirstInitialQuickSetupSettlements() {
         gameManager.placeInitialSettlement(QUICK_SETUP_SETTLEMENT_ONE,
-            gameManager.getPlayers()[0]);
+                gameManager.getPlayers()[0]);
         gameManager.placeInitialSettlement(QUICK_SETUP_SETTLEMENT_TWO,
-            gameManager.getPlayers()[1]);
+                gameManager.getPlayers()[1]);
     }
 
     private void quickSetup() {
@@ -197,7 +201,7 @@ public class GameDisplay implements ActionListener {
 
     private void quickSetupPlayer(int i) {
         players[i] = new Player(quickPlayerColors[i], quickPlayerNames[i],
-            new ArrayList<>(quickPlayerResources));
+                new ArrayList<>(quickPlayerResources));
 
         gameManager.decrementResourcesFromBank(quickPlayerResources);
 
@@ -332,24 +336,24 @@ public class GameDisplay implements ActionListener {
 
     private static String getSetupStyle(String[] setupStyles) {
         String style =
-            (String) JOptionPane.showInputDialog(null, "Quick or Normal Setup", "Setup Selection",
-            JOptionPane.QUESTION_MESSAGE, null, setupStyles, setupStyles[0]);
+                (String) JOptionPane.showInputDialog(null, "Quick or Normal Setup", "Setup Selection",
+                        JOptionPane.QUESTION_MESSAGE, null, setupStyles, setupStyles[0]);
         return style;
     }
 
     private static void invalidRoadPlacementDisplay() {
         JOptionPane.showMessageDialog(null, messages.getString("invalidRoad"),
-            messages.getString("invalidPlacementTitle"), JOptionPane.ERROR_MESSAGE);
+                messages.getString("invalidPlacementTitle"), JOptionPane.ERROR_MESSAGE);
     }
 
     private static void invalidSettlementPlacementDisplay() {
         JOptionPane.showMessageDialog(null, messages.getString("invalidSettlement"),
-            messages.getString("invalidPlacementTitle"), JOptionPane.ERROR_MESSAGE);
+                messages.getString("invalidPlacementTitle"), JOptionPane.ERROR_MESSAGE);
     }
 
-    private static String getFormattedPlayerMessage(String key, int i) {
+    private static String getFormattedPlayerMessage(String key, Object arg) {
         String messageTemplate = messages.getString(key);
-        return MessageFormat.format(messageTemplate, i + 1);
+        return MessageFormat.format(messageTemplate, arg);
     }
 
     private void setupLanguage() {
@@ -370,8 +374,8 @@ public class GameDisplay implements ActionListener {
 
     private String getLanguageString(String[] languages) {
         String language =
-            (String) JOptionPane.showInputDialog(null, "Choose a language", "Language Selection",
-            JOptionPane.QUESTION_MESSAGE, null, languages, languages[0]);
+                (String) JOptionPane.showInputDialog(null, "Choose a language", "Language Selection",
+                        JOptionPane.QUESTION_MESSAGE, null, languages, languages[0]);
         return language;
     }
 
@@ -416,7 +420,7 @@ public class GameDisplay implements ActionListener {
 
     private String getPlayerNumMessageAfterError() {
         return JOptionPane.showInputDialog(null, messages.getString("numPlayersError"),
-            "2");
+                "2");
     }
 
     private String ensureGetPlayerNumMessage() {
@@ -447,14 +451,14 @@ public class GameDisplay implements ActionListener {
 
     private void initBoardDisplay() {
         int useRandomizedBoard =
-            JOptionPane.showConfirmDialog(null, messages.getString("useRandomizedBoardMessage"),
-            messages.getString("useRandomizedBoardTitle"), JOptionPane.YES_NO_OPTION);
+                JOptionPane.showConfirmDialog(null, messages.getString("useRandomizedBoardMessage"),
+                        messages.getString("useRandomizedBoardTitle"), JOptionPane.YES_NO_OPTION);
 
         boolean randomize = useRandomizedBoard == JOptionPane.YES_OPTION;
         boardDisplay = new BoardDisplay(boardManager, randomize, gameLocale);
     }
 
-    void singleTurn(Player player) {
+    void singleTurn(Player player) throws Exception {
         updatePlayerInfoForTurn(player);
         if (waitForDiceRoll(gameManager) == ROBBER_ROLL)    sevenRolled(player);
         else    handleResourceDistributionOnRoll();
@@ -472,26 +476,28 @@ public class GameDisplay implements ActionListener {
     void runGame() {
         inTurn = players[gameManager.setNextPlayerInTurn()];
 
-        tryMainGameLoop();
+        try {
+            mainGameLoop();
+        } catch (Exception ignored) {}
         gameWonMessage(inTurn);
 
     }
 
-    private void tryMainGameLoop() {
-        try {
-            mainGameLoop();
-        } catch (GameOverException e) {
-        }
-    }
+//    private void tryMainGameLoop() {
+//        try {
+//            mainGameLoop();
+//        } catch (GameOverException e) {
+//        }
+//    }
 
-    private void mainGameLoop() {
+    private void mainGameLoop() throws Exception {
         boolean gameOver = false;
         while (!gameOver) {
             gameOver = doSingleTurnAndSetupForNextTurnIfGameNotOver();
         }
     }
 
-    private boolean doSingleTurnAndSetupForNextTurnIfGameNotOver() {
+    private boolean doSingleTurnAndSetupForNextTurnIfGameNotOver() throws Exception {
         singleTurn(inTurn);
         boolean gameOver = gameManager.isGameOver();
         if (!gameOver)  inTurn = players[gameManager.setNextPlayerInTurn()];
@@ -500,8 +506,8 @@ public class GameDisplay implements ActionListener {
 
     private static void gameWonMessage(Player player) {
         JOptionPane.showMessageDialog(null,
-            player.getPlayerName() + messages.getString("hasWonLabel"),
-            messages.getString("gameOverTitle"), JOptionPane.INFORMATION_MESSAGE);
+                player.getPlayerName() + messages.getString("hasWonLabel"),
+                messages.getString("gameOverTitle"), JOptionPane.INFORMATION_MESSAGE);
     }
 
 
@@ -528,11 +534,11 @@ public class GameDisplay implements ActionListener {
         int result = gameManager.distributeResourcesOnRoll(gameManager.getCurrentDiceRoll());
         if (result == 2) {
             JOptionPane.showMessageDialog(null, messages.getString("robberOnLocation"),
-                messages.getString("robberOnLocationTitle"), JOptionPane.INFORMATION_MESSAGE);
+                    messages.getString("robberOnLocationTitle"), JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
-    private void waitForTurnOver(Player player) {
+    private void waitForTurnOver(Player player) throws Exception {
         while (!turnDisplay.isTurnOver()) { // Loop until the turn is over
             waitForActionTaken();
             handleActionOptions(player);
@@ -550,38 +556,41 @@ public class GameDisplay implements ActionListener {
         }
     }
 
-    private void handleActionOptions(Player player) {
+    private void handleActionOptions(Player player) throws Exception {
         if (buildSettlement)    handleSettlementAction(player);
         else if (buildRoad)     handleRoadAction(player);
         else if (buildCity)     handleCityAction(player);
     }
 
-    private void handleSettlementAction(Player player) {
+    private void handleSettlementAction(Player player) throws Exception {
         buildSettlement = false;
         tryBuildSettlement(player);
-        repaintBoard();
+        repaintButtons();
+        repaintBoardHexes();;
         hasInTurnWonTheGame();
     }
 
-    private void hasInTurnWonTheGame() {
+    private void hasInTurnWonTheGame() throws Exception {
         gameManager.calculateVictoryPointsForPlayer(inTurn);
         if (gameManager.isGameOver()) {
-            throw new GameOverException();
+            throw new Exception();
         }
     }
 
-    private void handleRoadAction(Player player) {
+    private void handleRoadAction(Player player) throws Exception {
         buildRoad = false;
         tryBuildRoad(player);
         gameManager.findLongestRoad();
-        repaintBoard();
+        repaintButtons();
+        repaintBoardHexes();;
         hasInTurnWonTheGame();
     }
 
-    private void handleCityAction(Player player) {
+    private void handleCityAction(Player player) throws Exception {
         buildCity = false;
         tryBuildCity(player);
-        repaintBoard();
+        repaintButtons();
+        repaintBoardHexes();;
         hasInTurnWonTheGame();
     }
 
@@ -594,12 +603,12 @@ public class GameDisplay implements ActionListener {
 
     private void invalidCityPlacementMessage() {
         JOptionPane.showMessageDialog(null, messages.getString("invalidCityBuild"),
-            messages.getString("invalidCityBuildTitle"), JOptionPane.ERROR_MESSAGE);
+                messages.getString("invalidCityBuildTitle"), JOptionPane.ERROR_MESSAGE);
     }
 
     private void buildCityMessage() {
         JOptionPane.showMessageDialog(null, messages.getString("buildCityMessage"),
-            messages.getString("buildCityLabel"), JOptionPane.INFORMATION_MESSAGE);
+                messages.getString("buildCityLabel"), JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void tryBuildSettlement(Player player) {
@@ -619,29 +628,29 @@ public class GameDisplay implements ActionListener {
 
     private void buildRoad(Player player, int intersection1, int intersection2) {
         if (intersection1 == intersection2 || !gameManager.buildRoad(intersection1, intersection2,
-            player)) {
+                player)) {
             invalidRoadPlacementMessage();
         }
     }
 
     private static void invalidRoadPlacementMessage() {
         JOptionPane.showMessageDialog(null, messages.getString("invalidRoadBuild"),
-            messages.getString("invalidRoadBuildTitle"), JOptionPane.ERROR_MESSAGE);
+                messages.getString("invalidRoadBuildTitle"), JOptionPane.ERROR_MESSAGE);
     }
 
     protected static void buildRoadMessage() {
         JOptionPane.showMessageDialog(null, messages.getString("buildRoadMessage"),
-            messages.getString("buildRoadLabel"), JOptionPane.INFORMATION_MESSAGE);
+                messages.getString("buildRoadLabel"), JOptionPane.INFORMATION_MESSAGE);
     }
 
     private static void invalidSettlementPlacementMessage() {
         JOptionPane.showMessageDialog(null, messages.getString("invalidSettlementBuild"),
-            messages.getString("invalidSettlementBuildTitle"), JOptionPane.ERROR_MESSAGE);
+                messages.getString("invalidSettlementBuildTitle"), JOptionPane.ERROR_MESSAGE);
     }
 
     private static void buildSettlementMessage() {
         JOptionPane.showMessageDialog(null, messages.getString("buildSettlementMessage"),
-            messages.getString("buildSettlementLabel"), JOptionPane.INFORMATION_MESSAGE);
+                messages.getString("buildSettlementLabel"), JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void handlePlayerRobberDiscard(int j) {
@@ -654,7 +663,7 @@ public class GameDisplay implements ActionListener {
 
     private void startPlayerRobberDiscardAndWaitForSuccess(int j) {
         discardGUI = new TradeManagerGUI(players[j], gameManager, gameLocale,
-            gameManager.getNumberCardsToDiscard(players[j]));
+                gameManager.getNumberCardsToDiscard(players[j]));
 
         while (discardGUI.isShowing()) {
             sleepForInput();
@@ -663,13 +672,13 @@ public class GameDisplay implements ActionListener {
 
     protected void discardCardsMessage(int j) {
         JOptionPane.showMessageDialog(null, getFormattedDiscardMessage(j),
-            messages.getString("discardTitle"), JOptionPane.INFORMATION_MESSAGE);
+                messages.getString("discardTitle"), JOptionPane.INFORMATION_MESSAGE);
     }
 
     private String getFormattedDiscardMessage(int j) {
         String messageTemplate = messages.getString("discardMessage");
         return MessageFormat.format(messageTemplate, players[j].getPlayerName(),
-            gameManager.getNumberCardsToDiscard(players[j]));
+                gameManager.getNumberCardsToDiscard(players[j]));
     }
 
     private void handleRobberActions(Player currentPlayer) {
@@ -691,7 +700,7 @@ public class GameDisplay implements ActionListener {
 
     private static void displayRobberNoPlayersToStealFrom() {
         JOptionPane.showMessageDialog(null, messages.getString("noPlayersToStealMessage"),
-            messages.getString("noPlayersToStealTitle"), JOptionPane.INFORMATION_MESSAGE);
+                messages.getString("noPlayersToStealTitle"), JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void handleMoveRobber() {
@@ -721,11 +730,11 @@ public class GameDisplay implements ActionListener {
 
     public static void displayRobberPlacementError() {
         JOptionPane.showMessageDialog(null, messages.getString("noPlayersToStealMessage"),
-            messages.getString("noPlayersToStealTitle"), JOptionPane.INFORMATION_MESSAGE);
+                messages.getString("noPlayersToStealTitle"), JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void tryStealResourceWithMessageToPlayers(Player currentPlayer,
-        Player selectedPlayerToSteal) {
+                                                      Player selectedPlayerToSteal) {
         try {
             stealResourceWithMessageToPlayers(currentPlayer, selectedPlayerToSteal);
         } catch (IllegalArgumentException e) {
@@ -735,38 +744,30 @@ public class GameDisplay implements ActionListener {
     }
 
     private void stealResourceWithMessageToPlayers(Player currentPlayer,
-        Player selectedPlayerToSteal) {
+                                                   Player selectedPlayerToSteal) {
         String resourceStolen =
-            gameManager.tryRobberSteal(currentPlayer, selectedPlayerToSteal).toString();
+                gameManager.tryRobberSteal(currentPlayer, selectedPlayerToSteal).toString();
         displayRobberResourceStolenMessage(selectedPlayerToSteal.getPlayerName(),
-            resourceStolen);
+                resourceStolen);
     }
 
 
     public static void displayRobberResourceStolenMessage(String playerToStealFrom,
-        String resourceStolen) {
+                                                          String resourceStolen) {
         JOptionPane.showMessageDialog(null,
-            formatResourceStolenMessage(resourceStolen, playerToStealFrom),
-            messages.getString("resourceStolenTitle"), JOptionPane.INFORMATION_MESSAGE);
+                formatResourceStolenMessage(resourceStolen, playerToStealFrom),
+                messages.getString("resourceStolenTitle"), JOptionPane.INFORMATION_MESSAGE);
     }
 
     private static String formatResourceStolenMessage(String resourceStolen,
-        String playerToStealFrom) {
+                                                      String playerToStealFrom) {
         String messageTemplate = messages.getString("resourceStolenFromPlayerMessage");
         String formattedResourceStolen = getFormattedResourceStolen(resourceStolen);
         return MessageFormat.format(messageTemplate, formattedResourceStolen, playerToStealFrom);
     }
 
-    @SuppressWarnings("methodlength")
-    private static String getFormattedResourceStolen(String resourceStolen) {
-        switch (resourceStolen) {
-            case "BRICK": return messages.getString("brick");
-            case "LUMBER": return messages.getString("lumber");
-            case "GRAIN": return messages.getString("grain");
-            case "WOOL": return messages.getString("wool");
-            case "ORE": return messages.getString("ore");
-            default: return "";
-        }
+    public static String getFormattedResourceStolen(String resourceStolen) {
+    	return messages.getString(resourceStolen.toLowerCase());
     }
 
     private static String getNameOfPlayerToSteal(Map<String, Player> playerMap) {
@@ -786,9 +787,9 @@ public class GameDisplay implements ActionListener {
 
     private static String getPlayerToStealFromMessage(String[] playerNames) {
         String playerToStealFrom =
-            (String) JOptionPane.showInputDialog(null, messages.getString("chooseToStealMessage"),
-            messages.getString("chooseToStealTitle"), JOptionPane.QUESTION_MESSAGE, null,
-            playerNames, playerNames[0]);
+                (String) JOptionPane.showInputDialog(null, messages.getString("chooseToStealMessage"),
+                        messages.getString("chooseToStealTitle"), JOptionPane.QUESTION_MESSAGE, null,
+                        playerNames, playerNames[0]);
         return playerToStealFrom;
     }
 
@@ -801,7 +802,7 @@ public class GameDisplay implements ActionListener {
     }
 
     private void addPlayersToStealFromToMap(Player currentPlayer,
-        ArrayList<Player> playersToStealFrom, Map<String, Player> playerMap) {
+                                            ArrayList<Player> playersToStealFrom, Map<String, Player> playerMap) {
         for (Player p : playersToStealFrom) {
             if (!p.equals(currentPlayer)) {
                 playerMap.put(p.getPlayerName(), p);
@@ -811,12 +812,12 @@ public class GameDisplay implements ActionListener {
 
     private static void sevenRolledMessage() {
         JOptionPane.showMessageDialog(null, messages.getString("sevenRolledMessage"),
-            messages.getString("sevenRolledMessage"), JOptionPane.INFORMATION_MESSAGE);
+                messages.getString("sevenRolledMessage"), JOptionPane.INFORMATION_MESSAGE);
     }
 
     public static void moveRobberMessage() {
         JOptionPane.showMessageDialog(null, messages.getString("selectRobberHexMessage"),
-            messages.getString("moveRobberTitle"), JOptionPane.INFORMATION_MESSAGE);
+                messages.getString("moveRobberTitle"), JOptionPane.INFORMATION_MESSAGE);
     }
 
     protected int waitForHexSelection() {
@@ -828,7 +829,8 @@ public class GameDisplay implements ActionListener {
 
     protected void toggleHexButtons(boolean toggle) {
         boardDisplay.toggleHexButtons(toggle);
-        repaintBoard();
+        repaintButtons();
+        repaintBoardHexes();;
     }
 
     private int waitForDiceRoll(GameManager gameManager) {
@@ -856,9 +858,9 @@ public class GameDisplay implements ActionListener {
     }
 
     private void tryFirstSettlementAndRoadPlacement(Player[] players, int i) {
-        initialSettlementDisplay(i, messages.getString("settlementFirst"));
+        initialSettlementDisplay(players, i, messages.getString("settlementFirst"));
         waitForSettlementPlacement(players[i], false);
-        initialRoadDisplay(i, messages.getString("settlementFirst"));
+        initialRoadDisplay(players, i, messages.getString("settlementFirst"));
         waitForRoadPlacement(players[i]);
     }
 
@@ -871,9 +873,9 @@ public class GameDisplay implements ActionListener {
     }
 
     private void trySecondRoadAndSettlementPlacement(Player[] players, int i) {
-        initialSettlementDisplay(i, messages.getString("settlementSecond"));
+        initialSettlementDisplay(players, i, messages.getString("settlementSecond"));
         waitForSettlementPlacement(players[i], true);
-        initialRoadDisplay(i, messages.getString("settlementSecond"));
+        initialRoadDisplay(players, i, messages.getString("settlementSecond"));
         waitForRoadPlacement(players[i]);
     }
 
@@ -904,14 +906,15 @@ public class GameDisplay implements ActionListener {
 
     private boolean placeRoad(Player player, int intersection1, int intersection2) {
         gameManager.placeRoad(intersection1, intersection2, player, true);
-        repaintBoard();
+        repaintButtons();
+        repaintBoardHexes();;
         return true;
     }
 
-    private void initialRoadDisplay(int i, String roadNumber) {
+    private void initialRoadDisplay(Player[] players, int i, String roadNumber) {
         JOptionPane.showMessageDialog(null,
-            getFormattedStructureMessage("placeInitialRoadMessage", roadNumber),
-            getFormattedPlayerMessage("playerTurnTitle", i), JOptionPane.INFORMATION_MESSAGE);
+                getFormattedStructureMessage("placeInitialRoadMessage", roadNumber),
+                getFormattedPlayerMessage("playerTurnTitle", players[i].getPlayerName()), JOptionPane.INFORMATION_MESSAGE);
     }
 
     private String getFormattedStructureMessage(String key, String structureNumber) {
@@ -938,15 +941,16 @@ public class GameDisplay implements ActionListener {
     private boolean placeSettlement(Player player, boolean giveResources, int intersection1) {
         gameManager.placeInitialSettlement(intersection1, player);
         if (giveResources)  gameManager.giveInitialResources(intersection1, player);
-        repaintBoard();
+        repaintButtons();
+        repaintBoardHexes();;
         return true;
     }
 
-    private void initialSettlementDisplay(int playerIndex, String settlementNumber) {
+    private void initialSettlementDisplay(Player[] players, int playerIndex, String settlementNumber) {
         JOptionPane.showMessageDialog(null,
-            getFormattedStructureMessage("placeInitialSettlementMessage", settlementNumber),
-            getFormattedPlayerMessage("playerTurnTitle", playerIndex),
-            JOptionPane.INFORMATION_MESSAGE);
+                getFormattedStructureMessage("placeInitialSettlementMessage", settlementNumber),
+                getFormattedPlayerMessage("playerTurnTitle", players[playerIndex].getPlayerName()),
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     protected int getIntersectionButtonSelection() {
@@ -971,10 +975,10 @@ public class GameDisplay implements ActionListener {
         }
     }
 
-    protected void repaintBoard() {
-        repaintButtons();
-        repaintBoardHexes();
-    }
+//    protected void repaintBoard() {
+//        repaintButtons();
+//        repaintBoardHexes();
+//    }
 
     private void repaintBoardHexes() {
         boardDisplay.repaint();
@@ -1040,19 +1044,20 @@ public class GameDisplay implements ActionListener {
 
     private String getPlayerNameMessage(int i) {
         String curName = JOptionPane.showInputDialog(null,
-            getFormattedPlayerMessage("playerSelectionMessage", i),
-            messages.getString("namePlaceholder"));
+                getFormattedPlayerMessage("playerSelectionMessage", i + 1),
+                messages.getString("namePlaceholder"));
         return curName;
     }
 
     private void invalidPlayerNameMessage() {
         JOptionPane.showMessageDialog(null, messages.getString("playerNameSelectionError"),
-            messages.getString("invalidInput"), JOptionPane.ERROR_MESSAGE);
+                messages.getString("invalidInput"), JOptionPane.ERROR_MESSAGE);
     }
 
     public void toggleIntersectionButtons(boolean toggle) {
         boardDisplay.toggleIntersectionButtons(toggle);
-        repaintBoard();
+        repaintButtons();
+        repaintBoardHexes();;
     }
 
 
@@ -1060,12 +1065,13 @@ public class GameDisplay implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         playersStats.updatePlayersStats();
         updateCardGUI();
-        repaintBoard();
+        repaintButtons();
+        repaintBoardHexes();;
     }
 
     private void updateCardGUI() {
         if (diceManager.hasPlayerRolledDice() && turnDisplay.isEnableFlag()
-            && (discardGUI == null || !discardGUI.isShowing()))
+                && (discardGUI == null || !discardGUI.isShowing()))
             cardDisplay.setAllEnableTo(true);
         else
             cardDisplay.setAllEnableTo(false);

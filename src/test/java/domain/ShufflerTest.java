@@ -195,9 +195,9 @@ public class ShufflerTest {
         ArrayList<ResourceType> resourcePorts = new ArrayList<>();
 
         for (Port port: ports){
-            if(port.getPortTradeRatio() == PortTradeRatio.THREE_TO_ONE){
+            if(port.getPortTradeRatio() == 3){
                 numThreeToOnePorts++;
-            }else if (port.getPortTradeRatio() == PortTradeRatio.TWO_TO_ONE){
+            }else if (port.getPortTradeRatio() == 2){
                 resourcePorts.add(port.getResourceType());
             }
         }
@@ -416,13 +416,12 @@ public class ShufflerTest {
 
         boolean result = true;
         for(int i = 0; i < 4; i++){
-            result = result && PortTradeRatio.THREE_TO_ONE.equals(ports.get(i).getPortTradeRatio());
+            result = result && 3 == ports.get(i).getPortTradeRatio();
         }
 
         int index = 4;
         for(ResourceType resource: ResourceType.values()){
-            result =
-                result && PortTradeRatio.TWO_TO_ONE.equals(ports.get(index).getPortTradeRatio());
+            result = result && 2 == ports.get(index).getPortTradeRatio();
             result = result && resource.equals(ports.get(index).getResourceType());
             index++;
         }

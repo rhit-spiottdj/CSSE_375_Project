@@ -1,3 +1,5 @@
+# Base Catan Features
+
 ### F1: Supports GUI for player interaction
 
 ### F2: Allows users to select team color
@@ -97,5 +99,72 @@ When the following conditions are true:
 - The player buys a development card from the bank.
 
 
+# Cities & Knights Expansion Features (specific)
+
+### F25: Draw Progress Card
+When the following conditions are true:
+	- Dice requirements are met
+	- Improvement requirements are met 
+
+### F26: Distribute Commodities
+When the following conditions are true:
+	- A city in a commodity producing environment is owned
+
+### F27: Buy and Build a Wall on the board
+When the following conditions are true:
+	- The player owns a city
+	- The player has 2 brick
+
+### F28: Variable Robber Halving Rates
+When the following conditions are true:
+	 - threshold for halving = 7 + (2 * number_of_walls)
+
+### F29: Hire a Knight
+When the following conditions are true:
+	- The player has an unoccupied road section
+	- The player has 1 wool and 1 ore
+
+### F30: Activate a Knight
+When the following conditions are true:
+	- The player owns an inactive knight
+	- The player has one grain 
+	
+### F31: Promote a Knight
+When the following conditions are true:
+	- The specific knight has not been promoted on the current turn already
+	- The player has 1 wool and 1 ore
+	- The player has level 3 politics (only required for promoting to highest level knight)
+
+### F32: Perform Knight Action
+When the following conditions are true:
+	- The knight was not activated on the current turn
+
+### F33: Perform Barbarian Attack
+When the following conditions are true:
+	- The barbarian ship is at the end of the barbarian track
+
+### F34: Automatically Down-grade City (linked to F34)
+When the following conditions are true:
+	- The barbarian strength is greater than knight strength
+	- The player has the lowest strength
+
+### F35: Automatically Distribute Victory Point (linked to F34)
+When the following conditions are true:
+	- The knight strength is greater than or equal to the barbarian strength
+	- The player has the highest strength
+
+### F36: Improve City
+When the following conditions are true:
+	- The player owns a city
+	- The player has the required amount of commodities to upgrade (level specific)
+
+### F37: Build Metropolis
+When the following conditions are true:
+	- The player is upgrading to the 4th level of city improvement
+	- The player is the first to upgrade to level 4 in the specific category
+
+### F38: Play Progress Card
+When the following conditions are true:
+	- The player has rolled the dice
 
 

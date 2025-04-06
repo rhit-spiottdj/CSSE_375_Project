@@ -9,10 +9,11 @@ This use case covers the setup phase of the game. This breaks down into player c
 1. The Game displays the start menu. 
 2. Player 1 clicks the "New Game" button 
 3. The Game displays the following options to select the number of players. 
-   1. 3 players 
-   2. 4 players
-   3. 5 players 
-   4. 6 players 
+   1. 2 players
+   2. 3 players
+   3. 4 players
+   4. 5 players
+   5. 6 players
 4. Player 1 selects the amount of players to play with. 
 5. The Game displays a list of all players with text fields asking for their names and a color dropdown menu for a color. 
 6. Each player fills in their name and selects a color. 
