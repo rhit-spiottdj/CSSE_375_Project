@@ -351,9 +351,9 @@ public class GameDisplay implements ActionListener {
                 messages.getString("invalidPlacementTitle"), JOptionPane.ERROR_MESSAGE);
     }
 
-    private static String getFormattedPlayerMessage(String key, int i) {
+    private static String getFormattedPlayerMessage(String key, Object arg) {
         String messageTemplate = messages.getString(key);
-        return MessageFormat.format(messageTemplate, i + 1);
+        return MessageFormat.format(messageTemplate, arg);
     }
 
     private void setupLanguage() {
@@ -866,9 +866,9 @@ public class GameDisplay implements ActionListener {
     }
 
     private void tryFirstSettlementAndRoadPlacement(Player[] players, int i) {
-        initialSettlementDisplay(i, messages.getString("settlementFirst"));
+        initialSettlementDisplay(players, i, messages.getString("settlementFirst"));
         waitForSettlementPlacement(players[i], false);
-        initialRoadDisplay(i, messages.getString("settlementFirst"));
+        initialRoadDisplay(players, i, messages.getString("settlementFirst"));
         waitForRoadPlacement(players[i]);
     }
 
@@ -881,9 +881,9 @@ public class GameDisplay implements ActionListener {
     }
 
     private void trySecondRoadAndSettlementPlacement(Player[] players, int i) {
-        initialSettlementDisplay(i, messages.getString("settlementSecond"));
+        initialSettlementDisplay(players, i, messages.getString("settlementSecond"));
         waitForSettlementPlacement(players[i], true);
-        initialRoadDisplay(i, messages.getString("settlementSecond"));
+        initialRoadDisplay(players, i, messages.getString("settlementSecond"));
         waitForRoadPlacement(players[i]);
     }
 
@@ -919,10 +919,10 @@ public class GameDisplay implements ActionListener {
         return true;
     }
 
-    private void initialRoadDisplay(int i, String roadNumber) {
+    private void initialRoadDisplay(Player[] players, int i, String roadNumber) {
         JOptionPane.showMessageDialog(null,
                 getFormattedStructureMessage("placeInitialRoadMessage", roadNumber),
-                getFormattedPlayerMessage("playerTurnTitle", i), JOptionPane.INFORMATION_MESSAGE);
+                getFormattedPlayerMessage("playerTurnTitle", players[i].getPlayerName()), JOptionPane.INFORMATION_MESSAGE);
     }
 
     private String getFormattedStructureMessage(String key, String structureNumber) {
@@ -954,10 +954,10 @@ public class GameDisplay implements ActionListener {
         return true;
     }
 
-    private void initialSettlementDisplay(int playerIndex, String settlementNumber) {
+    private void initialSettlementDisplay(Player[] players, int playerIndex, String settlementNumber) {
         JOptionPane.showMessageDialog(null,
                 getFormattedStructureMessage("placeInitialSettlementMessage", settlementNumber),
-                getFormattedPlayerMessage("playerTurnTitle", playerIndex),
+                getFormattedPlayerMessage("playerTurnTitle", players[playerIndex].getPlayerName()),
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
@@ -1052,7 +1052,7 @@ public class GameDisplay implements ActionListener {
 
     private String getPlayerNameMessage(int i) {
         String curName = JOptionPane.showInputDialog(null,
-                getFormattedPlayerMessage("playerSelectionMessage", i),
+                getFormattedPlayerMessage("playerSelectionMessage", i + 1),
                 messages.getString("namePlaceholder"));
         return curName;
     }

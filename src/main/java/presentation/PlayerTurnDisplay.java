@@ -114,6 +114,8 @@ public class PlayerTurnDisplay {
 
     public void updateUIForNewPlayer(Player player) {
         this.playerName = player.getPlayerName();
+        System.out.println("HERE");
+        System.out.println(this.playerName);
         turnEnded = false;
         resetContent();
 
