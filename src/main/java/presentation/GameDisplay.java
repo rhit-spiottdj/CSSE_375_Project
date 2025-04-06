@@ -757,7 +757,7 @@ public class GameDisplay implements ActionListener {
         return MessageFormat.format(messageTemplate, formattedResourceStolen, playerToStealFrom);
     }
 
-    private static String getFormattedResourceStolen(String resourceStolen) {
+    public static String getFormattedResourceStolen(String resourceStolen) {
     	return messages.getString(resourceStolen.toLowerCase());
     }
 

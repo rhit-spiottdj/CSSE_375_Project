@@ -259,6 +259,18 @@ public class TestBank {
         bank.obtainResource(ResourceType.BRICK,19);
         assertFalse(bank.tradeResourcePort(threePort, ResourceType.GRAIN, ResourceType.BRICK, 1));
     }
+    
+    @Test
+    public void testPortTradeRatioThree() {
+    	Port threePort = new Port(3, ResourceType.BRICK);
+    	assertEquals(threePort.ratio, 3);
+    }
+    
+    @Test
+    public void testPortTradeRatioTwo() {
+    	Port threePort = new Port(2, ResourceType.BRICK);
+    	assertEquals(threePort.ratio, 2);
+    }
 
     @Test
     public void testTradeBankLBNegOne() {
