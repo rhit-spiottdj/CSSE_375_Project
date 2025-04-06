@@ -115,7 +115,6 @@ public class TradeManagerGUI {
         initializeMainFields();
     }
 
-
     private static void noResourcesSelectedMessage() {
         JOptionPane.showMessageDialog(null, messages.getString("noResourcesSelected"),
             messages.getString("noResourcesSelected"), JOptionPane.ERROR_MESSAGE);
