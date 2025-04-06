@@ -224,12 +224,6 @@ public class GameManager {
         }
     }
 
-    public void findLongestRoad() {
-        bonusManager.findLongestRoad(players, boardManager.getRoadsOnBoard().toArray(new Road[0]));
-        calculateVictoryPointsForPlayer(inTurn);
-    }
-
-
     public int calculateVictoryPointsForPlayer(Player player) {
         int amount = calculateVictoryPointsForPlayer(boardManager, player);
         player.setVictoryPoints(amount);
@@ -388,7 +382,10 @@ public class GameManager {
 
     public boolean playRoadBuildingCard(int[][] intersections){
         boolean success = cardManager.playRoadBuilding(inTurn, intersections);
-        if(success) findLongestRoad();
+        if(success) {
+            bonusManager.findLongestRoad(players, boardManager.getRoadsOnBoard().toArray(new Road[0]));
+            calculateVictoryPointsForPlayer(inTurn);
+        }
         return success;
     }
 

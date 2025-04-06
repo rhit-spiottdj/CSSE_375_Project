@@ -1796,7 +1796,7 @@ public class TestGameManager {
         EasyMock.expect(bonusManager.getLargestArmyOwner()).andReturn(null);
         player.setVictoryPoints(0);
 
-        EasyMock.replay(bm, bank, player, dcm);
+        EasyMock.replay(bm, bank, player, dcm, bonusManager);
 
         GameManager gm = new GameManager(dcm, new Player[]{player}, bm, bank);
 

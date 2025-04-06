@@ -703,7 +703,7 @@ public class DevelopmentCardManagerTests {
         assertEquals(ResourceType.GRAIN, stolen);
 
         EasyMock.verify(player,player2, boardManager);
-        assertEquals(bonusManager.largestArmyOwner,player); // TODO make sure this actually works
+        assertEquals(bonusManager.largestArmyOwner,player);
     }
 
     @Test

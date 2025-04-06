@@ -18,7 +18,7 @@ public class BonusManagerTests {
 
     Player[] players;
 
-    BonusManager manager;
+    BonusManager bonusManager;
 
     BoardManager boardManager;
 
@@ -30,7 +30,7 @@ public class BonusManagerTests {
         boardManager = EasyMock.createMock(BoardManager.class);
         players = new Player[]{player,player2};
 
-        manager = new BonusManager();
+        bonusManager = new BonusManager();
     }
 
     private Road[] setupRoads(Player owner, int numberOfRoads, Intersection startingPoint) {
@@ -75,10 +75,10 @@ public class BonusManagerTests {
         players[0] = player;
         players[1] = player2;
 
-        boolean actual = manager.findLongestRoad(players, roads);
+        boolean actual = bonusManager.findLongestRoad(players, roads);
 
         assertFalse(actual);
-        assertNull(manager.getLongestRoadOwner());
+        assertNull(bonusManager.getLongestRoadOwner());
     }
 
 //### Test Value 2
@@ -94,10 +94,10 @@ public class BonusManagerTests {
         players[0] = player;
         players[1] = player2;
 
-        boolean actual = manager.findLongestRoad(players, roads);
+        boolean actual = bonusManager.findLongestRoad(players, roads);
 
         assertTrue(actual);
-        assertEquals(player, manager.getLongestRoadOwner());
+        assertEquals(player, bonusManager.getLongestRoadOwner());
     }
 
     @Test
@@ -114,10 +114,10 @@ public class BonusManagerTests {
         System.arraycopy(roads, 0, roads3, 0, 5);
         System.arraycopy(roads2, 0, roads3, 5, 5);
 
-        boolean actual = manager.findLongestRoad(players, roads3);
+        boolean actual = bonusManager.findLongestRoad(players, roads3);
 
         assertTrue(actual);
-        assertEquals(player, manager.getLongestRoadOwner());
+        assertEquals(player, bonusManager.getLongestRoadOwner());
     }
 
 //### Test Value 3
@@ -136,10 +136,10 @@ public class BonusManagerTests {
         players[0] = player;
         players[1] = player2;
 
-        boolean actual = manager.findLongestRoad(players, roads);
+        boolean actual = bonusManager.findLongestRoad(players, roads);
 
         assertTrue(actual);
-        assertEquals(player, manager.getLongestRoadOwner());
+        assertEquals(player, bonusManager.getLongestRoadOwner());
     }
 
 //### Test Value 4
@@ -158,10 +158,10 @@ public class BonusManagerTests {
         players[0] = player;
         players[1] = player2;
 
-        boolean actual = manager.findLongestRoad(players, roads);
+        boolean actual = bonusManager.findLongestRoad(players, roads);
 
         assertFalse(actual);
-        assertNull(manager.getLongestRoadOwner());
+        assertNull(bonusManager.getLongestRoadOwner());
     }
 
 //### Test Value 5
@@ -190,10 +190,10 @@ public class BonusManagerTests {
         System.arraycopy(roads3, 0, roads, 10, 6);
         System.arraycopy(roads4, 0, roads, 16, 5);
 
-        boolean actual = manager.findLongestRoad(players, roads);
+        boolean actual = bonusManager.findLongestRoad(players, roads);
 
         assertTrue(actual);
-        assertEquals(player3, manager.getLongestRoadOwner());
+        assertEquals(player3, bonusManager.getLongestRoadOwner());
     }
 
 //### Test Value 6
@@ -215,10 +215,10 @@ public class BonusManagerTests {
         System.arraycopy(roads1, 0, roads, 0, 4);
         System.arraycopy(roads2, 0, roads, 4, 1);
 
-        boolean actual = manager.findLongestRoad(players, roads);
+        boolean actual = bonusManager.findLongestRoad(players, roads);
 
         assertFalse(actual);
-        assertNull(manager.getLongestRoadOwner());
+        assertNull(bonusManager.getLongestRoadOwner());
     }
 
 //### Test Value 7
@@ -240,29 +240,29 @@ public class BonusManagerTests {
         System.arraycopy(roads1, 0, roads, 0, 5);
         System.arraycopy(roads2, 0, roads, 5, 1);
 
-        boolean actual = manager.findLongestRoad(players, roads);
+        boolean actual = bonusManager.findLongestRoad(players, roads);
 
         assertTrue(actual);
-        assertEquals(player, manager.getLongestRoadOwner());
+        assertEquals(player, bonusManager.getLongestRoadOwner());
     }
 
     @ParameterizedTest
     @ValueSource(ints = {0,1})
     public void testBonusManager_getAndSetLargestArmyOwner(int playerIndex){
 
-        manager.setLargestArmyOwner(players[playerIndex]);
+        bonusManager.setLargestArmyOwner(players[playerIndex]);
 
-        assertEquals(players[playerIndex], manager.largestArmyOwner);
-        assertEquals(players[playerIndex], manager.getLargestArmyOwner());
+        assertEquals(players[playerIndex], bonusManager.largestArmyOwner);
+        assertEquals(players[playerIndex], bonusManager.getLargestArmyOwner());
     }
 
     @ParameterizedTest
     @ValueSource(ints = {0,1})
     public void testBonusManager_getAndSetLongestRoadOwner(int playerIndex){
 
-        manager.setLongestRoadOwner(players[playerIndex]);
+        bonusManager.setLongestRoadOwner(players[playerIndex]);
 
-        assertEquals(players[playerIndex], manager.longestRoadOwner);
-        assertEquals(players[playerIndex], manager.getLongestRoadOwner());
+        assertEquals(players[playerIndex], bonusManager.longestRoadOwner);
+        assertEquals(players[playerIndex], bonusManager.getLongestRoadOwner());
     }
 }
