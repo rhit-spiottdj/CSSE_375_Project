@@ -480,7 +480,7 @@ public class GameDisplay implements ActionListener {
     private void tryMainGameLoop() {
         try {
             mainGameLoop();
-        } catch (GameOverException e) {
+        } catch (RuntimeException e) {
         }
     }
 
@@ -566,7 +566,7 @@ public class GameDisplay implements ActionListener {
     private void hasInTurnWonTheGame() {
         gameManager.calculateVictoryPointsForPlayer(inTurn);
         if (gameManager.isGameOver()) {
-            throw new GameOverException();
+            throw new RuntimeException();
         }
     }
 
