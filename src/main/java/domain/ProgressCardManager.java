@@ -20,10 +20,10 @@ public class ProgressCardManager {
 
     private boolean checkSufficientResources(ResourceType resourceOne, ResourceType resourceTwo) {
         if (resourceOne.equals(resourceTwo)) {
-            return !bank.noMoreResource(resourceOne, 2);
+            return !bank.noMoreResource(new ResourceTransaction(resourceOne, 2));
         }
-        return !(bank.noMoreResource(resourceOne, 1) ||
-                bank.noMoreResource(resourceTwo, 1));
+        return !(bank.noMoreResource(new ResourceTransaction(resourceOne, 1)) ||
+                bank.noMoreResource(new ResourceTransaction(resourceTwo, 1)));
     }
 
     private void addResourcesToPlayer(Player player, ResourceType resourceOne, 

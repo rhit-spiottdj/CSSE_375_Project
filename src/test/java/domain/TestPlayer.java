@@ -19,23 +19,27 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestPlayer {
 
+    private Player createTestPlayer() {
+        return new Player(Color.BLUE, "Player1", new ArrayList<>());
+    }
+
     @EnumSource (ResourceType.class)
     @ParameterizedTest
     public void testPlayer_addEachResourceToEmpty(ResourceType resource) {
 
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
         player.addResource(resource);
 
         assertTrue(player.getResources().contains(resource));
         assertEquals(1, player.getResources().size());
-    } 
+    }
 
 
     @EnumSource (ResourceType.class)
     @ParameterizedTest
     public void testPlayer_addEachResourceToSingleSize(ResourceType resource) {
 
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
         player.addResource(resource);
         player.addResource(resource);
 
@@ -48,7 +52,7 @@ public class TestPlayer {
     @ParameterizedTest
     public void testPlayer_addEachResourceToMultipleSize(ResourceType resource) {
 
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
         player.addResource(resource);
         player.addResource(resource);
         player.addResource(resource);
@@ -62,7 +66,7 @@ public class TestPlayer {
     @ParameterizedTest
     public void testPlayer_addEachResourceToMaxSizeException(ResourceType resource) {
 
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
         for (int i = 0; i < 95; i++) {
             player.addResource(resource);
         }
@@ -70,7 +74,7 @@ public class TestPlayer {
         String expected = "Maximum resources reached, cannot add more";
 
         String actual = assertThrows(IllegalStateException.class,
-            () -> player.addResource(resource)).getMessage();
+                () -> player.addResource(resource)).getMessage();
 
 
         assertEquals(expected, actual);
@@ -80,7 +84,7 @@ public class TestPlayer {
     @ParameterizedTest
     public void testPlayer_removeEachResourceToEmptyException(ResourceType resource) {
 
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
 
         assertFalse(player.removeResource(resource));
     }
@@ -90,7 +94,7 @@ public class TestPlayer {
     @ParameterizedTest
     public void testPlayer_removeEachResourceToSingleSize(ResourceType resource) {
 
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
         player.addResource(resource);
         player.addResource(resource);
 
@@ -103,7 +107,7 @@ public class TestPlayer {
     @ParameterizedTest
     public void testPlayer_removeEachResourceToMultipleSize(ResourceType resource) {
 
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
         player.addResource(resource);
         player.addResource(resource);
         player.addResource(resource);
@@ -117,7 +121,7 @@ public class TestPlayer {
     @ParameterizedTest
     public void testPlayer_removeEachResourceToMaxSize(ResourceType resource) {
 
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
         for (int i = 0; i < 95; i++) {
             player.addResource(resource);
         }
@@ -128,14 +132,14 @@ public class TestPlayer {
 
     @Test
     public void testPlayer_checkNumResourceToEmpty() {
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
 
         assertEquals(0, player.checkNumResource());
     }
 
     @Test
     public void testPlayer_checkNumResourceToSingleSize() {
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
         player.addResource(ResourceType.BRICK);
 
         assertEquals(1, player.checkNumResource());
@@ -143,7 +147,7 @@ public class TestPlayer {
 
     @Test
     public void testPlayer_checkNumResourceToSingleSize2() {
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
         player.addResource(ResourceType.LUMBER);
 
         assertEquals(1, player.checkNumResource());
@@ -151,7 +155,7 @@ public class TestPlayer {
 
     @Test
     public void testPlayer_checkNumResourceToMultipleSize() {
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
         player.addResource(ResourceType.LUMBER);
         player.addResource(ResourceType.GRAIN);
 
@@ -164,7 +168,7 @@ public class TestPlayer {
 
     @Test
     public void testPlayer_checkNumResourceToMaxSize() {
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
         for (int i = 0; i < 95; i++) {
             player.addResource(ResourceType.LUMBER);
         }
@@ -179,7 +183,7 @@ public class TestPlayer {
     @Test
     public void testPlayer_hasResourcesBothEmpty() {
 
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
 
         boolean actual = player.hasResources(new ArrayList<>());
         assertFalse(actual);
@@ -190,7 +194,7 @@ public class TestPlayer {
     @ParameterizedTest
     public void testPlayer_hasResourcesToEmptyToSingleSizeException(ResourceType resource) {
 
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
         player.addResource(resource);
 
         boolean actual = player.hasResources(new ArrayList<>());
@@ -201,7 +205,7 @@ public class TestPlayer {
     public void testPlayer_hasResourcesToSingleSizeToSingleSizeExpectTrue(ResourceType resource) {
         ArrayList<ResourceType> listToCheck = new ArrayList<>();
         listToCheck.add(resource);
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
         player.addResource(resource);
 
         assertTrue(player.hasResources(listToCheck));
@@ -212,7 +216,7 @@ public class TestPlayer {
     public void testPlayer_hasResourcesToSingleSizeToEmptyExpectFalse(ResourceType resource) {
         ArrayList<ResourceType> listToCheck = new ArrayList<>();
         listToCheck.add(resource);
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
 
         assertFalse(player.hasResources(listToCheck));
     }
@@ -221,7 +225,7 @@ public class TestPlayer {
     public void testPlayer_hasResourcesToSingleSizeToSingleSizeExpectFalse() {
         ArrayList<ResourceType> listToCheck = new ArrayList<>();
         listToCheck.add(ResourceType.ORE);
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
         player.addResource(ResourceType.WOOL);
 
         assertFalse(player.hasResources(listToCheck));
@@ -232,7 +236,7 @@ public class TestPlayer {
         ArrayList<ResourceType> listToCheck = new ArrayList<>();
         listToCheck.add(ResourceType.ORE);
         listToCheck.add(ResourceType.ORE);
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
         player.addResource(ResourceType.ORE);
         player.addResource(ResourceType.ORE);
         player.addResource(ResourceType.WOOL);
@@ -245,7 +249,7 @@ public class TestPlayer {
         ArrayList<ResourceType> listToCheck = new ArrayList<>();
         listToCheck.add(ResourceType.LUMBER);
         listToCheck.add(ResourceType.ORE);
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
         player.addResource(ResourceType.LUMBER);
         player.addResource(ResourceType.WOOL);
 
@@ -255,7 +259,7 @@ public class TestPlayer {
     @Test
     public void testPlayer_hasResourcesToMaxSizeToMultipleSizeExpectFalse() {
         ArrayList<ResourceType> listToCheck = new ArrayList<>();
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
         for (int i = 0; i < 19; i++) {
             for(ResourceType resource: ResourceType.values()){
                 listToCheck.add(resource);
@@ -271,7 +275,7 @@ public class TestPlayer {
     @Test
     public void testPlayer_hasResourcesToMaxSizeToMaxSizeExpectFalse() {
         ArrayList<ResourceType> listToCheck = new ArrayList<>();
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
         for (int i = 0; i < 19; i++) {
             for(ResourceType resource: ResourceType.values()){
                 listToCheck.add(resource);
@@ -291,7 +295,7 @@ public class TestPlayer {
     @ParameterizedTest
     @EnumSource(ResourceType.class)
     public void testPlayer_getNumOwnedResource_empty(ResourceType resourceType){
-        Player player = new Player(Color.ORANGE, "Todd", new ArrayList<>());
+        Player player = createTestPlayer();
 
         int actual = player.getNumOwnedResource(resourceType);
 
@@ -357,9 +361,9 @@ public class TestPlayer {
 
     @ParameterizedTest
     @EnumSource(names = {"KNIGHT", "MONOPOLY",
-        "PLENTY", "ROAD"})
+            "PLENTY", "ROAD"})
     public void testPlayer_setDevelopmentCardAsPlayed_simpleSingleCard(DevelopmentCards devCard){
-        Player player = new Player(Color.ORANGE, "Todd", new ArrayList<>());
+        Player player = createTestPlayer();
         player.developmentCards.add(devCard);
 
         player.setDevelopmentCardAsPlayed(devCard);
@@ -373,12 +377,12 @@ public class TestPlayer {
 
     @ParameterizedTest
     @EnumSource(names = {"KNIGHT", "MONOPOLY",
-        "PLENTY", "ROAD"})
+            "PLENTY", "ROAD"})
     public void testPlayer_setDevelopmentCardAsPlayed_simpleMissingCard(DevelopmentCards devCard){
-        Player player = new Player(Color.ORANGE, "Todd", new ArrayList<>());
+        Player player = createTestPlayer();
 
         String actual = assertThrows(IllegalArgumentException.class,
-            () -> player.setDevelopmentCardAsPlayed(devCard)).getMessage();
+                () -> player.setDevelopmentCardAsPlayed(devCard)).getMessage();
 
         String expected = "Player doesn't own any of that card";
 
@@ -387,7 +391,7 @@ public class TestPlayer {
 
     @Test
     public void testPlayer_setDevelopmentCardAsPlayed_simpleMixedCard(){
-        Player player = new Player(Color.ORANGE, "Todd", new ArrayList<>());
+        Player player = createTestPlayer();
         player.developmentCards.add(KNIGHT);
         player.developmentCards.add(DevelopmentCards.MONOPOLY);
 
@@ -404,7 +408,7 @@ public class TestPlayer {
 
     @Test
     public void testPlayer_setDevelopmentCardAsPlayed_knightWithSingleUnplayableCard(){
-        Player player = new Player(Color.ORANGE, "Todd", new ArrayList<>());
+        Player player = createTestPlayer();
 
         player.developmentCards.add(KNIGHT);
         player.unplayableDevelopmentCards.add(KNIGHT);
@@ -425,7 +429,7 @@ public class TestPlayer {
 
     @Test
     public void testPlayer_setDevelopmentCardAsPlayed_knightWithTwoUnplayableCard(){
-        Player player = new Player(Color.ORANGE, "Todd", new ArrayList<>());
+        Player player = createTestPlayer();
 
         player.developmentCards.add(KNIGHT);
         player.unplayableDevelopmentCards.add(KNIGHT);
@@ -447,7 +451,7 @@ public class TestPlayer {
 
     @Test
     public void testPlayer_setDevelopmentCardAsPlayed_knightWithMaxUnplayableKnightCard(){
-        Player player = new Player(Color.ORANGE, "Todd", new ArrayList<>());
+        Player player = createTestPlayer();
 
         player.developmentCards.add(KNIGHT);
         for(int i = 0; i < 13; i++){
@@ -469,9 +473,9 @@ public class TestPlayer {
 
     @ParameterizedTest
     @EnumSource(names = {"KNIGHT", "MONOPOLY",
-        "PLENTY", "ROAD"})
+            "PLENTY", "ROAD"})
     public void testPlayer_addDevelopmentCard_simplePlayableCard(DevelopmentCards devCard){
-        Player player = new Player(Color.ORANGE, "Todd", new ArrayList<>());
+        Player player = createTestPlayer();
 
 
         player.addDevelopmentCard(devCard);
@@ -488,7 +492,7 @@ public class TestPlayer {
 
     @Test
     public void testPlayer_addDevelopmentCard_simpleUnplayableCard(){
-        Player player = new Player(Color.ORANGE, "Todd", new ArrayList<>());
+        Player player = createTestPlayer();
 
         player.addDevelopmentCard(VICTORY);
 
@@ -504,7 +508,7 @@ public class TestPlayer {
 
     @Test
     public void testPlayer_addDevelopmentCard_knightWithPlayableKnightCard(){
-        Player player = new Player(Color.ORANGE, "Todd", new ArrayList<>());
+        Player player = createTestPlayer();
 
         player.futureDevelopmentCards.add(KNIGHT);
 
@@ -523,7 +527,7 @@ public class TestPlayer {
 
     @Test
     public void testPlayer_addDevelopmentCard_knightWithPlayableMixCards(){
-        Player player = new Player(Color.ORANGE, "Todd", new ArrayList<>());
+        Player player = createTestPlayer();
 
         player.futureDevelopmentCards.add(KNIGHT);
         player.futureDevelopmentCards.add(ROAD);
@@ -544,7 +548,7 @@ public class TestPlayer {
 
     @Test
     public void testPlayer_addDevelopmentCard_knightWithPlayableMaxCards(){
-        Player player = new Player(Color.ORANGE, "Todd", new ArrayList<>());
+        Player player = createTestPlayer();
 
         for(int i = 0; i < 13; i++){
             player.futureDevelopmentCards.add(KNIGHT);
@@ -565,7 +569,7 @@ public class TestPlayer {
 
     @Test
     public void testPlayer_addDevelopmentCard_VPWithUnplayableVPCard(){
-        Player player = new Player(Color.ORANGE, "Todd", new ArrayList<>());
+        Player player = createTestPlayer();
 
         player.unplayableDevelopmentCards.add(VICTORY);
 
@@ -584,7 +588,7 @@ public class TestPlayer {
 
     @Test
     public void testPlayer_addDevelopmentCard_VPWithUnplayableMixCards(){
-        Player player = new Player(Color.ORANGE, "Todd", new ArrayList<>());
+        Player player = createTestPlayer();
 
         player.unplayableDevelopmentCards.add(VICTORY);
         player.unplayableDevelopmentCards.add(KNIGHT);
@@ -605,7 +609,7 @@ public class TestPlayer {
 
     @Test
     public void testPlayer_addDevelopmentCard_VPWithUnplayableMaxCards(){
-        Player player = new Player(Color.ORANGE, "Todd", new ArrayList<>());
+        Player player = createTestPlayer();
 
         for(int i = 0; i < 4;i++){
             player.unplayableDevelopmentCards.add(VICTORY);
@@ -628,7 +632,7 @@ public class TestPlayer {
 
     @Test
     public void testPlayer_startTurn_empty() {
-        Player player = new Player(Color.ORANGE, "Todd", new ArrayList<>());
+        Player player = createTestPlayer();
 
         player.startTurn();
 
@@ -638,7 +642,7 @@ public class TestPlayer {
 
     @Test
     public void testPlayer_startTurn_oneKnight() {
-        Player player = new Player(Color.ORANGE, "Todd", new ArrayList<>());
+        Player player = createTestPlayer();
 
         player.addDevelopmentCard(KNIGHT);
 
@@ -650,7 +654,7 @@ public class TestPlayer {
 
     @Test
     public void testPlayer_startTurn_twoKnight() {
-        Player player = new Player(Color.ORANGE, "Todd", new ArrayList<>());
+        Player player = createTestPlayer();
 
         player.addDevelopmentCard(KNIGHT);
         player.addDevelopmentCard(KNIGHT);
@@ -663,7 +667,7 @@ public class TestPlayer {
 
     @Test
     public void testPlayer_startTurn_maxCard() {
-        Player player = new Player(Color.ORANGE, "Todd", new ArrayList<>());
+        Player player = createTestPlayer();
 
         for(int i = 0; i < 14; i++){
             player.addDevelopmentCard(KNIGHT);
@@ -682,13 +686,13 @@ public class TestPlayer {
 
     @Test
     public void testPlayer_getDevCardPlayed(){
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
         assertFalse(player.isDevCardPlayed());
     }
 
     @Test
     public void testPlayer_getAndSetDevCardPlayed(){
-        Player player = new Player(Color.BLUE, "Player1", new ArrayList<>());
+        Player player = createTestPlayer();
         player.setDevCardPlayed();
         assertTrue(player.isDevCardPlayed());
     }
@@ -714,7 +718,7 @@ public class TestPlayer {
     @ParameterizedTest
     @ValueSource(ints = {0,1,2,3,4,5,6,7,8,9,10})
     public void testPlayer_getAndSetNumVictoryPoints(int numPoints){
-        Player player = new Player(Color.RED,"todd", new ArrayList<>());
+        Player player = createTestPlayer();
 
         player.setVictoryPoints(numPoints);
 
@@ -726,7 +730,7 @@ public class TestPlayer {
     @ParameterizedTest
     @ValueSource(ints = {0,1,2,3,4,5,6,7,8,9,10})
     public void testPlayer_setNumVictoryPoints(int numPoints){
-        Player player = new Player(Color.RED,"todd", new ArrayList<>());
+        Player player = createTestPlayer();
 
         player.setVictoryPoints(numPoints);
 
@@ -739,7 +743,7 @@ public class TestPlayer {
     @ParameterizedTest
     @ValueSource(ints = {0,1,2,3,4,5,6,7,8,9,10,11,12,13})
     public void testPlayer_getAndSetNumRoads(int numRoads){
-        Player player = new Player(Color.RED,"todd", new ArrayList<>());
+        Player player = createTestPlayer();
 
         player.setNumRoads(numRoads);
 
@@ -751,7 +755,7 @@ public class TestPlayer {
     @ParameterizedTest
     @ValueSource(ints = {0,1,2,3})
     public void testPlayer_getAndSetNumSettlements(int numSettlements){
-        Player player = new Player(Color.RED,"todd", new ArrayList<>());
+        Player player = createTestPlayer();
 
         player.setNumSettlements(numSettlements);
 
@@ -762,7 +766,7 @@ public class TestPlayer {
     @ParameterizedTest
     @ValueSource(ints = {0,1,2,3,4})
     public void testPlayer_getAndSetNumCities(int numCities){
-        Player player = new Player(Color.RED,"todd", new ArrayList<>());
+        Player player = createTestPlayer();
 
         player.setNumCities(numCities);
 
@@ -773,7 +777,7 @@ public class TestPlayer {
     @ParameterizedTest
     @EnumSource
     public void testHasDevelopmentCard_hasCard(DevelopmentCards card){
-        Player player = new Player(Color.RED, "d", new ArrayList<>());
+        Player player = createTestPlayer();
         player.developmentCards.add(card);
 
         assertTrue(player.hasDevelopmentCard(card));
@@ -782,14 +786,14 @@ public class TestPlayer {
     @ParameterizedTest
     @EnumSource
     public void testHasDevelopmentCard_hasNoCard(DevelopmentCards card){
-        Player player = new Player(Color.RED, "d", new ArrayList<>());
+        Player player = createTestPlayer();
 
         assertFalse(player.hasDevelopmentCard(card));
     }
 
     @Test
     public void testHasDevelopmentCard_differentCards(){
-        Player player = new Player(Color.RED, "d", new ArrayList<>());
+        Player player = createTestPlayer();
         player.developmentCards.add(KNIGHT);
 
         assertFalse(player.hasDevelopmentCard(ROAD));
@@ -798,7 +802,7 @@ public class TestPlayer {
     @ParameterizedTest
     @EnumSource
     public void testHasUnplayableDevelopmentCard_hasCard(DevelopmentCards card){
-        Player player = new Player(Color.RED, "d", new ArrayList<>());
+        Player player = createTestPlayer();
         player.unplayableDevelopmentCards.add(card);
 
         assertTrue(player.hasUnplayableDevelopmentCard(card));
@@ -807,14 +811,14 @@ public class TestPlayer {
     @ParameterizedTest
     @EnumSource
     public void testHasUnplayableDevelopmentCard_hasNoCard(DevelopmentCards card){
-        Player player = new Player(Color.RED, "d", new ArrayList<>());
+        Player player = createTestPlayer();
 
         assertFalse(player.hasUnplayableDevelopmentCard(card));
     }
 
     @Test
     public void testHasUnplayableDevelopmentCard_differentCards(){
-        Player player = new Player(Color.RED, "d", new ArrayList<>());
+        Player player = createTestPlayer();
         player.unplayableDevelopmentCards.add(KNIGHT);
 
         assertFalse(player.hasUnplayableDevelopmentCard(ROAD));

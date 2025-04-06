@@ -25,18 +25,18 @@ public class BoardManager {
     private static final int[] PRESET_BOARD_ROW_3 = {9, 11, 0, 3, 8};
     private static final int[] PRESET_BOARD_ROW_4 = {8, 3, 4, 5, -1};
     private static final int[] PRESET_BOARD_ROW_5 = {5, 6, 11, -1, -1};
-    static final int[] PORT_ONE = {10, 4};
-    static final int[] PORT_TWO = {30, 44};
-    static final int[] PORT_THREE = {51, 42};
-    static final int[] PORT_FOUR = {53, 47};
-    static final int[] PORT_FIVE = {31, 29};
-    static final int[] PORT_SIX = {21, 19};
-    static final int[] PORT_SEVEN = {39, 50};
-    static final int[] PORT_EIGHT = {48, 34};
-    static final int[] PORT_NINE = {20, 36};
-    static int[][] PORT_INTERSECTIONS = new int[][]{
-        PORT_ONE, PORT_TWO, PORT_THREE, PORT_FOUR, PORT_FIVE, PORT_SIX, PORT_SEVEN,
-        PORT_EIGHT, PORT_NINE};
+    static final Coordinate PORT_ONE = new Coordinate(10, 4);
+    static final Coordinate PORT_TWO = new Coordinate(30, 44);
+    static final Coordinate PORT_THREE = new Coordinate(51, 42);
+    static final Coordinate PORT_FOUR = new Coordinate(53, 47);
+    static final Coordinate PORT_FIVE = new Coordinate(31, 29);
+    static final Coordinate PORT_SIX = new Coordinate(21, 19);
+    static final Coordinate PORT_SEVEN = new Coordinate(39, 50);
+    static final Coordinate PORT_EIGHT = new Coordinate(48, 34);
+    static final Coordinate PORT_NINE = new Coordinate(20, 36);
+    static Coordinate[] PORT_LOCATIONS = new Coordinate[]{
+            PORT_ONE, PORT_TWO, PORT_THREE, PORT_FOUR, PORT_FIVE, PORT_SIX, PORT_SEVEN,
+            PORT_EIGHT, PORT_NINE};
     public static final int NUM_THREE_TO_ONE_PORTS = 4;
 
     ArrayList<Port> ports = new ArrayList<>();
@@ -59,51 +59,56 @@ public class BoardManager {
 
     private Random rand;
 
+    // Private constructor to handle all assignments
+    private BoardManager(Random rand, Hexagon[] hexagons, Intersection[] intersections,
+                         List<Intersection> structureLocations, List<Intersection> roads,
+                         List<Road> roadsOnBoard, Shuffler shuffler) {
+        this.rand = (rand != null) ? rand : new Random();
+        this.hexagons = (hexagons != null) ? hexagons : new Hexagon[0];  // Initialize empty array
+        this.intersections = (intersections != null) ? intersections : new Intersection[2]; // Provide expected size
+        this.structureLocations = (structureLocations != null) ? structureLocations : new ArrayList<>();
+        this.roads = (roads != null) ? roads : new ArrayList<>();
+        this.roadsOnBoard = (roadsOnBoard != null) ? roadsOnBoard : new ArrayList<>();
+        this.shuffler = shuffler;
+    }
+
+    // Public constructors delegating to the main constructor
     public BoardManager() {
-        this.rand = new Random();
+        this(new Random(), null, null, null, null, null, null);
     }
 
     protected BoardManager(Hexagon[] hexagons) {
-        this.hexagons = hexagons;
+        this(null, hexagons, null, null, null, null, null);
     }
 
     protected BoardManager(Random rand) {
-        this.rand = rand;
+        this(rand, null, null, null, null, null, null);
     }
 
     protected BoardManager(Intersection[] intersections) {
-        this.intersections = intersections;
+        this(null, null, intersections, null, null, null, null);
     }
 
     protected BoardManager(Intersection[] intersections, List<Intersection> structureLocations) {
-        this.intersections = intersections;
-        this.structureLocations = structureLocations;
+        this(null, null, intersections, structureLocations, null, null, null);
     }
 
-    protected BoardManager(Intersection[] intersections, List<Intersection> structureLocations,
-        ArrayList<Intersection> roads) {
-        this.intersections = intersections;
-        this.structureLocations = structureLocations;
-        this.roads = roads;
+    protected BoardManager(Intersection[] intersections, List<Intersection> structureLocations,ArrayList<Intersection> roads) {
+        this(null, null, intersections, structureLocations, roads, null, null);
     }
 
     protected BoardManager(Hexagon[] hexagons, Intersection[] intersections) {
-        this.hexagons = hexagons;
-        this.intersections = intersections;
+        this(null, hexagons, intersections, null, null, null, null);
     }
 
     protected BoardManager(Intersection[] intersections, List<Intersection> roads,
-        List<Road> roadsOnBoard) {
-        this.intersections = intersections;
-        this.roads = roads;
-        this.roadsOnBoard = roadsOnBoard;
+                           List<Road> roadsOnBoard) {
+        this(null, null, intersections, null, roads, roadsOnBoard, null);
     }
 
     protected BoardManager(Shuffler shuffler, Intersection[] intersections) {
-        this.shuffler = shuffler;
-        this.intersections = intersections;
+        this(null, null, intersections, null, null, null, shuffler);
     }
-
 
     Hexagon[] generateHexagons(boolean randomize) {
         shuffler = new Shuffler();
@@ -202,9 +207,9 @@ public class BoardManager {
     void randomizePorts(Shuffler shuffler){
 
         ports = shuffler.getShuffledPortTokens();
-        for(int i = 0; i < PORT_INTERSECTIONS.length; i++){
-            intersections[PORT_INTERSECTIONS[i][0]].setPort(ports.get(i));
-            intersections[PORT_INTERSECTIONS[i][1]].setPort(ports.get(i));
+        for(int i = 0; i < PORT_LOCATIONS.length; i++){
+            intersections[PORT_LOCATIONS[i].getIndex1()].setPort(ports.get(i));
+            intersections[PORT_LOCATIONS[i].getIndex2()].setPort(ports.get(i));
         }
     }
 
@@ -223,8 +228,8 @@ public class BoardManager {
 
     private int addPredeterminedTwoToOnePort(int i, ResourceType resource) {
         Port port = new Port(2, resource);
-        intersections[PORT_INTERSECTIONS[i][0]].setPort(port);
-        intersections[PORT_INTERSECTIONS[i++][1]].setPort(port);
+        intersections[PORT_LOCATIONS[i].getIndex1()].setPort(port);
+        intersections[PORT_LOCATIONS[i++].getIndex2()].setPort(port);
         ports.add(port);
         return i;
     }
@@ -239,8 +244,8 @@ public class BoardManager {
 
     private void addPredeterminedThreeToOnePort(int i) {
         Port port = new Port(3, ResourceType.GRAIN);
-        intersections[PORT_INTERSECTIONS[i][0]].setPort(port);
-        intersections[PORT_INTERSECTIONS[i][1]].setPort(port);
+        intersections[PORT_LOCATIONS[i].getIndex1()].setPort(port);
+        intersections[PORT_LOCATIONS[i].getIndex2()].setPort(port);
         ports.add(port);
     }
 
@@ -264,17 +269,17 @@ public class BoardManager {
 
     private int[][] getPredeterminedHexagonValues() {
         int[][] hexagonValues =
-            new int[][]{PRESET_BOARD_ROW_1, PRESET_BOARD_ROW_2, PRESET_BOARD_ROW_3,
-                PRESET_BOARD_ROW_4, PRESET_BOARD_ROW_5};
+                new int[][]{PRESET_BOARD_ROW_1, PRESET_BOARD_ROW_2, PRESET_BOARD_ROW_3,
+                        PRESET_BOARD_ROW_4, PRESET_BOARD_ROW_5};
         return hexagonValues;
     }
 
     private ResourceType[] getPredeterminedResourceLayout() {
         return new ResourceType[]{null, ResourceType.LUMBER, ResourceType.LUMBER, ResourceType.ORE,
-            ResourceType.GRAIN, ResourceType.GRAIN, ResourceType.ORE, ResourceType.WOOL,
-            ResourceType.LUMBER, ResourceType.WOOL, ResourceType.BRICK, ResourceType.BRICK,
-            ResourceType.GRAIN, ResourceType.GRAIN, ResourceType.WOOL, ResourceType.BRICK,
-            ResourceType.WOOL, ResourceType.LUMBER, ResourceType.ORE};
+                ResourceType.GRAIN, ResourceType.GRAIN, ResourceType.ORE, ResourceType.WOOL,
+                ResourceType.LUMBER, ResourceType.WOOL, ResourceType.BRICK, ResourceType.BRICK,
+                ResourceType.GRAIN, ResourceType.GRAIN, ResourceType.WOOL, ResourceType.BRICK,
+                ResourceType.WOOL, ResourceType.LUMBER, ResourceType.ORE};
     }
 
     void assignPredeterminedResources(Hexagon[] hexagons, ResourceType[] resourceTypes) {
@@ -379,7 +384,7 @@ public class BoardManager {
     private void ensureNewLocation(int[][] hexagonValues, Random rand, int[] desertIndex,
         int[] newRowAndCol) {
         while (newRowAndCol[0] == desertIndex[0] && newRowAndCol[1] == desertIndex[1] ||
-               hexagonValues[newRowAndCol[0]][newRowAndCol[1]] == -1) {
+                hexagonValues[newRowAndCol[0]][newRowAndCol[1]] == -1) {
             newRowAndCol[0] = rand.nextInt(RANDOM_BOUND);
             newRowAndCol[1] = rand.nextInt(RANDOM_BOUND);
         }
@@ -388,10 +393,11 @@ public class BoardManager {
     void addResAndValToHex(HexagonHelper helper) {
         if (helper.index != MAX_HEX_INDEX) {
             addResAndValToValidHex(helper);
+        } else {
+            helper.hexagons[helper.index].setDesert(true);
+            helper.hexagons[helper.index].setHasRobber(true);
+            helper.hexagons[helper.index].setValue(0);
         }
-
-        helper.hexagons[helper.index].setDesert(true);
-        helper.hexagons[helper.index].setHasRobber(true);
     }
 
     private void addResAndValToValidHex(HexagonHelper helper) {
@@ -399,6 +405,8 @@ public class BoardManager {
         helper.hexagons[helper.index].setValue(helper.numberTokens.get(0));
         helper.numberTokens.remove(0);
         helper.resourceTypes.remove(0);
+        helper.hexagons[helper.index].setDesert(false);
+        helper.hexagons[helper.index].setHasRobber(false);
     }
 
     Intersection[] generateIntersections() {
@@ -450,7 +458,7 @@ public class BoardManager {
     private void addIntersectionsThatAddToAndFlipY(IntersectionHelper helper, int i, int j) {
         if (i != END_OF_BOARD_INTERSECTIONS) {
             addIntersection(helper, helper.offsetX + j,
-                -1 * (helper.offsetY + INTERSECTION_HEIGHT_DIFF));
+                    -1 * (helper.offsetY + INTERSECTION_HEIGHT_DIFF));
             addFlippedIntersectionIfNotHorizontallyCentered(helper, j);
         }
     }
@@ -458,7 +466,7 @@ public class BoardManager {
     private void addFlippedIntersectionIfNotHorizontallyCentered(IntersectionHelper helper, int j) {
         if (j != 0 || helper.currentRowSize % 2 == 0) {
             addIntersection(helper, -1 * (helper.offsetX + j),
-                -1 * (helper.offsetY + INTERSECTION_HEIGHT_DIFF));
+                    -1 * (helper.offsetY + INTERSECTION_HEIGHT_DIFF));
         }
     }
 
@@ -466,7 +474,7 @@ public class BoardManager {
         int column) {
         if (row != 0) {
             addIntersection(helper, helper.offsetX + column,
-                -1 * (helper.offsetY - INTERSECTION_HEIGHT_DIFF));
+                    -1 * (helper.offsetY - INTERSECTION_HEIGHT_DIFF));
             addSubtractFlipIntersectionIfNotHorizontallyCentered(helper, column);
         }
     }
@@ -475,7 +483,7 @@ public class BoardManager {
         int column) {
         if (column != 0 || helper.currentRowSize % 2 == 0) {
             addIntersection(helper, -1 * (helper.offsetX + column),
-                -1 * (helper.offsetY - INTERSECTION_HEIGHT_DIFF));
+                    -1 * (helper.offsetY - INTERSECTION_HEIGHT_DIFF));
         }
     }
 
@@ -489,14 +497,14 @@ public class BoardManager {
     private void addIntersectionIfNotHorizontallyCentered(IntersectionHelper helper, int j) {
         if (j != 0 || helper.currentRowSize % 2 == 0) {
             addIntersection(helper, -1 * (helper.offsetX + j),
-                helper.offsetY + INTERSECTION_HEIGHT_DIFF);
+                    helper.offsetY + INTERSECTION_HEIGHT_DIFF);
         }
     }
 
     private void addIntersectionsThatSubtractFromY(IntersectionHelper helper, int row, int column) {
         if (row != 0) {
             addIntersection(helper, helper.offsetX + column,
-                helper.offsetY - INTERSECTION_HEIGHT_DIFF);
+                    helper.offsetY - INTERSECTION_HEIGHT_DIFF);
             addSubtractIntersectionIfNotHorizontallyCentered(helper, column);
         }
     }
@@ -505,7 +513,7 @@ public class BoardManager {
         int column) {
         if (column != 0 || helper.currentRowSize % 2 == 0) {
             addIntersection(helper, -1 * (helper.offsetX + column),
-                helper.offsetY - INTERSECTION_HEIGHT_DIFF);
+                    helper.offsetY - INTERSECTION_HEIGHT_DIFF);
         }
     }
 
@@ -683,7 +691,7 @@ public class BoardManager {
 
     private boolean checkSettlementPlacement(int index, Player player) {
         if (indexOutOfBoundsOrViolatesSettlementRules(index) ||
-            roadNotConnectingOrNotOwnedByPlayer(index, player)) {
+                roadNotConnectingOrNotOwnedByPlayer(index, player)) {
             return false;
         }
         return true;
@@ -691,13 +699,13 @@ public class BoardManager {
 
     private boolean roadNotConnectingOrNotOwnedByPlayer(int index, Player player) {
         return !roads.contains(intersections[index])
-               || !intersections[index].ownedByThisPlayer(player);
+                || !intersections[index].ownedByThisPlayer(player);
 
     }
 
     private boolean indexOutOfBoundsOrViolatesSettlementRules(int index) {
         return (index < 0 || index > MAX_INTERSECTION_INDEX ||
-            checkIfViolatesSettlementRules(index, intersections[index]));
+                checkIfViolatesSettlementRules(index, intersections[index]));
     }
 
     boolean checkSettlementCostAndCount(Player player) {
@@ -742,7 +750,7 @@ public class BoardManager {
 
     private boolean checkValidRoadPlacementLocation(int one, int two, Player p, boolean init) {
         if (invalidRoadIndices(one, two) || roadAlreadyExistsOnIntersections(one, two, init) ||
-            intersectionsNotOwnedByPlayer(one, two, p) || nonAdjacentIntersections(one, two)) {
+                intersectionsNotOwnedByPlayer(one, two, p) || nonAdjacentIntersections(one, two)) {
             return false;
         }
         return true;
@@ -766,7 +774,7 @@ public class BoardManager {
     boolean initCheck(int one, int two, boolean init) {
         if(init) {
             return !(intersections[one].getStructure() == null
-                 && intersections[two].getStructure() == null);
+                    && intersections[two].getStructure() == null);
         }
         return false;
     }
@@ -820,7 +828,7 @@ public class BoardManager {
         Intersection intersection = intersections[index];
         if (intersection.getStructure() == null)    return false;
         return intersection.getStructure().getOwner() == player &&
-               intersection.getStructure() instanceof Settlement;
+                intersection.getStructure() instanceof Settlement;
     }
 
     public boolean buildCity(int index, Player player) {
@@ -903,8 +911,10 @@ public class BoardManager {
     }
 
     boolean roadFound(int i, int i1, Road road) {
-        return road.getIntersections()[0].equals(intersections[i]) &&
-               road.getIntersections()[1].equals(intersections[i1]);
+        return (road.getIntersections()[0].equals(intersections[i]) &&
+                road.getIntersections()[1].equals(intersections[i1])) ||
+                (road.getIntersections()[0].equals(intersections[i1]) &&
+                        road.getIntersections()[1].equals(intersections[i]));
     }
 
     public void moveRobber(int hexIndex) {
@@ -981,29 +991,31 @@ public class BoardManager {
     }
 
     private int tryAddResourcesFromRoll(Bank bank, Intersection inter,
-        ResourceType resource) {
-        Player player = inter.getStructure().getOwner();
-        return tryToAddFromCityOrSettlement(bank, inter, resource, player);
+                                        ResourceType resource) {
+        Structure structure = inter.getStructure();
+        if(structure != null){
+            return tryToAddFromCityOrSettlement(bank, inter, resource, structure);
+        }
+        return 0;
     }
 
-    @SuppressWarnings("methodlength")
     private int tryToAddFromCityOrSettlement(Bank bank, Intersection inter,
-        ResourceType resource, Player player) {
-        if (inter.getStructure() instanceof City) {
-            if (bank.obtainResource(resource, 2)) {
-                player.addResource(resource);
-                player.addResource(resource);
-            } else  return 1;
-        } else if (bank.obtainResource(resource, 1))    player.addResource(resource);
-        else  return 1;
-        return 0;
+                                             ResourceType resource, Structure structure) {
+        int numResourcesToGet = (structure instanceof City) ? 2 : 1;
+        ResourceTransaction transaction = new ResourceTransaction(resource, numResourcesToGet);
+        if (bank.obtainResource(transaction)) {
+            structure.distributeResources(resource);
+        } else {
+            return 1;
+        }
+        return numResourcesToGet;
     }
     public ArrayList<Port> getPorts(){
         return new ArrayList<>(ports);
     }
 
-    public int[][] getPortIntersections() {
-        return PORT_INTERSECTIONS.clone();
+    public Coordinate[] getPortLocations() {
+        return PORT_LOCATIONS.clone();
     }
 
     public boolean removeRoad(int i, int i1) {

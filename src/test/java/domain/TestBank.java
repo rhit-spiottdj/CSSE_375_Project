@@ -22,7 +22,7 @@ public class TestBank {
     Port threePort;
 
     @BeforeEach
-    private void setup(){
+    public void setup(){
         bank = new Bank();
         threePort = new Port(3, ResourceType.LUMBER);
     }
@@ -30,7 +30,7 @@ public class TestBank {
     @Test
     public void testObtainResourceLumberNegOne() {
         Bank bank = new Bank();
-        assertFalse(bank.obtainResource(ResourceType.LUMBER, -1));
+        assertFalse(bank.obtainResource(new ResourceTransaction(ResourceType.LUMBER, -1)));
 
         for (ResourceType resource : ResourceType.values()) {
             assertEquals(19, bank.resources.get(resource));
@@ -41,7 +41,7 @@ public class TestBank {
     @Test
     public void testObtainResourceLumberMin() {
         Bank bank = new Bank();
-        assertFalse(bank.obtainResource(ResourceType.LUMBER, Integer.MIN_VALUE));
+        assertFalse(bank.obtainResource(new ResourceTransaction(ResourceType.LUMBER, Integer.MIN_VALUE)));
 
         for (ResourceType resource : ResourceType.values()) {
             assertEquals(19, bank.resources.get(resource));
@@ -51,7 +51,7 @@ public class TestBank {
     @Test
     public void testObtainResourceLumberZero() {
         Bank bank = new Bank();
-        assertFalse(bank.obtainResource(ResourceType.LUMBER, 0));
+        assertFalse(bank.obtainResource(new ResourceTransaction(ResourceType.LUMBER, 0)));
         for (ResourceType resource : ResourceType.values()) {
             assertEquals(19, bank.resources.get(resource));
         }
@@ -63,7 +63,7 @@ public class TestBank {
         Bank bank = new Bank();
 
 
-        assertTrue(bank.obtainResource(ResourceType.BRICK, 19));
+        assertTrue(bank.obtainResource(new ResourceTransaction(ResourceType.BRICK, 19)));
 
         for (ResourceType resource : ResourceType.values()) {
             if (resource.equals(ResourceType.BRICK)) {
@@ -77,7 +77,7 @@ public class TestBank {
     @Test
     public void testObtainResourceBrickMaxPlusOne() {
         Bank bank = new Bank();
-        assertFalse(bank.obtainResource(ResourceType.BRICK, 20));
+        assertFalse(bank.obtainResource(new ResourceTransaction(ResourceType.BRICK, 20)));
 
         for (ResourceType resource : ResourceType.values()) {
             assertEquals(19, bank.resources.get(resource));
@@ -87,7 +87,7 @@ public class TestBank {
     @Test
     public void testObtainResourceBrickMinMinusOne() {
         Bank bank = new Bank();
-        assertFalse(bank.obtainResource(ResourceType.BRICK, Integer.MAX_VALUE));
+        assertFalse(bank.obtainResource(new ResourceTransaction(ResourceType.BRICK, Integer.MAX_VALUE)));
 
         for (ResourceType resource : ResourceType.values()) {
             assertEquals(19, bank.resources.get(resource));
@@ -99,7 +99,7 @@ public class TestBank {
     @EnumSource(ResourceType.class)
     public void testObtainResourceOneResource(ResourceType resourceToTest) {
         Bank bank = new Bank();
-        assertTrue(bank.obtainResource(resourceToTest, 1));
+        assertTrue(bank.obtainResource(new ResourceTransaction(resourceToTest, 1)));
 
         for (ResourceType resource : ResourceType.values()) {
             if (resource.equals(resourceToTest)) {
@@ -118,7 +118,7 @@ public class TestBank {
             bank.resources.put(resource, 0);
         }
 
-        assertFalse(bank.obtainResource(ResourceType.GRAIN, 1));
+        assertFalse(bank.obtainResource(new ResourceTransaction(ResourceType.GRAIN, 1)));
 
         for (ResourceType resource : ResourceType.values()) {
             assertEquals(0, bank.resources.get(resource));
@@ -136,7 +136,7 @@ public class TestBank {
         bank.resources.put(ResourceType.GRAIN, 1);
 
 
-        assertTrue(bank.obtainResource(ResourceType.GRAIN, 1));
+        assertTrue(bank.obtainResource(new ResourceTransaction(ResourceType.GRAIN, 1)));
 
         for (ResourceType resource : ResourceType.values()) {
             assertEquals(0, bank.resources.get(resource));
@@ -152,7 +152,7 @@ public class TestBank {
         bank.resources.put(ResourceType.GRAIN, 1);
         bank.resources.put(ResourceType.ORE, 1);
 
-        assertTrue(bank.obtainResource(ResourceType.GRAIN, 1));
+        assertTrue(bank.obtainResource(new ResourceTransaction(ResourceType.GRAIN, 1)));
 
         for (ResourceType resource : ResourceType.values()) {
             if (resource.equals(ResourceType.ORE)) {
@@ -184,7 +184,7 @@ public class TestBank {
 
     @Test
     public void testTradePort_ThreeLBOne() {
-        bank.obtainResource(ResourceType.LUMBER, 3);
+        bank.obtainResource(new ResourceTransaction(ResourceType.LUMBER, 3));
         assertTrue(bank.tradeResourcePort(threePort, ResourceType.LUMBER, ResourceType.BRICK, 1));
         assertEquals(18, bank.resources.get(ResourceType.BRICK));
         assertEquals(19, bank.resources.get(ResourceType.LUMBER));
@@ -192,8 +192,8 @@ public class TestBank {
 
     @Test
     public void testTradePort_TwoGWNine() {
-        bank.obtainResource(ResourceType.GRAIN,18);
         Port twoPort = new Port(2, ResourceType.GRAIN);
+        bank.obtainResource(new ResourceTransaction(ResourceType.GRAIN,18));
         assertTrue(bank.tradeResourcePort(twoPort, ResourceType.GRAIN, ResourceType.WOOL, 9));
         assertEquals(19, bank.resources.get(ResourceType.GRAIN));
         assertEquals(10, bank.resources.get(ResourceType.WOOL));
@@ -202,8 +202,8 @@ public class TestBank {
     @ParameterizedTest
     @EnumSource(names = {"GRAIN", "WOOL", "LUMBER", "ORE"})
     public void testTradePort_twoResourceEachTypeBrickOne(ResourceType giveAway){
-        bank.obtainResource(giveAway,2);
         Port twoPort = new Port(2, giveAway);
+        bank.obtainResource(new ResourceTransaction(giveAway,2));
         assertTrue(bank.tradeResourcePort(twoPort, giveAway, ResourceType.BRICK, 1));
         assertEquals(19, bank.resources.get(giveAway));
         assertEquals(18, bank.resources.get(ResourceType.BRICK));
@@ -211,8 +211,8 @@ public class TestBank {
 
     @Test
     public void testTradePort_twoResourceBrickGrainOne(){
-        bank.obtainResource(ResourceType.BRICK,2);
         Port twoPort = new Port(2, ResourceType.BRICK);
+        bank.obtainResource(new ResourceTransaction(ResourceType.BRICK,2));
         assertTrue(bank.tradeResourcePort(twoPort, ResourceType.BRICK, ResourceType.GRAIN, 1));
         assertEquals(19, bank.resources.get(ResourceType.BRICK));
         assertEquals(18, bank.resources.get(ResourceType.GRAIN));
@@ -226,9 +226,9 @@ public class TestBank {
 
     @Test
     public void testTradePort_emptyGiveOneTake(){
-        bank.obtainResource(ResourceType.GRAIN,19);
-        bank.obtainResource(ResourceType.BRICK,18);
         Port twoPort = new Port(2, ResourceType.GRAIN);
+        bank.obtainResource(new ResourceTransaction(ResourceType.GRAIN,19));
+        bank.obtainResource(new ResourceTransaction(ResourceType.BRICK,18));
         assertTrue(bank.tradeResourcePort(twoPort, ResourceType.GRAIN, ResourceType.BRICK, 1));
         assertEquals(2, bank.resources.get(ResourceType.GRAIN));
         assertEquals(0, bank.resources.get(ResourceType.BRICK));
@@ -236,9 +236,9 @@ public class TestBank {
 
     @Test
     public void testTradePort_oneGiveTwoTake(){
-        bank.obtainResource(ResourceType.GRAIN,18);
-        bank.obtainResource(ResourceType.BRICK,17);
         Port twoPort = new Port(2, ResourceType.GRAIN);
+        bank.obtainResource(new ResourceTransaction(ResourceType.GRAIN,18));
+        bank.obtainResource(new ResourceTransaction(ResourceType.BRICK,17));
         assertTrue(bank.tradeResourcePort(twoPort, ResourceType.GRAIN, ResourceType.BRICK, 1));
         assertEquals(3, bank.resources.get(ResourceType.GRAIN));
         assertEquals(1, bank.resources.get(ResourceType.BRICK));
@@ -246,8 +246,8 @@ public class TestBank {
 
     @Test
     public void testTradePort_twoGiveThreeTake(){
-        bank.obtainResource(ResourceType.GRAIN,17);
-        bank.obtainResource(ResourceType.BRICK,16);
+        bank.obtainResource(new ResourceTransaction(ResourceType.GRAIN,17));
+        bank.obtainResource(new ResourceTransaction(ResourceType.BRICK,16));
         assertTrue(bank.tradeResourcePort(threePort, ResourceType.GRAIN, ResourceType.BRICK, 1));
         assertEquals(5, bank.resources.get(ResourceType.GRAIN));
         assertEquals(2, bank.resources.get(ResourceType.BRICK));
@@ -255,8 +255,8 @@ public class TestBank {
 
     @Test
     public void testTradePort_emptyTake(){
-        bank.obtainResource(ResourceType.GRAIN,17);
-        bank.obtainResource(ResourceType.BRICK,19);
+        bank.obtainResource(new ResourceTransaction(ResourceType.GRAIN,17));
+        bank.obtainResource(new ResourceTransaction(ResourceType.BRICK,19));
         assertFalse(bank.tradeResourcePort(threePort, ResourceType.GRAIN, ResourceType.BRICK, 1));
     }
     
@@ -319,8 +319,8 @@ public class TestBank {
     @Test
     public void testTradeBankOWOne() {
         Bank bank = new Bank();
-        bank.setBankResource(ResourceType.ORE, 0);
-        bank.setBankResource(ResourceType.WOOL, 19);
+        bank.setBankResource(new ResourceTransaction(ResourceType.ORE, 0));
+        bank.setBankResource(new ResourceTransaction(ResourceType.WOOL, 19));
         assertTrue(bank.tradeResourceBank(ResourceType.ORE, ResourceType.WOOL, 1));
         assertEquals(4, bank.resources.get(ResourceType.ORE));
         assertEquals(18, bank.resources.get(ResourceType.WOOL));
@@ -861,7 +861,7 @@ public class TestBank {
     public void testBank_giveBackResource_minValExpectFalse() {
         Bank bank = new Bank();
         bank.resources.put(ResourceType.LUMBER, 0);
-        assertFalse(bank.giveBackResource(ResourceType.LUMBER, Integer.MIN_VALUE));
+        assertFalse(bank.giveBackResource(new ResourceTransaction(ResourceType.LUMBER, Integer.MIN_VALUE)));
         assertEquals(0, bank.resources.get(ResourceType.LUMBER));
     }
 
@@ -869,7 +869,7 @@ public class TestBank {
     public void testBank_giveBackResource_negOneExpectFalse() {
         Bank bank = new Bank();
         bank.resources.put(ResourceType.LUMBER, 0);
-        assertFalse(bank.giveBackResource(ResourceType.LUMBER, -1));
+        assertFalse(bank.giveBackResource(new ResourceTransaction(ResourceType.LUMBER, -1)));
         assertEquals(0, bank.resources.get(ResourceType.LUMBER));
     }
 
@@ -877,7 +877,7 @@ public class TestBank {
     public void testBank_giveBackResource_zeroExpectFalse() {
         Bank bank = new Bank();
         bank.resources.put(ResourceType.LUMBER, 0);
-        assertFalse(bank.giveBackResource(ResourceType.LUMBER, 0));
+        assertFalse(bank.giveBackResource(new ResourceTransaction(ResourceType.LUMBER, 0)));
         assertEquals(0, bank.resources.get(ResourceType.LUMBER));
     }
 
@@ -886,7 +886,7 @@ public class TestBank {
     public void testBank_giveBackResource_oneExpectTrue(ResourceType resource) {
         Bank bank = new Bank();
         bank.resources.put(resource, 0);
-        assertTrue(bank.giveBackResource(resource, 1));
+        assertTrue(bank.giveBackResource(new ResourceTransaction(resource, 1)));
         assertEquals(1, bank.resources.get(resource));
     }
 
@@ -895,7 +895,7 @@ public class TestBank {
     public void testBank_giveBackResource_maxValExpectTrue(ResourceType resource) {
         Bank bank = new Bank();
         bank.resources.put(resource, 0);
-        assertTrue(bank.giveBackResource(resource, 19));
+        assertTrue(bank.giveBackResource(new ResourceTransaction(resource, 19)));
         assertEquals(19, bank.resources.get(resource));
     }
 
@@ -904,7 +904,7 @@ public class TestBank {
     public void testBank_giveBackResource_maxResourcesExpectFalse(ResourceType resource) {
         Bank bank = new Bank();
         bank.resources.put(resource, 19);
-        assertFalse(bank.giveBackResource(resource, 1));
+        assertFalse(bank.giveBackResource(new ResourceTransaction(resource, 1)));
         assertEquals(19, bank.resources.get(resource));
     }
 
@@ -913,7 +913,7 @@ public class TestBank {
     public void testBank_giveBackResource_oneResourceInBankExpectTrue(ResourceType resource) {
         Bank bank = new Bank();
         bank.resources.put(resource, 1);
-        assertTrue(bank.giveBackResource(resource, 1));
+        assertTrue(bank.giveBackResource(new ResourceTransaction(resource, 1)));
         assertEquals(2, bank.resources.get(resource));
     }
 
@@ -922,7 +922,7 @@ public class TestBank {
     public void testBank_giveBackResource_twoResourceInBankExpectTrue(ResourceType resource) {
         Bank bank = new Bank();
         bank.resources.put(resource, 2);
-        assertTrue(bank.giveBackResource(resource, 1));
+        assertTrue(bank.giveBackResource(new ResourceTransaction(resource, 1)));
         assertEquals(3, bank.resources.get(resource));
     }
 
@@ -931,7 +931,7 @@ public class TestBank {
     public void testBank_giveBackResource_oneResourceInBankGiveBackTwoExpectTrue(ResourceType resource) {
         Bank bank = new Bank();
         bank.resources.put(resource, 1);
-        assertTrue(bank.giveBackResource(resource, 2));
+        assertTrue(bank.giveBackResource(new ResourceTransaction(resource, 2)));
         assertEquals(3, bank.resources.get(resource));
     }
 
@@ -940,7 +940,7 @@ public class TestBank {
     public void testBank_giveBackResource_twoResourceInBankGiveBackTwoExpectTrue(ResourceType resource) {
         Bank bank = new Bank();
         bank.resources.put(resource, 2);
-        assertTrue(bank.giveBackResource(resource, 2));
+        assertTrue(bank.giveBackResource(new ResourceTransaction(resource, 2)));
         assertEquals(4, bank.resources.get(resource));
     }
 
@@ -969,14 +969,14 @@ public class TestBank {
     @ParameterizedTest
     @EnumSource
     public void testGetAndSetBankResource_resources(ResourceType resource){
-        bank.setBankResource(resource, 5);
+        bank.setBankResource(new ResourceTransaction(resource, 5));
         assertEquals(5, bank.getBankResource(resource));
     }
 
     @ParameterizedTest
     @ValueSource(ints = {0,1,19})
     public void testGetAndSetBankResource_amounts(int amount){
-        bank.setBankResource(ResourceType.GRAIN, amount);
+        bank.setBankResource(new ResourceTransaction(ResourceType.GRAIN, amount));
         assertEquals(amount, bank.getBankResource(ResourceType.GRAIN));
     }
 

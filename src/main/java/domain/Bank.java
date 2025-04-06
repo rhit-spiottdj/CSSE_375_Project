@@ -22,33 +22,34 @@ public class Bank {
         setUpDevelopmentCards();
     }
 
-    public boolean obtainResource(ResourceType resource, int amount) {
-        if (noMoreResource(resource, amount)) {
+    public boolean obtainResource(ResourceTransaction transaction) {
+        if (noMoreResource(transaction)) {
             return false;
         }
-        resources.put(resource, resources.get(resource) - amount);
+        resources.put(transaction.resourceType, resources.get(transaction.resourceType) - transaction.amount);
         return true;
     }
 
-    public boolean giveBackResource(ResourceType resource, int amount) {
-        if (maxResources(resource, amount)) {
+    public boolean giveBackResource(ResourceTransaction transaction) {
+        if (maxResources(transaction)) {
             return false;
         }
-        resources.put(resource, resources.get(resource) + amount);
+        resources.put(transaction.resourceType, resources.get(transaction.resourceType) + transaction.amount);
         return true;
     }
 
-    private boolean maxResources(ResourceType resource, int amount) {
-        return resources.get(resource) + amount > MAX_INDIVIDUAL_RESOURCE || amount < 1;
+    private boolean maxResources(ResourceTransaction transaction) {
+        return resources.get(transaction.resourceType) + transaction.amount > MAX_INDIVIDUAL_RESOURCE || transaction.amount < 1;
     }
 
-    boolean noMoreResource(ResourceType resource, int amount) {
-        return amount < 1 || resources.get(resource) < amount;
+    boolean noMoreResource(ResourceTransaction transaction) {
+        return transaction.amount < 1 || resources.get(transaction.resourceType) < transaction.amount;
     }
 
     public boolean tradeResourcePort(Port port, ResourceType giving, ResourceType taking,
         int amount) {
-        if (noMoreResource(taking, amount) || isTwoToOnePortOfDifferentResource(port, giving)){
+        ResourceTransaction transaction = new ResourceTransaction(taking, amount);
+        if (noMoreResource(transaction) || isTwoToOnePortOfDifferentResource(port, giving)){
             return false;
         }
         tradeResourcePortExchangeResources(port, giving, taking, amount);
@@ -76,7 +77,8 @@ public class Bank {
     }
 
     public boolean tradeResourceBank(ResourceType giving, ResourceType taking, int amount) {
-        if (noMoreResource(taking, amount) || giving == taking) {
+        ResourceTransaction transaction = new ResourceTransaction(taking, amount);
+        if (noMoreResource(transaction) || giving == taking) {
             return false;
         }
         exchangeResourcesInBank(giving, taking, amount, REQUIRE_FOUR_TIMES_RESOURCES);
@@ -166,11 +168,12 @@ public class Bank {
     }
 
     private boolean unsuccessfulRemoveOrGibeBack(Player player, ResourceType resource) {
-        return !player.removeResource(resource) || !giveBackResource(resource, 1);
+        ResourceTransaction transaction = new ResourceTransaction(resource, 1);
+        return !player.removeResource(resource) || !giveBackResource(transaction);
     }
 
-    protected void setBankResource(ResourceType resource, int amount) {
-        resources.put(resource, amount);
+    protected void setBankResource(ResourceTransaction transaction) {
+        resources.put(transaction.resourceType, transaction.amount);
     }
 
     protected int getBankResource(ResourceType resourceType) {
