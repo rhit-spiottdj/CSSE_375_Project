@@ -27,14 +27,6 @@
 - numConnectedPaths: int
 }
 
-+class Path{
-- hasRoad: boolean
--intersection1: Intersection
--intersection2: Intersection
-+ boolean hasRoad()
-+ boolean addRoad()
-}
-
 +enum Port {
 + THREE_TO_ONE
 + TWO_TO_ONE

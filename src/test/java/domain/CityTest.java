@@ -29,7 +29,7 @@ public class CityTest {
 
     @Test
     public void testCity_getCost(){
-        Collection<ResourceType> cost = Settlement.getCost();
+        Collection<ResourceType> cost = City.getCost();
 
         assertTrue(cost.remove(ResourceType.ORE));
         assertTrue(cost.remove(ResourceType.ORE));

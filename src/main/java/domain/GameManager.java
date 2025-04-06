@@ -19,6 +19,7 @@ public class GameManager {
     int inTurnIndex = -1;
     private int numPlayers;
     public BoardManager boardManager;
+    private BonusManager bonusManager;
     private DevelopmentCardManager cardManager;
 
     Bank bank;
@@ -31,7 +32,8 @@ public class GameManager {
         this.boardManager = (boardManager != null) ? boardManager : new BoardManager();
         this.bank = (bank != null) ? bank : new Bank();
         this.diceManager = (diceManager != null) ? diceManager : new DiceManager(2);
-        this.cardManager = (cardManager != null) ? cardManager : new DevelopmentCardManager(this.players, this.bank, this.boardManager);
+        this.bonusManager = (bonusManager != null) ? bonusManager : new BonusManager();
+        this.cardManager = (cardManager != null) ? cardManager : new DevelopmentCardManager(this.players, this.bank, this.boardManager, this.bonusManager);
     }
 
     //This one is for testing only
@@ -223,7 +225,7 @@ public class GameManager {
     }
 
     public void findLongestRoad() {
-        cardManager.findLongestRoad(players, boardManager.getRoadsOnBoard().toArray(new Road[0]));
+        bonusManager.findLongestRoad(players, boardManager.getRoadsOnBoard().toArray(new Road[0]));
         calculateVictoryPointsForPlayer(inTurn);
     }
 
@@ -245,7 +247,7 @@ public class GameManager {
 
     private int getLongestRoadPoints(Player player) {
         int longestRoadPoints = 0;
-        if (player.equals(cardManager.getLongestRoadOwner())) {
+        if (player.equals(bonusManager.getLongestRoadOwner())) {
             longestRoadPoints = 2;
         }
         return longestRoadPoints;
@@ -253,7 +255,7 @@ public class GameManager {
 
     private int getLargestArmyPoints(Player player) {
         int largestArmyPoints = 0;
-        if (player.equals(cardManager.getLargestArmyOwner())) {
+        if (player.equals(bonusManager.getLargestArmyOwner())) {
             largestArmyPoints = 2;
         }
         return largestArmyPoints;

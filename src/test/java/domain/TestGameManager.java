@@ -22,6 +22,7 @@ public class TestGameManager {
 
     GameManager manager;
     BoardManager boardManager;
+    BonusManager bonusManager;
     DevelopmentCardManager cardManager;
     Player player1;
     Player player2;
@@ -801,6 +802,7 @@ public class TestGameManager {
 
     private void calculateVictoryPointsForPlayer_setupStandard() {
         boardManager = EasyMock.createMock(BoardManager.class);
+        bonusManager = EasyMock.createMock(BonusManager.class);
         cardManager = EasyMock.createMock(DevelopmentCardManager.class);
         manager = new GameManager(2, boardManager, cardManager);
         player1 = EasyMock.createMock(Player.class);
@@ -831,17 +833,17 @@ public class TestGameManager {
 
     private void calculateVictoryPointsForPlayer_expectLongestRoad(boolean hasRoad) {
         if (hasRoad) {
-            EasyMock.expect(cardManager.getLongestRoadOwner()).andReturn(player1);
+            EasyMock.expect(bonusManager.getLongestRoadOwner()).andReturn(player1);
         } else {
-            EasyMock.expect(cardManager.getLongestRoadOwner()).andReturn(null);
+            EasyMock.expect(bonusManager.getLongestRoadOwner()).andReturn(null);
         }
     }
 
     private void calculateVictoryPointsForPlayer_expectLargestArmy(boolean hasRoad) {
         if (hasRoad) {
-            EasyMock.expect(cardManager.getLargestArmyOwner()).andReturn(player1);
+            EasyMock.expect(bonusManager.getLargestArmyOwner()).andReturn(player1);
         } else {
-            EasyMock.expect(cardManager.getLargestArmyOwner()).andReturn(null);
+            EasyMock.expect(bonusManager.getLargestArmyOwner()).andReturn(null);
         }
     }
 
@@ -1784,14 +1786,14 @@ public class TestGameManager {
         EasyMock.expect(dcm.playRoadBuilding(player, intersections)).andReturn(true);
         EasyMock.expect(bm.getRoadsOnBoard()).andReturn(new ArrayList<>());
 
-        EasyMock.expect(dcm.findLongestRoad(EasyMock.anyObject(), EasyMock.anyObject())).andReturn(true);
+        EasyMock.expect(bonusManager.findLongestRoad(EasyMock.anyObject(), EasyMock.anyObject())).andReturn(true);
 
         EasyMock.expect(player.getUnplayableDevelopmentCards()).andReturn(new ArrayList<>());
 
         EasyMock.expect(bm.getStructures()).andReturn(new ArrayList<>());
 
-        EasyMock.expect(dcm.getLongestRoadOwner()).andReturn(null);
-        EasyMock.expect(dcm.getLargestArmyOwner()).andReturn(null);
+        EasyMock.expect(bonusManager.getLongestRoadOwner()).andReturn(null);
+        EasyMock.expect(bonusManager.getLargestArmyOwner()).andReturn(null);
         player.setVictoryPoints(0);
 
         EasyMock.replay(bm, bank, player, dcm);

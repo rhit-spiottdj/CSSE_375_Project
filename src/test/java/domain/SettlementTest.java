@@ -33,6 +33,7 @@ public class SettlementTest {
 
         assertTrue(cost.remove(ResourceType.BRICK));
         assertTrue(cost.remove(ResourceType.LUMBER));
+        assertTrue(cost.remove(ResourceType.GRAIN));
         assertTrue(cost.remove(ResourceType.WOOL));
         assertTrue(cost.isEmpty());
     }
