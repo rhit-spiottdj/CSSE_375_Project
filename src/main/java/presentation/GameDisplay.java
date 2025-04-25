@@ -1,4 +1,5 @@
 package presentation;
+import presentation.BarbarianRaidDisplay;
 
 import domain.*;
 
@@ -41,6 +42,7 @@ public class GameDisplay implements ActionListener {
 
     private TradeManagerGUI discardGUI;
     protected PlayersStatsGUI playersStats;
+    BarbarianRaidDisplay barbarianRaidDisplay;
     Locale gameLocale = locales[0];
 
     private String[] quickPlayerNames = new String[]{"Player1", "Player2", "Player3", "Player4"};
@@ -77,12 +79,11 @@ public class GameDisplay implements ActionListener {
                     ResourceType.GRAIN, ResourceType.ORE, ResourceType.ORE, ResourceType.ORE));
     private JButton confirmButton;
 
-    // Store previous resource counts for gain detection
     private Map<Player, Map<ResourceType, Integer>> previousPlayerResourceCounts = new HashMap<>();
 
     public GameDisplay(boolean quickSetup) {
         setup(quickSetup);
-        storeAllInitialResourceCounts(); // Store initial counts after setup
+        storeAllInitialResourceCounts();
         setupForFirstTurn();
 
         boardFrame.pack();
@@ -139,6 +140,7 @@ public class GameDisplay implements ActionListener {
         verticalPanel.add(turnDisplay.frame);
         verticalPanel.add(cardDisplay.frame);
         boardFrame.add(verticalPanel);
+        boardFrame.add(barbarianRaidDisplay.panel);
         boardFrame.add(playersStats.frame);
     }
 
@@ -146,6 +148,7 @@ public class GameDisplay implements ActionListener {
         playersStats = new PlayersStatsGUI(gameManager.getPlayers(), gameLocale);
         turnDisplay = new PlayerTurnDisplay(gameManager, this, players, gameLocale);
         cardDisplay = new CardGUI(players, gameManager, this, gameLocale);
+        barbarianRaidDisplay = new BarbarianRaidDisplay(gameManager);
     }
 
     private void handlePlayerSetup(boolean isQuickSetup) {
@@ -469,12 +472,11 @@ public class GameDisplay implements ActionListener {
 
     void singleTurn(Player player) throws Exception {
         updatePlayerInfoForTurn(player);
-        int roll = waitForDiceRoll(gameManager); // Get the roll result
+        int roll = waitForDiceRoll(gameManager);
         if (roll == ROBBER_ROLL) {
             sevenRolled(player);
-        } else {
-            handleResourceDistributionOnRoll(roll); // Pass the roll result
         }
+        handleResourceDistributionOnRoll(roll);
 
         waitForTurnOver(player);
     }
@@ -533,14 +535,13 @@ public class GameDisplay implements ActionListener {
 
     private void handlePlayersRobberDiscard() {
         for (int j = 0; j < players.length; j++) {
-            if (players[j] != null) { // Check if player exists
+            if (players[j] != null) {
                 handlePlayerRobberDiscard(j);
             }
         }
     }
 
     private void handleResourceDistributionOnRoll(int roll) {
-        // Store counts *before* distribution
         Map<Player, Map<ResourceType, Integer>> countsBefore = new HashMap<>();
         for (Player p : players) {
             if (p != null) {
@@ -552,14 +553,11 @@ public class GameDisplay implements ActionListener {
             }
         }
 
-        // Distribute resources
         int result = gameManager.distributeResourcesOnRoll(roll);
 
-        // Highlight tiles
         List<Integer> affectedHexIndices = getHexIndicesFromRoll(roll);
         boardDisplay.highlightHexes(affectedHexIndices);
 
-        // Check for gains and trigger indicators *after* distribution
         for (Player p : players) {
             if (p != null) {
                 boolean gained = false;
@@ -582,7 +580,6 @@ public class GameDisplay implements ActionListener {
             }
         }
 
-        // Handle robber message if necessary
         if (result == 2) {
             JOptionPane.showMessageDialog(null, messages.getString("robberOnLocation"),
                     messages.getString("robberOnLocationTitle"), JOptionPane.INFORMATION_MESSAGE);
@@ -606,10 +603,9 @@ public class GameDisplay implements ActionListener {
             waitForActionTaken();
             handleActionOptions(player);
             actionTaken = false;
-            // Clear highlights at the end of the action processing, before waiting for next action
-            // boardDisplay.clearHighlights(); // Moved clearing to after action handling
+
         }
-        boardDisplay.clearHighlights(); // Ensure highlights are cleared when turn ends
+        boardDisplay.clearHighlights();
     }
 
     private void waitForActionTaken() {
@@ -622,10 +618,7 @@ public class GameDisplay implements ActionListener {
         if (buildSettlement)    handleSettlementAction(player);
         else if (buildRoad)     handleRoadAction(player);
         else if (buildCity)     handleCityAction(player);
-        // After handling an action, clear highlights if they were related to the dice roll
-        // If highlights are used for build previews, they should be cleared differently.
-        // For now, assuming highlights are only for dice rolls:
-        // boardDisplay.clearHighlights(); // Clear after action is processed
+
     }
 
 
@@ -804,19 +797,19 @@ public class GameDisplay implements ActionListener {
         try {
             stealResourceWithMessageToPlayers(currentPlayer, selectedPlayerToSteal);
         } catch (IllegalArgumentException e) {
-            // display already handled
+
         }
 
     }
 
     private void stealResourceWithMessageToPlayers(Player currentPlayer,
                                                    Player selectedPlayerToSteal) {
-        if (selectedPlayerToSteal != null) { // Check if a player was actually selected
+        if (selectedPlayerToSteal != null) {
             ResourceType stolenResource = gameManager.tryRobberSteal(currentPlayer, selectedPlayerToSteal);
             if (stolenResource != null) {
                 displayRobberResourceStolenMessage(selectedPlayerToSteal.getPlayerName(), stolenResource.toString());
             }
-            // Optionally handle the case where stealing failed (e.g., player had no cards after all)
+
         }
     }
 
@@ -1066,7 +1059,7 @@ public class GameDisplay implements ActionListener {
         colorPickerDisplay = new ColorPickerDisplay(numPlayers, gameLocale);
 
         for (int i = 0; i < numPlayers; i++)    setupPlayer(i);
-        storeAllInitialResourceCounts(); // Store counts after players are created
+        storeAllInitialResourceCounts();
     }
 
     private void setupPlayer(int i) {
@@ -1126,6 +1119,7 @@ public class GameDisplay implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         playersStats.updatePlayersStats(); // This now handles triggering indicators internally
+        barbarianRaidDisplay.updateDisplay();
         updateCardGUI();
         repaintButtons();
         repaintBoardHexes();;

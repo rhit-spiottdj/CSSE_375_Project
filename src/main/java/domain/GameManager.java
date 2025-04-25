@@ -11,13 +11,13 @@ public class GameManager {
     private static final int MAX_HEX_INDEX = 18;
     public static final int MULTIPLE_OF_FOUR = 4;
     public static final int SCORE_TO_WIN = 10;
-    private static final int BARBARIAN_ATTACK_THRESHOLD = 7;
+    private static final int BARBARIAN_ATTACK_THRESHOLD = 1;
     private static final int ROBBER_ROLL = 7;
 
     private int sevensRolledCounter = 0;
 
     public DiceManager diceManager;
-    Player[] players = new Player[MAX_PLAYERS];
+    Player[] players;
     Player inTurn;
 
     int inTurnIndex = -1;
@@ -622,5 +622,13 @@ public class GameManager {
 
     public void findLongestRoad() {
         bonusManager.findLongestRoad(players, boardManager.getRoadsOnBoard().toArray(new Road[0]));
+    }
+
+    public int getSevensRolledCounter() {
+        return sevensRolledCounter;
+    }
+
+    public int getBarbarianAttackThreshold() {
+        return BARBARIAN_ATTACK_THRESHOLD;
     }
 }
