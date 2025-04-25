@@ -11,6 +11,10 @@ public class GameManager {
     private static final int MAX_HEX_INDEX = 18;
     public static final int MULTIPLE_OF_FOUR = 4;
     public static final int SCORE_TO_WIN = 10;
+    private static final int BARBARIAN_ATTACK_THRESHOLD = 7;
+    private static final int ROBBER_ROLL = 7;
+
+    private int sevensRolledCounter = 0;
 
     public DiceManager diceManager;
     Player[] players = new Player[MAX_PLAYERS];
@@ -19,16 +23,16 @@ public class GameManager {
     int inTurnIndex = -1;
     private int numPlayers;
     public BoardManager boardManager;
-    private BonusManager bonusManager;
+    public BonusManager bonusManager;
     private DevelopmentCardManager cardManager;
 
     Bank bank;
     private boolean gameOver = false;
 
     private GameManager(Player[] players, int numPlayers, BoardManager boardManager, Bank bank,
-                        DiceManager diceManager, DevelopmentCardManager cardManager) {
+                        DiceManager diceManager, DevelopmentCardManager cardManager, BonusManager bonusManager) {
         this.numPlayers = (players != null) ? players.length : numPlayers;
-        this.players = (players != null) ? players : new Player[this.numPlayers];  // Ensure players is initialized
+        this.players = (players != null) ? players : new Player[this.numPlayers];
         this.boardManager = (boardManager != null) ? boardManager : new BoardManager();
         this.bank = (bank != null) ? bank : new Bank();
         this.diceManager = (diceManager != null) ? diceManager : new DiceManager(2);
@@ -36,37 +40,36 @@ public class GameManager {
         this.cardManager = (cardManager != null) ? cardManager : new DevelopmentCardManager(this.players, this.bank, this.boardManager, this.bonusManager);
     }
 
-    //This one is for testing only
     protected GameManager() {
-        this(null, 0, null, null, null, null);
+        this(null, 0, null, null, null, null, null);
     }
 
     public GameManager(int numPlayers) {
-        this(null, numPlayers, null, null, null, null);
+        this(null, numPlayers, null, null, null, null, null);
     }
 
     public GameManager(int numPlayers, BoardManager boardManager) {
-        this(null, numPlayers, boardManager, null, null, null);
+        this(null, numPlayers, boardManager, null, null, null, null);
     }
 
     protected GameManager(int numPlayers, BoardManager boardManager, DevelopmentCardManager cardManager) {
-        this(null, numPlayers, boardManager, null, null, cardManager);
+        this(null, numPlayers, boardManager, null, null, cardManager, null);
     }
 
     protected GameManager(Player[] players, BoardManager boardManager) {
-        this(players, 0, boardManager, null, null, null);
+        this(players, 0, boardManager, null, null, null, null);
     }
 
     protected GameManager(Player[] players, BoardManager boardManager, Bank bank) {
-        this(players, 0, boardManager, bank, null, null);
+        this(players, 0, boardManager, bank, null, null, null);
     }
 
     protected GameManager(DevelopmentCardManager cardManager, Player[] players, BoardManager boardManager, Bank bank) {
-        this(players, 0, boardManager, bank, null, cardManager);
+        this(players, 0, boardManager, bank, null, cardManager, null);
     }
 
     protected GameManager(Player[] players, BoardManager boardManager, Bank bank, DiceManager diceManager) {
-        this(players, 0, boardManager, bank, diceManager, null);
+        this(players, 0, boardManager, bank, diceManager, null, null);
     }
 
 
@@ -101,7 +104,7 @@ public class GameManager {
     }
 
     private void swapPlayerAtIndexAndClearRoll(int offsetIndex, int betterRollIndex,int[] rolls,
-        Player[] players ){
+                                               Player[] players ){
         Player temp = players[betterRollIndex];
         players[betterRollIndex] = players[offsetIndex];
         players[offsetIndex] = temp;
@@ -217,7 +220,7 @@ public class GameManager {
     }
 
     public void placeRoad(int intersection1, int intersection2,
-        Player player, boolean init) {
+                          Player player, boolean init) {
         validateDifferentIntersections(intersection1, intersection2);
         if (!boardManager.placeRoad(intersection1, intersection2, player, init)) {
             throw new IllegalArgumentException("Error placing road, try again");
@@ -258,7 +261,7 @@ public class GameManager {
     private int getStructureVictoryPoints(BoardManager boardManager, Player player) {
         int structureVictoryPoints = 0;
         for (Structure structure : boardManager.getStructures())
-            if (structure.getOwner().equals(player))
+            if (structure.getOwner() != null && structure.getOwner().equals(player))
                 structureVictoryPoints += structure.getVictoryPoints();
         return structureVictoryPoints;
     }
@@ -324,12 +327,12 @@ public class GameManager {
     }
 
     public boolean playerDiscardResources(Player player,
-        Collection<ResourceType> resourcesToDiscard) {
+                                          Collection<ResourceType> resourcesToDiscard) {
         return bank.playerDiscardResources(player, resourcesToDiscard);
     }
 
     public boolean currentPlayerHasSufficientResources(
-        Collection<ResourceType> resourcesToTradeAway) {
+            Collection<ResourceType> resourcesToTradeAway) {
         return inTurn.hasResources(resourcesToTradeAway);
     }
 
@@ -341,7 +344,7 @@ public class GameManager {
     }
 
     public boolean playerTrade(Player player2, Collection<ResourceType> player1Resources,
-        Collection<ResourceType> player2Resources) {
+                               Collection<ResourceType> player2Resources) {
         return bank.playerTrade(inTurn, player2, player1Resources, player2Resources);
     }
 
@@ -363,7 +366,7 @@ public class GameManager {
     }
 
     private void removeResourcesFromPlayerAndGiveBackToBank(Collection<ResourceType> resourceCost,
-        Player player) {
+                                                            Player player) {
         for (ResourceType resource : resourceCost) {
             player.removeResource(resource);
             bank.giveBackResource(new ResourceTransaction(resource, 1));
@@ -371,12 +374,137 @@ public class GameManager {
     }
 
     public int distributeResourcesOnRoll(int roll) {
-        return boardManager.distributeResourcesOnRoll(roll, bank);
+        if (roll == ROBBER_ROLL) {
+            handleBarbarianTrigger();
+            return 0; // Indicate 7 was rolled, but don't distribute resources yet
+        } else {
+            return boardManager.distributeResourcesOnRoll(roll, bank);
+        }
+    }
+
+    private void handleBarbarianTrigger() {
+        sevensRolledCounter++;
+        if (sevensRolledCounter >= BARBARIAN_ATTACK_THRESHOLD) {
+            handleBarbarianAttack();
+            sevensRolledCounter = 0;
+        }
+    }
+
+
+    private void handleBarbarianAttack() {
+        int barbarianStrength = calculateBarbarianStrength();
+        int totalKnightStrength = calculateTotalKnightStrength();
+        if (barbarianStrength > totalKnightStrength) {
+            applyBarbarianPenalty();
+        } else {
+            applyBarbarianReward();
+        }
+        resetAllPlayerKnightCounts();
+    }
+
+    private int calculateBarbarianStrength() {
+        int strength = 0;
+        for(Structure structure: boardManager.getStructures()) {
+            if(structure instanceof City) {
+                strength++;
+            }
+        }
+        return strength;
+    }
+
+    private int calculateTotalKnightStrength() {
+        int strength = 0;
+        for(Player player: players) {
+            if(player != null) { // Ensure player is not null
+                strength += player.getPlayedKnightCount();
+            }
+        }
+        return strength;
+    }
+
+    private void applyBarbarianPenalty() {
+        Player playerWithFewestKnights = null;
+        int minKnights = Integer.MAX_VALUE;
+        for (Player player: players) {
+            if(player != null) { // Ensure player is not null
+                if (player.getPlayedKnightCount() < minKnights) {
+                    minKnights = player.getPlayedKnightCount();
+                }
+            }
+        }
+
+        ArrayList<Player> playersToPenalize = new ArrayList<>();
+        for (Player player: players) {
+            if(player != null) { // Ensure player is not null
+                if (player.getPlayedKnightCount() == minKnights) {
+                    playersToPenalize.add(player);
+                }
+            }
+        }
+
+        for (Player player : playersToPenalize) {
+            downgradeRandomCity(player);
+        }
+    }
+
+    private void downgradeRandomCity(Player player) {
+        ArrayList<Integer> playerCityLocations = new ArrayList<>();
+        for(int i = 0; i < boardManager.intersections.length; i++) {
+            Structure structure = boardManager.intersections[i].getStructure();
+            if(structure instanceof City && structure.getOwner() != null && structure.getOwner().equals(player)) {
+                playerCityLocations.add(i);
+            }
+        }
+        if(!playerCityLocations.isEmpty()) {
+            Random rand = new Random();
+            int cityIndexToDowngrade = playerCityLocations.get(rand.nextInt(playerCityLocations.size()));
+
+            // Replace City with Settlement
+            boardManager.intersections[cityIndexToDowngrade].setStructure(null); // Clear structure first
+            boardManager.placeSettlementSetup(cityIndexToDowngrade, player, new Settlement());
+
+            // Adjust player counts
+            player.setNumCities(player.getNumCities() + 1); // Give city back
+            player.setNumSettlements(player.getNumSettlements() - 1); // Take settlement away
+
+            // Recalculate VP immediately after downgrade
+            calculateVictoryPointsForPlayer(player);
+        }
+    }
+
+
+    private void applyBarbarianReward() {
+        Player playerWithMostKnights = null;
+        int maxKnights = -1;
+        int numPlayersWithMax = 0;
+        for (Player player: players) {
+            if(player != null) { // Ensure player is not null
+                if (player.getPlayedKnightCount() > maxKnights) {
+                    maxKnights = player.getPlayedKnightCount();
+                    playerWithMostKnights = player;
+                    numPlayersWithMax = 1;
+                } else if (player.getPlayedKnightCount() == maxKnights && maxKnights >= 0) { // Check if count is non-negative
+                    numPlayersWithMax++;
+                }
+            }
+        }
+        if (numPlayersWithMax == 1 && playerWithMostKnights != null) {
+            playerWithMostKnights.setVictoryPoints(playerWithMostKnights.getVictoryPoints() + 1);
+            calculateVictoryPointsForPlayer(playerWithMostKnights); // Recalculate VP immediately
+        }
+    }
+
+    private void resetAllPlayerKnightCounts() {
+        for (Player player : players) {
+            if(player != null) { // Ensure player is not null
+                player.resetPlayedKnightCount();
+            }
+        }
     }
 
 
     public Collection<ResourceType> playYearOfPlenty(ResourceType resourceOne,
-        ResourceType resourceTwo){
+                                                     ResourceType resourceTwo){
         return cardManager.playYearOfPlenty(inTurn, resourceOne, resourceTwo);
     }
 
@@ -425,6 +553,9 @@ public class GameManager {
     }
 
     public boolean playerTradeWithBank(ResourceType giving, ResourceType taking, int numResources){
+        if (numResources % MULTIPLE_OF_FOUR != 0) {
+            return false;
+        }
         boolean success = bank.tradeResourceBank(giving, taking, numResources / MULTIPLE_OF_FOUR);
         if (success) {
             doTradeWithBank(giving, taking, numResources);
@@ -438,7 +569,7 @@ public class GameManager {
     }
 
     public boolean playerTradeWithPort(Port port, ResourceType giving, ResourceType taking,
-        int numResources){
+                                       int numResources){
         if (portCheck(port, giving, taking, numResources)) {
             doTradeWithPort(port, giving, taking, numResources);
             return true;
@@ -447,18 +578,21 @@ public class GameManager {
     }
 
     private boolean portCheck(Port port, ResourceType giving, ResourceType taking,
-        int numResources) {
+                              int numResources) {
         return isValidRatio(port.getPortTradeRatio(), numResources) && bank.tradeResourcePort(port,
-            giving, taking, numResources / port.getPortTradeRatio());
+                giving, taking, numResources / port.getPortTradeRatio());
     }
 
     private void doTradeWithPort(Port port, ResourceType giving, ResourceType taking,
-        int numResources) {
+                                 int numResources) {
         removePlayerResource(giving, numResources);
         addPlayerResource(taking, numResources / port.getPortTradeRatio());
     }
 
     static boolean isValidRatio(int portTradeRatio, int numResources) {
+        if (portTradeRatio <= 0) return false;
+        // Avoid division by zero if numResources is 0
+        if (numResources == 0) return true;
         int base = numResources/portTradeRatio;
         return numResources == base * portTradeRatio;
     }
@@ -477,7 +611,7 @@ public class GameManager {
 
     public int setNextPlayerInTurn(){
         inTurnIndex++;
-        if(inTurnIndex == numPlayers) inTurnIndex = 0;
+        if(inTurnIndex >= numPlayers) inTurnIndex = 0; // Use >= to handle potential initialization issues
         inTurn = players[inTurnIndex];
         return inTurnIndex;
     }
@@ -485,5 +619,8 @@ public class GameManager {
     public boolean isGameOver(){
         return gameOver;
     }
-}
 
+    public void findLongestRoad() {
+        bonusManager.findLongestRoad(players, boardManager.getRoadsOnBoard().toArray(new Road[0]));
+    }
+}

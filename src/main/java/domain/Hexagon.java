@@ -20,7 +20,7 @@ public class Hexagon {
 
     public static final int NUMBER_OF_INTERSECTIONS = 6;
 
-    protected Hexagon(Point2D center, int uniqueIndex){
+    public Hexagon(Point2D center, int uniqueIndex){
         this.uniqueIndex = uniqueIndex;
         this.center = center;
         this.value = 0;

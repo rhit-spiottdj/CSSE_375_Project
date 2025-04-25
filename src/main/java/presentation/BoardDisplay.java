@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -23,7 +24,7 @@ public class BoardDisplay extends JPanel {
     public static final double VECTOR_MAGNITUDE_SCALER = 0.2;
     public static final Color BROWN = new Color(101, 67, 33);
     public static final BasicStroke BRIDGE_STROKE = new BasicStroke(4);
-    private HexagonDisplay[] hexDisplays;
+    HexagonDisplay[] hexDisplays;
 
     private IntersectionButtonManager intersectionButtonManager;
 
@@ -32,6 +33,7 @@ public class BoardDisplay extends JPanel {
     BoardManager boardManager;
 
     static ResourceBundle messages;
+    private Timer highlightTimer;
 
     protected BoardDisplay(BoardManager boardManager, boolean randomize, Locale locale) {
         this.boardManager = boardManager;
@@ -65,7 +67,7 @@ public class BoardDisplay extends JPanel {
     private void addHexButtonsToManager(BoardManager boardManager) {
         for (Hexagon hexagon : boardManager.getHexagons()) {
             this.add(
-                hexButtonManager.createHexButton(hexagon.getCenter(), hexagon.getUniqueIndex()));
+                    hexButtonManager.createHexButton(hexagon.getCenter(), hexagon.getUniqueIndex()));
         }
     }
 
@@ -79,10 +81,10 @@ public class BoardDisplay extends JPanel {
 
     private void intersectionAction(BoardManager boardManager, JButton intersectionButton) {
         intersectionButtonManager.setSelectedIntersection(
-            intersectionButtonManager.intersectionButtons.indexOf(intersectionButton));
+                intersectionButtonManager.intersectionButtons.indexOf(intersectionButton));
 
         boardManager.setIntersectionSelection(
-            intersectionButtonManager.getSelectedIntersection());
+                intersectionButtonManager.getSelectedIntersection());
     }
 
 
@@ -103,7 +105,7 @@ public class BoardDisplay extends JPanel {
     private void addIntersectionsToManager(BoardManager boardManager) {
         for (Intersection intersection : boardManager.getIntersections()) {
             this.add(intersectionButtonManager.createIntersectionButton(intersection.getCenter(),
-                intersection.getUniqueIndex()));
+                    intersection.getUniqueIndex()));
         }
     }
 
@@ -143,7 +145,7 @@ public class BoardDisplay extends JPanel {
     }
 
     private void setGraphicsAndDrawBridgesAtPort(Graphics2D g2, Intersection[] intersections,
-        ArrayList<Port> ports, int i) {
+                                                 ArrayList<Port> ports, int i) {
         setGraphicToBridgeMode(g2);
         drawBridgesAtPort(g2, intersections, i, ports.get(i));
     }
@@ -157,7 +159,7 @@ public class BoardDisplay extends JPanel {
     }
 
     private void drawPortLabel(Graphics2D g2, int[] bridgeEndPoint, int[] otherBridgeEndPoint,
-        Port port) {
+                               Port port) {
         int[] center = calculateCenter(bridgeEndPoint, otherBridgeEndPoint);
         setGraphicToPortTextMode(g2);
         g2.drawString(portDisplay(port), center[0], center[1]);
@@ -176,7 +178,6 @@ public class BoardDisplay extends JPanel {
         }
     }
 
-    @SuppressWarnings("methodlength")
     private static String getFormattedResource(String resource) {
         switch (resource) {
             case "BRICK": return messages.getString("brick");
@@ -209,10 +210,10 @@ public class BoardDisplay extends JPanel {
     }
 
     private int[] drawPortBridge(Graphics2D g2, double vectorX, double vectorY,
-        double vectorScaleFactor) {
+                                 double vectorScaleFactor) {
         int[] displayPoint = convertPointToDisplay(vectorX,vectorY);
         int[] displayPointEnd = convertPointToDisplay(vectorX + vectorX * vectorScaleFactor,
-            vectorY + vectorY * vectorScaleFactor);
+                vectorY + vectorY * vectorScaleFactor);
         g2.drawLine(displayPoint[0], displayPoint[1], displayPointEnd[0], displayPointEnd[1]);
         return displayPointEnd;
     }
@@ -246,16 +247,16 @@ public class BoardDisplay extends JPanel {
 
     private void redrawButtonWithSettlement(BoardManager boardManager, int index) {
         intersectionButtonManager.intersectionButtons.get(index).setBorder(
-            BorderFactory.createLineBorder(
-            boardManager.getIntersectionSettlementColor(index),
-            INTERSECTION_BUTTON_BORDER_THICKNESS));
+                BorderFactory.createLineBorder(
+                        boardManager.getIntersectionSettlementColor(index),
+                        INTERSECTION_BUTTON_BORDER_THICKNESS));
     }
 
     public void upgradeToCityButton(int index) {
         intersectionButtonManager.intersectionButtons.get(index).setBounds(
-            intersectionButtonManager.intersectionButtons.get(index).getX() - 2,
-            intersectionButtonManager.intersectionButtons.get(index).getY() - 2, CITY_BUTTON_SIZE,
-            CITY_BUTTON_SIZE);
+                intersectionButtonManager.intersectionButtons.get(index).getX() - 2,
+                intersectionButtonManager.intersectionButtons.get(index).getY() - 2, CITY_BUTTON_SIZE,
+                CITY_BUTTON_SIZE);
     }
 
     public void toggleHexButtons(boolean toggle) {
@@ -272,6 +273,37 @@ public class BoardDisplay extends JPanel {
         final int boardHeight = 780;
         return new Dimension(boardWidth,boardHeight);
     }
+
+    public void highlightHexes(List<Integer> hexIndices) {
+        clearHighlights(); // Clear previous highlights first
+        for (int index : hexIndices) {
+            if (index >= 0 && index < hexDisplays.length) {
+                hexDisplays[index].setHighlighted(true);
+            }
+        }
+        repaint(); // Trigger repaint to show highlights
+
+        // Stop any existing timer
+        if (highlightTimer != null && highlightTimer.isRunning()) {
+            highlightTimer.stop();
+        }
+
+        // Start a timer to clear highlights after a delay
+        highlightTimer = new Timer(2000, e -> clearHighlights()); // 2 seconds delay
+        highlightTimer.setRepeats(false);
+        highlightTimer.start();
+    }
+
+    public void clearHighlights() {
+        boolean needsRepaint = false;
+        for (HexagonDisplay hexDisplay : hexDisplays) {
+            if(hexDisplay.highlighted){
+                needsRepaint = true;
+            }
+            hexDisplay.setHighlighted(false);
+        }
+        if (needsRepaint) {
+            repaint();
+        }
+    }
 }
-
-

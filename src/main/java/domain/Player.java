@@ -32,6 +32,7 @@ public class Player {
     int victoryPoints = 2;
 
     private boolean devCardPlayed = false;
+    private int playedKnightCount = 0;
 
     public Player(Color c, String name, Collection<ResourceType> col) {
         this.playerColor = c;
@@ -49,7 +50,7 @@ public class Player {
     public Collection<DevelopmentCards> getFutureDevelopmentCards(){
         return new ArrayList<>(futureDevelopmentCards);
     }
- 
+
     public void startTurn(){
         while(!futureDevelopmentCards.isEmpty()){
             developmentCards.add(futureDevelopmentCards.remove(0));
@@ -127,12 +128,12 @@ public class Player {
         }
         return true;
     }
-    
+
     public boolean validateResourcesNotBlank(Collection<ResourceType> resourcesToCheck) {
-    	if (resourcesToCheck.size() <= 0) {
-    		return false;
-    	}
-    	return true;
+        if (resourcesToCheck.size() <= 0) {
+            return false;
+        }
+        return true;
     }
 
     public Color getPlayerColor() {
@@ -181,5 +182,17 @@ public class Player {
 
     public void setNumSettlements(int numSettlements){
         this.numSettlements = numSettlements;
+    }
+
+    public void incrementPlayedKnightCount() {
+        this.playedKnightCount++;
+    }
+
+    public int getPlayedKnightCount() {
+        return playedKnightCount;
+    }
+
+    public void resetPlayedKnightCount() {
+        this.playedKnightCount = 0;
     }
 }

@@ -9,8 +9,6 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-//This GUI code was adapted from a CSSE 375 revision of a
-// Settlers of Catan Project with instructor permission
 public class PlayerTurnDisplay {
 
     private static final int SMALL_INSET_PADDING = 10;
@@ -39,7 +37,7 @@ public class PlayerTurnDisplay {
     private JButton endTurnButton;
     private JButton buildButton;
 
-    private JLabel playerNameLabel;
+    public JLabel playerNameLabel;
 
     private GameManager gameManager;
 
@@ -55,8 +53,8 @@ public class PlayerTurnDisplay {
     private boolean enableFlag = true;
 
 
-    PlayerTurnDisplay(GameManager gameManager, GameDisplay gameDisplay, Player[] players,
-        Locale locale) {
+    public PlayerTurnDisplay(GameManager gameManager, GameDisplay gameDisplay, Player[] players,
+                             Locale locale) {
         initializeConstructorFields(gameManager, gameDisplay, players, locale);
         initializeRemainingFields(gameManager, locale);
 
@@ -70,7 +68,7 @@ public class PlayerTurnDisplay {
     }
 
     private void initializeConstructorFields(GameManager gameManager,
-        GameDisplay gameDisplay, Player[] players, Locale locale) {
+                                             GameDisplay gameDisplay, Player[] players, Locale locale) {
         this.gameManager = gameManager;
         this.gameDisplay = gameDisplay;
         this.players = players;
@@ -114,8 +112,6 @@ public class PlayerTurnDisplay {
 
     public void updateUIForNewPlayer(Player player) {
         this.playerName = player.getPlayerName();
-        System.out.println("HERE");
-        System.out.println(this.playerName);
         turnEnded = false;
         resetContent();
 
@@ -123,8 +119,8 @@ public class PlayerTurnDisplay {
 
     }
 
-    private String getPlayerNameTurn(String playerName) {
-        String message = messages.getString("playerNameTurn");
+    public String getPlayerNameTurn(String playerName) {
+        String message = messages.getString("playerTurnTitle");
         return MessageFormat.format(message, playerName);
     }
 
@@ -155,7 +151,7 @@ public class PlayerTurnDisplay {
 
     private void addPlayerLabel(GridBagConstraints constraints) {
         setGridBagConstraints(constraints,
-            new GridBagConstraintHelper(0, 0, PLAYER_LABEL_WIDTH, PLAYER_LABEL_HEIGHT));
+                new GridBagConstraintHelper(0, 0, PLAYER_LABEL_WIDTH, PLAYER_LABEL_HEIGHT));
         setPlayerNameLabelConstraints(constraints);
         initializePlayerNameLabel();
         panel.add(playerNameLabel, constraints);
@@ -181,7 +177,7 @@ public class PlayerTurnDisplay {
 
     private void setPlayerNameLabelConstraints(GridBagConstraints constraints) {
         constraints.insets = new Insets(PLAYER_SMALL_INSET_PADDING, PLAYER_LARGE_INSET_PADDING,
-            PLAYER_SMALL_INSET_PADDING, PLAYER_LARGE_INSET_PADDING);
+                PLAYER_SMALL_INSET_PADDING, PLAYER_LARGE_INSET_PADDING);
         constraints.anchor = GridBagConstraints.CENTER;
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1;
@@ -198,7 +194,7 @@ public class PlayerTurnDisplay {
 
     private void addEndTurnButton(GridBagConstraints constraints) {
         setGridBagConstraints(constraints,
-            new GridBagConstraintHelper(0, BOTTOM_ROW_BUTTON_INDEX, END_TURN_BUTTON_WIDTH, 1));
+                new GridBagConstraintHelper(0, BOTTOM_ROW_BUTTON_INDEX, END_TURN_BUTTON_WIDTH, 1));
         endTurnButton = new JButton(messages.getString("endTurnLabel"));
         setEndTurnButtonInsetsConstraints(constraints);
         panel.add(endTurnButton, constraints);
@@ -206,14 +202,14 @@ public class PlayerTurnDisplay {
 
     private void setEndTurnButtonInsetsConstraints(GridBagConstraints constraints) {
         constraints.insets =
-            new Insets(SMALL_INSET_PADDING, SMALL_INSET_PADDING, SMALL_INSET_PADDING,
-                LARGE_INSET_PADDING);
+                new Insets(SMALL_INSET_PADDING, SMALL_INSET_PADDING, SMALL_INSET_PADDING,
+                        LARGE_INSET_PADDING);
     }
 
 
     private void addBuildButton(GridBagConstraints constraints) {
         setGridBagConstraints(constraints, new GridBagConstraintHelper(
-            RIGHT_BUTTON_COLUMN, TOP_ROW_BUTTON, PLAYER_ACTION_BUTTON_WIDTH, 1));
+                RIGHT_BUTTON_COLUMN, TOP_ROW_BUTTON, PLAYER_ACTION_BUTTON_WIDTH, 1));
         buildButton = new JButton(messages.getString("buildLabel"));
         setEndTurnButtonInsetsConstraints(constraints);
         panel.add(buildButton, constraints);
@@ -221,7 +217,7 @@ public class PlayerTurnDisplay {
 
     private void addTradeButton(GridBagConstraints constraints) {
         setGridBagConstraints(constraints, new GridBagConstraintHelper(
-            LEFT_BUTTON_COLUMN, TOP_ROW_BUTTON, PLAYER_ACTION_BUTTON_WIDTH, 1));
+                LEFT_BUTTON_COLUMN, TOP_ROW_BUTTON, PLAYER_ACTION_BUTTON_WIDTH, 1));
         tradeButton = new JButton(messages.getString("tradeLabel"));
         setTradeButtonAdditionalConstraints(constraints);
         panel.add(tradeButton, constraints);
@@ -230,8 +226,8 @@ public class PlayerTurnDisplay {
     private void setTradeButtonAdditionalConstraints(GridBagConstraints constraints) {
         constraints.weightx = 0.5;
         constraints.insets =
-            new Insets(SMALL_INSET_PADDING, LARGE_INSET_PADDING, SMALL_INSET_PADDING,
-                SMALL_INSET_PADDING);
+                new Insets(SMALL_INSET_PADDING, LARGE_INSET_PADDING, SMALL_INSET_PADDING,
+                        SMALL_INSET_PADDING);
         constraints.fill = GridBagConstraints.HORIZONTAL;
     }
 
@@ -279,7 +275,7 @@ public class PlayerTurnDisplay {
 
 
     private void setGridBagConstraints(GridBagConstraints constraints,
-        GridBagConstraintHelper helper) {
+                                       GridBagConstraintHelper helper) {
         constraints.gridheight = helper.height;
         constraints.gridwidth = helper.width;
         constraints.gridx = helper.offsetX;
@@ -301,6 +297,3 @@ public class PlayerTurnDisplay {
         }
     }
 }
-
-
-

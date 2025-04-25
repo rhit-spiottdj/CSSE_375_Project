@@ -26,7 +26,7 @@ public class DevelopmentCardManager {
 
 
     public Collection<ResourceType> playYearOfPlenty(Player player, ResourceType resourceOne,
-        ResourceType resourceTwo) {
+                                                     ResourceType resourceTwo) {
         boolean insufficientResources = checkIfInsufficientResources(resourceOne, resourceTwo);
         if (!insufficientResources) addResourcesToPlayer(player, resourceOne, resourceTwo);
         return player.getResources();
@@ -47,7 +47,7 @@ public class DevelopmentCardManager {
     }
 
     private void addResourcesToPlayer(Player player, ResourceType resourceOne,
-        ResourceType resourceTwo) {
+                                      ResourceType resourceTwo) {
         try {
             player.addResource(resourceOne);
             player.addResource(resourceTwo);
@@ -113,17 +113,18 @@ public class DevelopmentCardManager {
     }
 
     public ResourceType playKnight(Player player, Player toStealFrom, int newHexIndex) {
-        boolean playerToStealFrom = validatePlayKnight(player, toStealFrom, newHexIndex);
-        ResourceType stolen = getPossibleStolenResource(player, toStealFrom, playerToStealFrom);
+        boolean playerToStealFromExists = validatePlayKnight(player, toStealFrom, newHexIndex);
+        ResourceType stolen = getPossibleStolenResource(player, toStealFrom, playerToStealFromExists);
+        player.incrementPlayedKnightCount();
         bonus.updateLargestArmy(player);
         player.setDevelopmentCardAsPlayed(DevelopmentCards.KNIGHT);
         return stolen;
     }
 
     private ResourceType getPossibleStolenResource(Player player, Player toStealFrom,
-        boolean playerToStealFrom) {
+                                                   boolean playerToStealFromExists) {
         ResourceType stolen = null;
-        if(playerToStealFrom)   stolen = board.stealResource(player, toStealFrom);
+        if(playerToStealFromExists)   stolen = board.stealResource(player, toStealFrom);
         return stolen;
     }
 
@@ -149,7 +150,7 @@ public class DevelopmentCardManager {
     }
 
     private void ensureValidPlayerForHex(Player toStealFrom,
-        int oldRobberLocation, ArrayList<Player> onHexagon) {
+                                         int oldRobberLocation, ArrayList<Player> onHexagon) {
         noPlayerToStealFrom(toStealFrom);
         moveRobberBackAndErrorIfPlayerNotOnHex(toStealFrom, oldRobberLocation, onHexagon);
     }
@@ -161,7 +162,7 @@ public class DevelopmentCardManager {
     }
 
     private void moveRobberBackAndErrorIfPlayerNotOnHex(Player toStealFrom,
-        int oldRobberLocation, ArrayList<Player> onHexagon) {
+                                                        int oldRobberLocation, ArrayList<Player> onHexagon) {
         if(!(onHexagon.contains(toStealFrom))){
             board.moveRobber(oldRobberLocation);
             throw new IllegalArgumentException("Player is not on the hex");

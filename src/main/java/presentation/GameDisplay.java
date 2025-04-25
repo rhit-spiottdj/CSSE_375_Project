@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.List; // Ensure List is imported
+
 
 public class GameDisplay implements ActionListener {
 
@@ -75,14 +77,30 @@ public class GameDisplay implements ActionListener {
                     ResourceType.GRAIN, ResourceType.ORE, ResourceType.ORE, ResourceType.ORE));
     private JButton confirmButton;
 
+    // Store previous resource counts for gain detection
+    private Map<Player, Map<ResourceType, Integer>> previousPlayerResourceCounts = new HashMap<>();
+
     public GameDisplay(boolean quickSetup) {
         setup(quickSetup);
+        storeAllInitialResourceCounts(); // Store initial counts after setup
         setupForFirstTurn();
 
         boardFrame.pack();
         cardDisplay.frame.setVisible(false);
 
         setupTimer();
+    }
+
+    private void storeAllInitialResourceCounts() {
+        for (Player player : players) {
+            if (player != null) {
+                Map<ResourceType, Integer> counts = new HashMap<>();
+                for (ResourceType resource : ResourceType.values()) {
+                    counts.put(resource, player.getNumOwnedResource(resource));
+                }
+                previousPlayerResourceCounts.put(player, counts);
+            }
+        }
     }
 
     private void setupForFirstTurn() {
@@ -115,14 +133,6 @@ public class GameDisplay implements ActionListener {
 
         addSecondaryDisplaysToFrame();
     }
-
-//    private void initBoard() {
-//        initBoardDisplay();
-//
-//        initBoardFrame();
-//
-//        addBoardDisplayToFrame();
-//    }
 
     private void addSecondaryDisplaysToFrame() {
         JPanel verticalPanel = new JPanel(new GridLayout(2,1));
@@ -357,7 +367,6 @@ public class GameDisplay implements ActionListener {
     }
 
     private void setupLanguage() {
-        //dropdown frame to select either english or spanish
         String[] languages = {"English", "Espanol"};
         String language = ensureGetLanguageString(languages);
 
@@ -460,11 +469,16 @@ public class GameDisplay implements ActionListener {
 
     void singleTurn(Player player) throws Exception {
         updatePlayerInfoForTurn(player);
-        if (waitForDiceRoll(gameManager) == ROBBER_ROLL)    sevenRolled(player);
-        else    handleResourceDistributionOnRoll();
+        int roll = waitForDiceRoll(gameManager); // Get the roll result
+        if (roll == ROBBER_ROLL) {
+            sevenRolled(player);
+        } else {
+            handleResourceDistributionOnRoll(roll); // Pass the roll result
+        }
 
         waitForTurnOver(player);
     }
+
 
     private void updatePlayerInfoForTurn(Player player) {
         inTurn = player;
@@ -482,13 +496,6 @@ public class GameDisplay implements ActionListener {
         gameWonMessage(inTurn);
 
     }
-
-//    private void tryMainGameLoop() {
-//        try {
-//            mainGameLoop();
-//        } catch (GameOverException e) {
-//        }
-//    }
 
     private void mainGameLoop() throws Exception {
         boolean gameOver = false;
@@ -526,28 +533,83 @@ public class GameDisplay implements ActionListener {
 
     private void handlePlayersRobberDiscard() {
         for (int j = 0; j < players.length; j++) {
-            handlePlayerRobberDiscard(j);
+            if (players[j] != null) { // Check if player exists
+                handlePlayerRobberDiscard(j);
+            }
         }
     }
 
-    private void handleResourceDistributionOnRoll() {
-        int result = gameManager.distributeResourcesOnRoll(gameManager.getCurrentDiceRoll());
+    private void handleResourceDistributionOnRoll(int roll) {
+        // Store counts *before* distribution
+        Map<Player, Map<ResourceType, Integer>> countsBefore = new HashMap<>();
+        for (Player p : players) {
+            if (p != null) {
+                Map<ResourceType, Integer> playerCounts = new HashMap<>();
+                for (ResourceType rt : ResourceType.values()) {
+                    playerCounts.put(rt, p.getNumOwnedResource(rt));
+                }
+                countsBefore.put(p, playerCounts);
+            }
+        }
+
+        // Distribute resources
+        int result = gameManager.distributeResourcesOnRoll(roll);
+
+        // Highlight tiles
+        List<Integer> affectedHexIndices = getHexIndicesFromRoll(roll);
+        boardDisplay.highlightHexes(affectedHexIndices);
+
+        // Check for gains and trigger indicators *after* distribution
+        for (Player p : players) {
+            if (p != null) {
+                boolean gained = false;
+                Map<ResourceType, Integer> countsNow = new HashMap<>();
+                for (ResourceType rt : ResourceType.values()) {
+                    countsNow.put(rt, p.getNumOwnedResource(rt));
+                }
+
+                Map<ResourceType, Integer> previousCounts = countsBefore.getOrDefault(p, new HashMap<>());
+                for(ResourceType rt : ResourceType.values()){
+                    if(countsNow.getOrDefault(rt, 0) > previousCounts.getOrDefault(rt, 0)){
+                        gained = true;
+                        break;
+                    }
+                }
+
+                if (gained) {
+                    playersStats.triggerResourceGainIndicator(p);
+                }
+            }
+        }
+
+        // Handle robber message if necessary
         if (result == 2) {
             JOptionPane.showMessageDialog(null, messages.getString("robberOnLocation"),
                     messages.getString("robberOnLocationTitle"), JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
+
+    private List<Integer> getHexIndicesFromRoll(int roll) {
+        List<Integer> indices = new ArrayList<>();
+        Hexagon[] hexagons = boardManager.getHexagons();
+        for (int i = 0; i < hexagons.length; i++) {
+            if (hexagons[i].getValue() == roll && !hexagons[i].getHasRobber()) {
+                indices.add(i);
+            }
+        }
+        return indices;
+    }
+
     private void waitForTurnOver(Player player) throws Exception {
-        while (!turnDisplay.isTurnOver()) { // Loop until the turn is over
+        while (!turnDisplay.isTurnOver()) {
             waitForActionTaken();
             handleActionOptions(player);
             actionTaken = false;
+            // Clear highlights at the end of the action processing, before waiting for next action
+            // boardDisplay.clearHighlights(); // Moved clearing to after action handling
         }
-    }
-
-    private void killTradeAndBuildWindowsIfAlive(){
-
+        boardDisplay.clearHighlights(); // Ensure highlights are cleared when turn ends
     }
 
     private void waitForActionTaken() {
@@ -560,7 +622,12 @@ public class GameDisplay implements ActionListener {
         if (buildSettlement)    handleSettlementAction(player);
         else if (buildRoad)     handleRoadAction(player);
         else if (buildCity)     handleCityAction(player);
+        // After handling an action, clear highlights if they were related to the dice roll
+        // If highlights are used for build previews, they should be cleared differently.
+        // For now, assuming highlights are only for dice rolls:
+        // boardDisplay.clearHighlights(); // Clear after action is processed
     }
+
 
     private void handleSettlementAction(Player player) throws Exception {
         buildSettlement = false;
@@ -580,7 +647,7 @@ public class GameDisplay implements ActionListener {
     private void handleRoadAction(Player player) throws Exception {
         buildRoad = false;
         tryBuildRoad(player);
-        gameManager.findLongestRoad();
+        gameManager.bonusManager.findLongestRoad(players, boardManager.getRoadsOnBoard().toArray(new Road[0]));
         repaintButtons();
         repaintBoardHexes();;
         hasInTurnWonTheGame();
@@ -716,7 +783,6 @@ public class GameDisplay implements ActionListener {
         return tryRobberMovement(hexSelection);
     }
 
-    @SuppressWarnings("methodlength")
     private boolean tryRobberMovement(int hexSelection) {
         boolean robberMoved = false;
         try {
@@ -745,10 +811,13 @@ public class GameDisplay implements ActionListener {
 
     private void stealResourceWithMessageToPlayers(Player currentPlayer,
                                                    Player selectedPlayerToSteal) {
-        String resourceStolen =
-                gameManager.tryRobberSteal(currentPlayer, selectedPlayerToSteal).toString();
-        displayRobberResourceStolenMessage(selectedPlayerToSteal.getPlayerName(),
-                resourceStolen);
+        if (selectedPlayerToSteal != null) { // Check if a player was actually selected
+            ResourceType stolenResource = gameManager.tryRobberSteal(currentPlayer, selectedPlayerToSteal);
+            if (stolenResource != null) {
+                displayRobberResourceStolenMessage(selectedPlayerToSteal.getPlayerName(), stolenResource.toString());
+            }
+            // Optionally handle the case where stealing failed (e.g., player had no cards after all)
+        }
     }
 
 
@@ -767,7 +836,7 @@ public class GameDisplay implements ActionListener {
     }
 
     public static String getFormattedResourceStolen(String resourceStolen) {
-    	return messages.getString(resourceStolen.toLowerCase());
+        return messages.getString(resourceStolen.toLowerCase());
     }
 
     private static String getNameOfPlayerToSteal(Map<String, Player> playerMap) {
@@ -893,7 +962,6 @@ public class GameDisplay implements ActionListener {
         return roadPlaced;
     }
 
-    @SuppressWarnings("methodlength")
     private boolean tryRoadPlacement(Player player, int intersection1, int intersection2) {
         boolean roadPlaced = false;
         try {
@@ -927,7 +995,6 @@ public class GameDisplay implements ActionListener {
         return trySettlementPlacement(player, giveResources, intersection1);
     }
 
-    @SuppressWarnings("methodlength")
     private boolean trySettlementPlacement(Player player, boolean giveResources, int intersection) {
         boolean settlementPlaced = false;
         try {
@@ -975,11 +1042,6 @@ public class GameDisplay implements ActionListener {
         }
     }
 
-//    protected void repaintBoard() {
-//        repaintButtons();
-//        repaintBoardHexes();
-//    }
-
     private void repaintBoardHexes() {
         boardDisplay.repaint();
     }
@@ -998,13 +1060,13 @@ public class GameDisplay implements ActionListener {
         return null;
     }
 
-    //
     public void setupPlayers() {
         numPlayers = gameManager.getNumPlayers();
         players = new Player[numPlayers];
         colorPickerDisplay = new ColorPickerDisplay(numPlayers, gameLocale);
 
         for (int i = 0; i < numPlayers; i++)    setupPlayer(i);
+        storeAllInitialResourceCounts(); // Store counts after players are created
     }
 
     private void setupPlayer(int i) {
@@ -1063,11 +1125,12 @@ public class GameDisplay implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        playersStats.updatePlayersStats();
+        playersStats.updatePlayersStats(); // This now handles triggering indicators internally
         updateCardGUI();
         repaintButtons();
         repaintBoardHexes();;
     }
+
 
     private void updateCardGUI() {
         if (diceManager.hasPlayerRolledDice() && turnDisplay.isEnableFlag()
@@ -1077,4 +1140,3 @@ public class GameDisplay implements ActionListener {
             cardDisplay.setAllEnableTo(false);
     }
 }
-

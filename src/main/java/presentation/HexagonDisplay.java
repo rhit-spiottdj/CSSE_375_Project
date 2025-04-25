@@ -49,6 +49,8 @@ public class HexagonDisplay {
     protected Polygon hexToDraw;
     protected Polygon hexBoundaryPathToDraw;
     private Point2D displayCenter;
+    boolean highlighted = false;
+    private final Color highlightColor = Color.CYAN;
 
 
     protected HexagonDisplay(Hexagon hexClass, boolean displayUnique) {
@@ -109,9 +111,9 @@ public class HexagonDisplay {
 
     private Point2D generateSide(Point2D point, int size, int index) {
         int valX = (int) (point.getX() + size *
-            Math.cos(Math.PI / 2 + index * 2 * Math.PI / HEX_NUM_SIDES));
+                Math.cos(Math.PI / 2 + index * 2 * Math.PI / HEX_NUM_SIDES));
         int valY = (int) (point.getY() + size *
-            Math.sin(Math.PI / 2 + index * 2 * Math.PI / HEX_NUM_SIDES));
+                Math.sin(Math.PI / 2 + index * 2 * Math.PI / HEX_NUM_SIDES));
 
         return new Point2D.Double(valX, valY);
     }
@@ -135,8 +137,13 @@ public class HexagonDisplay {
     }
 
     private void drawPathAroundHexagon(Graphics2D g2) {
-        g2.setColor(new Color(borderColor[0], borderColor[1], borderColor[2]));
-        g2.setStroke(new BasicStroke(HEX_BOUNDARY_STROKE_WIDTH));
+        if(highlighted) {
+            g2.setColor(highlightColor);
+            g2.setStroke(new BasicStroke(HEX_BOUNDARY_STROKE_WIDTH + 4)); // Make highlight thicker
+        } else {
+            g2.setColor(new Color(borderColor[0], borderColor[1], borderColor[2]));
+            g2.setStroke(new BasicStroke(HEX_BOUNDARY_STROKE_WIDTH));
+        }
         g2.drawPolygon(hexBoundaryPathToDraw);
     }
 
@@ -187,13 +194,13 @@ public class HexagonDisplay {
     }
 
     private void drawRoadLineUsingHexSideIndices(Graphics2D g2, int sideStartingIndex,
-        int sideEndingIndex) {
+                                                 int sideEndingIndex) {
         Point2D sideStartingPoint = generateSide(displayCenter, HEX_BORDER_RADIUS,
-            sideStartingIndex);
+                sideStartingIndex);
         Point2D sideEndingPoint = generateSide(displayCenter, HEX_BORDER_RADIUS, sideEndingIndex);
 
         g2.drawLine((int) sideStartingPoint.getX(), (int) sideStartingPoint.getY(),
-            (int) sideEndingPoint.getX(), (int) sideEndingPoint.getY());
+                (int) sideEndingPoint.getX(), (int) sideEndingPoint.getY());
     }
 
     private Point2D getRelativeRoadCenter(Graphics2D g2, Road road) {
@@ -250,7 +257,7 @@ public class HexagonDisplay {
 
     private void setFontAndColor(Graphics2D g2, Color textColor) {
         Font font = new Font("Arial", Font.BOLD, LABEL_FONT_SIZE);
-        g2.setFont(font); // Set the font
+        g2.setFont(font);
         g2.setColor(textColor);
     }
 
@@ -278,7 +285,6 @@ public class HexagonDisplay {
         return convertValidResourceToColor(resource);
     }
 
-    @SuppressWarnings("methodlength")
     private Color convertValidResourceToColor(ResourceType resource) {
         switch(resource){
             case ORE: return new Color(oreColor[0], oreColor[1], oreColor[2]);
@@ -290,7 +296,9 @@ public class HexagonDisplay {
         }
     }
 
+    public void setHighlighted(boolean highlighted) {
+        this.highlighted = highlighted;
+    }
+
 
 }
-
-
