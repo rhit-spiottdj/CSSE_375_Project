@@ -856,6 +856,20 @@ public class BoardManager {
         intersections[index].setStructure(city);
     }
 
+    void replaceCityWithSettlement(int index) {
+        Structure originalStructure = intersections[index].getStructure();
+        Player originalOwner = originalStructure.getOwner();
+        structures.remove(originalStructure);
+
+        Settlement newSettlement = new Settlement();
+        newSettlement.setOwner(originalOwner);
+
+        structures.add(newSettlement);
+        intersections[index].setStructure(newSettlement);
+        //print structures
+        System.out.println("Structures: " + structures);
+    }
+
     boolean checkHasCityResources(Player player) {
         return player.hasResources(City.getCost()) && player.getNumCities() > 0;
     }

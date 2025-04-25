@@ -631,7 +631,10 @@ public class GameDisplay implements ActionListener {
         sevenRolledMessage();
         handlePlayersRobberDiscard();
         handleRobberActions(player);
-        gameManager.handleBarbarianTrigger();
+        ArrayList<Integer> downgradedIndexes = gameManager.handleBarbarianTrigger();
+        for (Integer downgradedIndex : downgradedIndexes) {
+            boardDisplay.downgradeToSettlementButton(downgradedIndex);
+        }
         enableButtonsAndCardGUI(true);
     }
 
@@ -768,6 +771,8 @@ public class GameDisplay implements ActionListener {
         if (!gameManager.buildCity(intersection1, player))  invalidCityPlacementMessage();
         else    boardDisplay.upgradeToCityButton(intersection1);
     }
+
+
     
     private boolean checkValidResourcesCity(Player player) {
     	if (!player.getEnoughForCity()) {

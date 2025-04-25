@@ -14,6 +14,7 @@ import java.util.ResourceBundle;
 public class BoardDisplay extends JPanel {
     private static final int INTERSECTION_BUTTON_BORDER_THICKNESS = 5;
     private static final int CITY_BUTTON_SIZE = 20;
+    private static final int SETTLEMENT_BUTTON_SIZE = 15;
 
     public static final int X_CENTER_OFFSET = 360;
 
@@ -257,6 +258,13 @@ public class BoardDisplay extends JPanel {
                 intersectionButtonManager.intersectionButtons.get(index).getX() - 2,
                 intersectionButtonManager.intersectionButtons.get(index).getY() - 2, CITY_BUTTON_SIZE,
                 CITY_BUTTON_SIZE);
+    }
+
+    public void downgradeToSettlementButton(int index) {
+        intersectionButtonManager.intersectionButtons.get(index).setBounds(
+                intersectionButtonManager.intersectionButtons.get(index).getX() + 2,
+                intersectionButtonManager.intersectionButtons.get(index).getY() + 2, SETTLEMENT_BUTTON_SIZE,
+                SETTLEMENT_BUTTON_SIZE);
     }
 
     public void toggleHexButtons(boolean toggle) {
