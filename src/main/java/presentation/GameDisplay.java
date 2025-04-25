@@ -394,7 +394,7 @@ public class GameDisplay implements ActionListener {
 
     private int ensureGetWinConditionInt() {
     	int victoryPoints = 0;
-    	while (victoryPoints <= 0) {
+    	while (victoryPoints <= 5) {
     		victoryPoints = getWinCondition();
     	}
     	return victoryPoints;
