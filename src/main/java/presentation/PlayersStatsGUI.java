@@ -54,22 +54,23 @@ public class PlayersStatsGUI {
         playerInfoFrame.setLayout(new GridLayout(1, players.length, 5, 5));
         playerInfoLabel = new JLabel("Please pick which player's information to view");
         playerInfoFrame.add(playerInfoLabel);
-//        initializePlayerGUIs(players);
+        int i = 0;
         for(Player p : players) {
             JButton btn = new JButton(p.getPlayerName());
-            PlayerStatsGUI singlePlayerGUI = new PlayerStatsGUI(p, locale);
-            btn.addActionListener(f -> showPlayerInfoDialog(playerInfoFrame, p));
+            int finalI = i;
+            btn.addActionListener(f -> showPlayerInfoDialog(playerInfoFrame, p, finalI));
             playerInfoFrame.add(btn);
+            i++;
         }
         playerInfoFrame.setLocationRelativeTo(null);
         playerInfoFrame.setVisible(true);
     }
 
-    private void showPlayerInfoDialog(JFrame playerInfoFrame, Player p) {
+    private void showPlayerInfoDialog(JFrame playerInfoFrame, Player p, int i) {
         singlePlayerInfoFrame = new JFrame();
         singlePlayerInfoFrame.setSize(new Dimension(800, 800));
         singlePlayerInfoFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        initializePlayerGUI(p);
+        initializePlayerGUI(p, i);
         singlePlayerInfoFrame.setVisible(true);
     }
 
@@ -79,10 +80,10 @@ public class PlayersStatsGUI {
 //        }
 //    }
 
-    private void initializePlayerGUI(Player p) {
+    private void initializePlayerGUI(Player p, int i) {
         PlayerStatsGUI singlePlayerGUI = new PlayerStatsGUI(p, locale);
-//        playerStatsGUIs[i] = singlePlayerGUI;
-//        playerGuiMap.put(players[i], singlePlayerGUI); // Map player to their GUI
+        playerStatsGUIs[i] = singlePlayerGUI;
+        playerGuiMap.put(p, singlePlayerGUI); // Map player to their GUI
 
         // Maybe add both panels (name+resources) to a single sub-panel per player
         JPanel playerPanelContainer = new JPanel();
