@@ -386,31 +386,33 @@ public class GameManager {
         }
     }
 
-    public int handleBarbarianTrigger() {
+    public ArrayList<Integer> handleBarbarianTrigger() {
         sevensRolledCounter++;
         if (sevensRolledCounter >= BARBARIAN_ATTACK_THRESHOLD) {
-            handleBarbarianAttack();
             sevensRolledCounter = 0;
+            return handleBarbarianAttack();
         }
-        return 0;
+        return null;
     }
 
 
-    private void handleBarbarianAttack() {
+    private ArrayList<Integer> handleBarbarianAttack() {
         int barbarianStrength = calculateBarbarianStrength();
         int totalKnightStrength = calculateTotalKnightStrength();
         String title = messages.getString("barbarianAttackTitle");
         String message;
+        ArrayList<Integer> removedCities = new ArrayList<>();
 
         if (barbarianStrength > totalKnightStrength) {
             message = MessageFormat.format(messages.getString("barbariansWonMessage"), barbarianStrength, totalKnightStrength);
             JOptionPane.showMessageDialog(null, message, title, JOptionPane.WARNING_MESSAGE);
-            applyBarbarianPenalty();
+            removedCities = applyBarbarianPenalty();
         } else {
             message = MessageFormat.format(messages.getString("playersWonMessage"), totalKnightStrength, barbarianStrength);
             JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
             applyBarbarianReward();
         }
+        return removedCities;
     }
 
     private int calculateBarbarianStrength() {
@@ -433,8 +435,8 @@ public class GameManager {
         return strength;
     }
 
-    private void applyBarbarianPenalty() {
-        Player playerWithFewestKnights = null;
+    private ArrayList<Integer> applyBarbarianPenalty() {
+        ArrayList<Integer> removedCities = new ArrayList<>();
         int minKnights = Integer.MAX_VALUE;
         for (Player player: players) {
             if(player != null) {
@@ -455,16 +457,20 @@ public class GameManager {
 
         StringBuilder penaltyMessage = new StringBuilder();
         for (Player player : playersToPenalize) {
-            if (downgradeRandomCity(player)) {
+            int removedIndex = downgradeRandomCity(player);
+            if (removedIndex != -1) {
+                removedCities.add(removedIndex);
+                calculateVictoryPointsForPlayer(player);
                 penaltyMessage.append(MessageFormat.format(messages.getString("cityDowngradedMessage"), player.getPlayerName())).append("\n");
             }
         }
         if (penaltyMessage.length() > 0) {
             JOptionPane.showMessageDialog(null, penaltyMessage.toString().trim(), messages.getString("barbarianAttackTitle"), JOptionPane.WARNING_MESSAGE);
         }
+        return removedCities;
     }
 
-    private boolean downgradeRandomCity(Player player) {
+    private int downgradeRandomCity(Player player) {
         ArrayList<Integer> playerCityLocations = new ArrayList<>();
 
         for(int i = 0; i < boardManager.intersections.length; i++) {
@@ -478,33 +484,19 @@ public class GameManager {
             Random rand = new Random();
             int cityIndexToDowngrade = playerCityLocations.get(rand.nextInt(playerCityLocations.size()));
 
-            Structure cityStructure = boardManager.intersections[cityIndexToDowngrade].getStructure();
-
-            boardManager.getStructures().remove(cityStructure);
-
-            boardManager.intersections[cityIndexToDowngrade].setStructure(null);
-
-            Settlement settlement = new Settlement();
-            settlement.setOwner(player);
-
-            boardManager.intersections[cityIndexToDowngrade].setStructure(settlement);
-            boardManager.getStructures().add(settlement);
-
-            player.setNumCities(player.getNumCities() + 1);
-
-            calculateVictoryPointsForPlayer(player);
+            boardManager.replaceCityWithSettlement(cityIndexToDowngrade);
 
             String message = MessageFormat.format(messages.getString("cityDowngradedMessage"), player.getPlayerName());
             JOptionPane.showMessageDialog(null, message, messages.getString("barbarianAttackTitle"), JOptionPane.WARNING_MESSAGE);
 
             gameOver = false;
 
-            return true;
+            return cityIndexToDowngrade;
         }
 
         String message = MessageFormat.format(messages.getString("noCitiesToDowngradeMessage"), player.getPlayerName());
         JOptionPane.showMessageDialog(null, message, messages.getString("barbarianAttackTitle"), JOptionPane.WARNING_MESSAGE);
-        return false;
+        return -1;
     }
 
     private void applyBarbarianReward() {
