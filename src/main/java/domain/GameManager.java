@@ -380,19 +380,19 @@ public class GameManager {
 
     public int distributeResourcesOnRoll(int roll) {
         if (roll == ROBBER_ROLL) {
-            handleBarbarianTrigger();
             return 0; // Indicate 7 was rolled, but don't distribute resources yet
         } else {
             return boardManager.distributeResourcesOnRoll(roll, bank);
         }
     }
 
-    private void handleBarbarianTrigger() {
+    public int handleBarbarianTrigger() {
         sevensRolledCounter++;
         if (sevensRolledCounter >= BARBARIAN_ATTACK_THRESHOLD) {
             handleBarbarianAttack();
             sevensRolledCounter = 0;
         }
+        return 0;
     }
 
 
@@ -411,7 +411,6 @@ public class GameManager {
             JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
             applyBarbarianReward();
         }
-        resetAllPlayerKnightCounts();
     }
 
     private int calculateBarbarianStrength() {
@@ -467,33 +466,52 @@ public class GameManager {
 
     private boolean downgradeRandomCity(Player player) {
         ArrayList<Integer> playerCityLocations = new ArrayList<>();
+
         for(int i = 0; i < boardManager.intersections.length; i++) {
             Structure structure = boardManager.intersections[i].getStructure();
             if(structure instanceof City && structure.getOwner() != null && structure.getOwner().equals(player)) {
                 playerCityLocations.add(i);
             }
         }
+
         if(!playerCityLocations.isEmpty()) {
             Random rand = new Random();
             int cityIndexToDowngrade = playerCityLocations.get(rand.nextInt(playerCityLocations.size()));
 
+            Structure cityStructure = boardManager.intersections[cityIndexToDowngrade].getStructure();
+
+            boardManager.getStructures().remove(cityStructure);
+
             boardManager.intersections[cityIndexToDowngrade].setStructure(null);
-            boardManager.placeSettlementSetup(cityIndexToDowngrade, player, new Settlement());
+
+            Settlement settlement = new Settlement();
+            settlement.setOwner(player);
+
+            boardManager.intersections[cityIndexToDowngrade].setStructure(settlement);
+            boardManager.getStructures().add(settlement);
 
             player.setNumCities(player.getNumCities() + 1);
-            player.setNumSettlements(player.getNumSettlements() - 1);
 
             calculateVictoryPointsForPlayer(player);
-            return true; // Indicate a city was downgraded
-        }
-        return false; // Indicate no city was downgraded
-    }
 
+            String message = MessageFormat.format(messages.getString("cityDowngradedMessage"), player.getPlayerName());
+            JOptionPane.showMessageDialog(null, message, messages.getString("barbarianAttackTitle"), JOptionPane.WARNING_MESSAGE);
+
+            gameOver = false;
+
+            return true;
+        }
+
+        String message = MessageFormat.format(messages.getString("noCitiesToDowngradeMessage"), player.getPlayerName());
+        JOptionPane.showMessageDialog(null, message, messages.getString("barbarianAttackTitle"), JOptionPane.WARNING_MESSAGE);
+        return false;
+    }
 
     private void applyBarbarianReward() {
         Player playerWithMostKnights = null;
         int maxKnights = -1;
         int numPlayersWithMax = 0;
+
         for (Player player: players) {
             if(player != null) {
                 if (player.getPlayedKnightCount() > maxKnights) {
@@ -505,19 +523,18 @@ public class GameManager {
                 }
             }
         }
-        if (numPlayersWithMax == 1 && playerWithMostKnights != null) {
-            playerWithMostKnights.setVictoryPoints(playerWithMostKnights.getVictoryPoints() + 1);
+
+        if (numPlayersWithMax == 1 && playerWithMostKnights != null && maxKnights > 0) {
+            playerWithMostKnights.addDevelopmentCard(DevelopmentCards.VICTORY);
+
             calculateVictoryPointsForPlayer(playerWithMostKnights);
+
+            if (playerWithMostKnights.getVictoryPoints() >= SCORE_TO_WIN) {
+                gameOver = true;
+            }
+
             String message = MessageFormat.format(messages.getString("playerRewardedMessage"), playerWithMostKnights.getPlayerName());
             JOptionPane.showMessageDialog(null, message, messages.getString("barbarianAttackTitle"), JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
-
-    private void resetAllPlayerKnightCounts() {
-        for (Player player : players) {
-            if(player != null) {
-                player.resetPlayedKnightCount();
-            }
         }
     }
 

@@ -1,5 +1,4 @@
 package presentation;
-import presentation.BarbarianRaidDisplay;
 
 import domain.*;
 
@@ -476,7 +475,10 @@ public class GameDisplay implements ActionListener {
         if (roll == ROBBER_ROLL) {
             sevenRolled(player);
         }
-        handleResourceDistributionOnRoll(roll);
+        else {
+            handleResourceDistributionOnRoll(roll);
+        }
+
 
         waitForTurnOver(player);
     }
@@ -494,7 +496,9 @@ public class GameDisplay implements ActionListener {
 
         try {
             mainGameLoop();
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            System.err.println("Game ended due to exception: " + e.getMessage());
+        }
         gameWonMessage(inTurn);
 
     }
@@ -525,6 +529,7 @@ public class GameDisplay implements ActionListener {
         sevenRolledMessage();
         handlePlayersRobberDiscard();
         handleRobberActions(player);
+        gameManager.handleBarbarianTrigger();
         enableButtonsAndCardGUI(true);
     }
 
@@ -552,7 +557,6 @@ public class GameDisplay implements ActionListener {
                 countsBefore.put(p, playerCounts);
             }
         }
-
         int result = gameManager.distributeResourcesOnRoll(roll);
 
         List<Integer> affectedHexIndices = getHexIndicesFromRoll(roll);
