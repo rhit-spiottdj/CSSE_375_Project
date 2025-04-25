@@ -553,8 +553,9 @@ public class BoardManager {
     public Hexagon[] initializeBoardStructure(boolean randomize) {
         Hexagon[] hexagons = generateHexagons(randomize);
         Intersection[] intersections = generateIntersections();
+        for (int i = 0; i < intersections.length; i++) {
+        }
         generatePorts(randomize);
-
         linkHexagonsAndIntersections(hexagons, intersections);
         return hexagons;
     }
@@ -987,8 +988,9 @@ public class BoardManager {
     private int checkStructureExistsAndTryToGiveResource(Bank bank, Hexagon hex) {
         ResourceType resource = hex.getResource();
         Intersection[] intersections = hex.getIntersections();
-        for (Intersection inter : intersections)
+        for (Intersection inter : intersections) {
             if (inter.getStructure() != null) return tryAddResourcesFromRoll(bank, inter, resource);
+        }
         return 0;
     }
 

@@ -95,5 +95,9 @@ public class Intersection {
     public void setPort(Port port){
         this.port = port;
     }
+    
+    public HashSet<Player> getOwners() {
+    	return this.owners;
+    }
 
 }

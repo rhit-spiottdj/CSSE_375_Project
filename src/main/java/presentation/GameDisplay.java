@@ -59,8 +59,8 @@ public class GameDisplay implements ActionListener {
     Locale gameLocale = locales[0];
 
     private String[] quickPlayerNames = new String[]{"Player1", "Player2", "Player3", "Player4", "Player5", "Player6"};
-    private Color[] quickPlayerColors =
-            new Color[]{Color.RED, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.BLACK, Color.PINK};
+    private Color[] quickPlayerColors = {Color.RED, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.BLACK, Color.PINK};
+
 
     protected Player[] players;
 
@@ -166,10 +166,7 @@ public class GameDisplay implements ActionListener {
     }
 
     private void placeQuickSetupStructures() {
-        placeFirstInitialQuickSetupSettlements();
-        placeSecondInitialQuickSetupSettlements();
-        placeFirstInitialQuickSetupRoads();
-        placeSecondInitialQuickSetupRoads();
+
         repaintButtons();
         repaintBoardHexes();;
     }
@@ -270,7 +267,6 @@ public class GameDisplay implements ActionListener {
         setupLanguage();
         int playerNum = getPlayerNum();
         initializeGameAndBoardManager(playerNum);
-
         quickSetupPlayers();
     }
 
@@ -293,11 +289,9 @@ public class GameDisplay implements ActionListener {
 
     private void normalSetup() {
         setupLanguage();
-
         int playerNum = getPlayerNum();
-
         initializeGameAndBoardManager(playerNum);
-
+        setupWinCondition();
         setupPlayers();
         rollForPlayerOrder();
     }
@@ -474,7 +468,30 @@ public class GameDisplay implements ActionListener {
         Locale.setDefault(locales[1]);
         JComponent.setDefaultLocale(locales[1]);
     }
+    
+    private void setupWinCondition() {
+    	int victoryPoints = ensureGetWinConditionInt();
+    	gameManager.setScoreToWin(victoryPoints);
+    }
 
+    private int ensureGetWinConditionInt() {
+    	int victoryPoints = 0;
+    	while (victoryPoints <= 4) {
+    		victoryPoints = getWinCondition();
+    	}
+    	return victoryPoints;
+    }
+    
+    private int getWinCondition() {
+    	int victoryPoints = -1;
+    	String victoryPointsString = JOptionPane.showInputDialog(null, "Set Victory Points needed for Win (min 5)");
+    	try {
+    		victoryPoints = Integer.parseInt(victoryPointsString);
+    	} catch (NumberFormatException e) {
+    		victoryPoints = -1;
+    	}
+    	return victoryPoints;
+    }
 
     private int getPlayerNum() {
 
@@ -678,10 +695,26 @@ public class GameDisplay implements ActionListener {
     }
 
     private void tryBuildCity(Player player) {
+    	if (!checkValidResourcesCity(player)) {
+    		return;
+    	}
         buildCityMessage();
         int intersection1 = getIntersectionButtonSelection();
         if (!gameManager.buildCity(intersection1, player))  invalidCityPlacementMessage();
         else    boardDisplay.upgradeToCityButton(intersection1);
+    }
+    
+    private boolean checkValidResourcesCity(Player player) {
+    	if (!player.getEnoughForCity()) {
+    		invalidResourcesMessage();
+    		return false;
+    	}
+    	return true;
+    }
+    
+    private void invalidResourcesMessage() {
+    	JOptionPane.showMessageDialog(null, messages.getString("buildInvalidResources"),
+                messages.getString("buildInvalidResourcesTitle"), JOptionPane.ERROR_MESSAGE);
     }
 
     private void invalidCityPlacementMessage() {
@@ -695,18 +728,40 @@ public class GameDisplay implements ActionListener {
     }
 
     private void tryBuildSettlement(Player player) {
+    	if (!checkValidResourcesSettlement(player)) {
+    		return;
+    	}
         buildSettlementMessage();
         int intersection1 = getIntersectionButtonSelection();
         if (!gameManager.buildSettlement(intersection1, player)) {
             invalidSettlementPlacementMessage();
         }
     }
+    
+    private boolean checkValidResourcesSettlement(Player player) {
+    	if (!player.getEnoughForSettlement()) {
+    		invalidResourcesMessage();
+    		return false;
+    	}
+    	return true;
+    }
 
     protected void tryBuildRoad(Player player) {
+    	if (!checkValidResourcesRoad(player)) {
+    		return;
+    	}
         buildRoadMessage();
         int intersection1 = getIntersectionButtonSelection();
         int intersection2 = getIntersectionButtonSelection();
         buildRoad(player, intersection1, intersection2);
+    }
+    
+    private boolean checkValidResourcesRoad(Player player) {
+    	if (!player.getEnoughForRoad()) {
+    		invalidResourcesMessage();
+    		return false;
+    	} 
+    	return true;
     }
 
     private void buildRoad(Player player, int intersection1, int intersection2) {
@@ -812,8 +867,8 @@ public class GameDisplay implements ActionListener {
     }
 
     public static void displayRobberPlacementError() {
-        JOptionPane.showMessageDialog(null, messages.getString("noPlayersToStealMessage"),
-                messages.getString("noPlayersToStealTitle"), JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, messages.getString("invalidRobberPlacement"),
+                messages.getString("invalidRobberPlacementTitle"), JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void tryStealResourceWithMessageToPlayers(Player currentPlayer,
@@ -957,7 +1012,7 @@ public class GameDisplay implements ActionListener {
 
     private void trySecondRoadAndSettlementPlacement(Player[] players, int i) {
         initialSettlementDisplay(players, i, messages.getString("settlementSecond"));
-        waitForSettlementPlacement(players[i], true);
+        waitForSettlementPlacement(players[i], false);
         initialRoadDisplay(players, i, messages.getString("settlementSecond"));
         waitForRoadPlacement(players[i]);
     }
