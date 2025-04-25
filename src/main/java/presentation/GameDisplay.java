@@ -20,8 +20,7 @@ public class GameDisplay implements ActionListener {
     public static final int TIMER_INTERVAL = 100;
     public static final int TIMER_START_AFTER = 100;
     private static final int ROBBER_ROLL = 7;
-    public static final int[] QUICK_SETUP_SETTLEMENTS = {0, 31, 47, 41, 3, 37, 13, 2, 28, 26, 34, 52};
-    static final int[] QUICK_SETUP_ROADS = {0, 6, 31, 29, 47, 53, 41, 23, 3, 9, 37, 17, 13, 32, 2, 18, 28, 10, 26, 44, 34, 49, 52, 46};
+   
     private static ResourceBundle messages;
     private final Locale[] locales = {new Locale("en"), new Locale("es")};
     protected CardGUI cardDisplay;
@@ -38,9 +37,9 @@ public class GameDisplay implements ActionListener {
     BarbarianRaidDisplay barbarianRaidDisplay;
     Locale gameLocale = locales[0];
 
-    private String[] quickPlayerNames = new String[]{"Player1", "Player2", "Player3", "Player4", "Player5", "Player6"};
+    private String[] quickPlayerNames = new String[]{"Player1", "Player2", "Player3", "Player4"};
     private Color[] quickPlayerColors =
-            new Color[]{Color.RED, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.BLACK, Color.CYAN};
+            new Color[]{Color.RED, Color.GREEN, Color.BLUE, Color.MAGENTA};
 
     protected Player[] players;
 
@@ -153,38 +152,15 @@ public class GameDisplay implements ActionListener {
     }
 
     private void placeQuickSetupStructures() {
-        placeInitialQuickSetupSettlements(0);
-        placeInitialQuickSetupSettlements(6);
-        placeInitialQuickSetupRoads(0);
-        placeInitialQuickSetupRoads(12);
+
         repaintButtons();
         repaintBoardHexes();;
     }
-    
-    private void placeInitialQuickSetupRoads(int index) {
-    	int playerNum = 0;
-    	while (playerNum < numPlayers) {
-    		int index2 = index + 1;
-    		gameManager.placeRoad(QUICK_SETUP_ROADS[index], QUICK_SETUP_ROADS[index2], gameManager.getPlayers()[playerNum], true);
-    		index+=2;
-    		playerNum++;
-    	}
-    }
-    
-    private void placeInitialQuickSetupSettlements(int index) {
-    	int playerNum = 0;
-    	while (playerNum < numPlayers) {
-    		gameManager.placeInitialSettlement(QUICK_SETUP_SETTLEMENTS[index], gameManager.getPlayers()[playerNum]);
-    		index++;
-    		playerNum++;
-    	}
-    }
+
 
     private void quickSetup() {
         setupLanguage();
-        int playerNum = getPlayerNum();
-        initializeGameAndBoardManager(playerNum);
-
+        initializeGameAndBoardManager(2);
         quickSetupPlayers();
     }
 
@@ -393,7 +369,7 @@ public class GameDisplay implements ActionListener {
 
     private int ensureGetWinConditionInt() {
     	int victoryPoints = 0;
-    	while (victoryPoints <= 5) {
+    	while (victoryPoints <= 4) {
     		victoryPoints = getWinCondition();
     	}
     	return victoryPoints;
@@ -984,7 +960,7 @@ public class GameDisplay implements ActionListener {
 
     private void trySecondRoadAndSettlementPlacement(Player[] players, int i) {
         initialSettlementDisplay(players, i, messages.getString("settlementSecond"));
-        waitForSettlementPlacement(players[i], true);
+        waitForSettlementPlacement(players[i], false);
         initialRoadDisplay(players, i, messages.getString("settlementSecond"));
         waitForRoadPlacement(players[i]);
     }

@@ -151,6 +151,7 @@ public class Player {
         while(resourceDupe.remove(resourceType)) numRemoved++;
         return numRemoved;
     }
+    
 
     public void setVictoryPoints(int victoryPoints){
         this.victoryPoints = victoryPoints;
