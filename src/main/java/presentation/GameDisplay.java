@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.List;
 
 public class GameDisplay implements ActionListener {
 
@@ -56,6 +57,7 @@ public class GameDisplay implements ActionListener {
 
     private TradeManagerGUI discardGUI;
     protected PlayersStatsGUI playersStats;
+    BarbarianRaidDisplay barbarianRaidDisplay;
     Locale gameLocale = locales[0];
 
     private String[] quickPlayerNames = new String[]{"Player1", "Player2", "Player3", "Player4", "Player5", "Player6"};
@@ -148,6 +150,7 @@ public class GameDisplay implements ActionListener {
         verticalPanel.add(turnDisplay.frame);
         verticalPanel.add(cardDisplay.frame);
         boardFrame.add(verticalPanel);
+        boardFrame.add(barbarianRaidDisplay.panel);
         boardFrame.add(playersStats.frame);
     }
 
@@ -155,6 +158,7 @@ public class GameDisplay implements ActionListener {
         playersStats = new PlayersStatsGUI(gameManager.getPlayers(), gameLocale);
         turnDisplay = new PlayerTurnDisplay(gameManager, this, players, gameLocale);
         cardDisplay = new CardGUI(players, gameManager, this, gameLocale);
+        barbarianRaidDisplay = new BarbarianRaidDisplay(gameManager);
     }
 
     private void handlePlayerSetup(boolean isQuickSetup) {
@@ -563,8 +567,14 @@ public class GameDisplay implements ActionListener {
 
     void singleTurn(Player player) throws Exception {
         updatePlayerInfoForTurn(player);
-        if (waitForDiceRoll(gameManager) == ROBBER_ROLL)    sevenRolled(player);
-        else    handleResourceDistributionOnRoll();
+        int roll = waitForDiceRoll(gameManager);
+        if (roll == ROBBER_ROLL) {
+            sevenRolled(player);
+        }
+        else {
+            handleResourceDistributionOnRoll(roll);
+        }
+
 
         waitForTurnOver(player);
     }
@@ -581,7 +591,9 @@ public class GameDisplay implements ActionListener {
 
         try {
             mainGameLoop();
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            System.err.println("Game ended due to exception: " + e.getMessage());
+        }
         gameWonMessage(inTurn);
 
     }
@@ -619,6 +631,7 @@ public class GameDisplay implements ActionListener {
         sevenRolledMessage();
         handlePlayersRobberDiscard();
         handleRobberActions(player);
+        gameManager.handleBarbarianTrigger();
         enableButtonsAndCardGUI(true);
     }
 
@@ -633,8 +646,44 @@ public class GameDisplay implements ActionListener {
         }
     }
 
-    private void handleResourceDistributionOnRoll() {
-        int result = gameManager.distributeResourcesOnRoll(gameManager.getCurrentDiceRoll());
+    private void handleResourceDistributionOnRoll(int roll) {
+        Map<Player, Map<ResourceType, Integer>> countsBefore = new HashMap<>();
+        for (Player p : players) {
+            if (p != null) {
+                Map<ResourceType, Integer> playerCounts = new HashMap<>();
+                for (ResourceType rt : ResourceType.values()) {
+                    playerCounts.put(rt, p.getNumOwnedResource(rt));
+                }
+                countsBefore.put(p, playerCounts);
+            }
+        }
+        int result = gameManager.distributeResourcesOnRoll(roll);
+
+        List<Integer> affectedHexIndices = getHexIndicesFromRoll(roll);
+        boardDisplay.highlightHexes(affectedHexIndices);
+
+        for (Player p : players) {
+            if (p != null) {
+                boolean gained = false;
+                Map<ResourceType, Integer> countsNow = new HashMap<>();
+                for (ResourceType rt : ResourceType.values()) {
+                    countsNow.put(rt, p.getNumOwnedResource(rt));
+                }
+
+                Map<ResourceType, Integer> previousCounts = countsBefore.getOrDefault(p, new HashMap<>());
+                for(ResourceType rt : ResourceType.values()){
+                    if(countsNow.getOrDefault(rt, 0) > previousCounts.getOrDefault(rt, 0)){
+                        gained = true;
+                        break;
+                    }
+                }
+
+                if (gained) {
+                    playersStats.triggerResourceGainIndicator(p);
+                }
+            }
+        }
+
         if (result == 2) {
             JOptionPane.showMessageDialog(null, messages.getString("robberOnLocation"),
                     messages.getString("robberOnLocationTitle"), JOptionPane.INFORMATION_MESSAGE);
@@ -642,11 +691,24 @@ public class GameDisplay implements ActionListener {
     }
 
     private void waitForTurnOver(Player player) throws Exception {
-        while (!turnDisplay.isTurnOver()) { // Loop until the turn is over
+        while (!turnDisplay.isTurnOver()) {
             waitForActionTaken();
             handleActionOptions(player);
             actionTaken = false;
+
         }
+        boardDisplay.clearHighlights();
+    }
+
+    private List<Integer> getHexIndicesFromRoll(int roll) {
+        List<Integer> indices = new ArrayList<>();
+        Hexagon[] hexagons = boardManager.getHexagons();
+        for (int i = 0; i < hexagons.length; i++) {
+            if (hexagons[i].getValue() == roll && !hexagons[i].getHasRobber()) {
+                indices.add(i);
+            }
+        }
+        return indices;
     }
 
     private void killTradeAndBuildWindowsIfAlive(){
@@ -1205,6 +1267,7 @@ public class GameDisplay implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         playersStats.updatePlayersStats();
+        barbarianRaidDisplay.updateDisplay();
         updateCardGUI();
         repaintButtons();
         repaintBoardHexes();;
