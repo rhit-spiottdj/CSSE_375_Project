@@ -59,7 +59,7 @@ public class GameDisplay implements ActionListener {
     Locale gameLocale = locales[0];
 
     private String[] quickPlayerNames = new String[]{"Player1", "Player2", "Player3", "Player4", "Player5", "Player6"};
-    private Color[] quickPlayerColors = {Color.RED, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.BLACK, Color.PINK};
+    private Color[] quickPlayerColors = new Color[]{Color.RED, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.BLACK, Color.PINK};
 
 
     protected Player[] players;
@@ -166,7 +166,10 @@ public class GameDisplay implements ActionListener {
     }
 
     private void placeQuickSetupStructures() {
-
+    	placeFirstInitialQuickSetupSettlements();
+    	placeSecondInitialQuickSetupSettlements();
+    	placeFirstInitialQuickSetupRoads();
+    	placeSecondInitialQuickSetupRoads();
         repaintButtons();
         repaintBoardHexes();;
     }
