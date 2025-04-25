@@ -12,11 +12,11 @@ public class GameManager {
     private static final int MAX_INTERSECTION_INDEX = 53;
     private static final int MAX_HEX_INDEX = 18;
     public static final int MULTIPLE_OF_FOUR = 4;
-    public static final int SCORE_TO_WIN = 10;
     private static final int BARBARIAN_ATTACK_THRESHOLD = 1;
     private static final int ROBBER_ROLL = 7;
 
     private int sevensRolledCounter = 0;
+    public int scoreToWin = 10;
 
     public DiceManager diceManager;
     Player[] players;
@@ -235,7 +235,7 @@ public class GameManager {
     public int calculateVictoryPointsForPlayer(Player player) {
         int amount = calculateVictoryPointsForPlayer(boardManager, player);
         player.setVictoryPoints(amount);
-        gameOver = amount >= SCORE_TO_WIN;
+        gameOver = amount >= scoreToWin;
         return amount;
     }
 
@@ -529,7 +529,7 @@ public class GameManager {
 
             calculateVictoryPointsForPlayer(playerWithMostKnights);
 
-            if (playerWithMostKnights.getVictoryPoints() >= SCORE_TO_WIN) {
+            if (playerWithMostKnights.getVictoryPoints() >= scoreToWin) {
                 gameOver = true;
             }
 
@@ -665,5 +665,9 @@ public class GameManager {
 
     public int getBarbarianAttackThreshold() {
         return BARBARIAN_ATTACK_THRESHOLD;
+    }
+    
+    public void setScoreToWin(int score) {
+    	scoreToWin = score;
     }
 }
