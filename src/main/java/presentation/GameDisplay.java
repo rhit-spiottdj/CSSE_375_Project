@@ -799,8 +799,8 @@ public class GameDisplay implements ActionListener {
     }
 
     public static void displayRobberPlacementError() {
-        JOptionPane.showMessageDialog(null, messages.getString("noPlayersToStealMessage"),
-                messages.getString("noPlayersToStealTitle"), JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, messages.getString("invalidRobberPlacement"),
+                messages.getString("invalidRobberPlacementTitle"), JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void tryStealResourceWithMessageToPlayers(Player currentPlayer,
