@@ -842,5 +842,148 @@ public class TestPlayer {
     	player.addResource(b);
     	assertTrue(player.validateResourcesNotBlank(player.resources));
     }
+    
+    @Test
+    public void testGetEnoughForRoadBlank() {
+    	Player player = new Player(Color.RED, "d", new ArrayList<>());
+    	assertFalse(player.getEnoughForRoad());
+    }
+    
+    @Test
+    public void testGetEnoughForRoadLumber() {
+    	Player player = new Player(Color.RED, "d", new ArrayList<>());
+    	ResourceType l = ResourceType.LUMBER;
+    	player.addResource(l);
+    	assertFalse(player.getEnoughForRoad());
+    }
+    
+    @Test
+    public void testGetEnoughForRoadBrick() {
+    	Player player = new Player(Color.RED, "d", new ArrayList<>());
+    	ResourceType b = ResourceType.BRICK;
+    	player.addResource(b);
+    	assertFalse(player.getEnoughForRoad());
+    }
+    
+    @Test
+    public void testGetEnoughForRoadEnough() {
+    	Player player = new Player(Color.RED, "d", new ArrayList<>());
+    	ResourceType b = ResourceType.BRICK;
+    	ResourceType l = ResourceType.LUMBER;
+    	player.addResource(l);
+    	player.addResource(b);
+    	assertTrue(player.getEnoughForRoad());
+    }
+    
+    @Test
+    public void testGetEnoughForSettlementBlank() {
+    	Player player = new Player(Color.RED, "d", new ArrayList<>());
+    	assertFalse(player.getEnoughForSettlement());
+    }
+    
+    @Test
+    public void testGetEnoughForSettlementLumberMissing() {
+    	Player player = new Player(Color.RED, "d", new ArrayList<>());
+    	ResourceType b = ResourceType.BRICK;
+    	ResourceType w = ResourceType.WOOL;
+    	ResourceType g = ResourceType.GRAIN;
+    	player.addResource(b);
+    	player.addResource(w);
+    	player.addResource(g);
+    	assertFalse(player.getEnoughForSettlement());
+    }
+    
+    @Test
+    public void testGetEnoughForSettlementBrickMissing() {
+    	Player player = new Player(Color.RED, "d", new ArrayList<>());
+    	ResourceType l = ResourceType.LUMBER;
+    	ResourceType w = ResourceType.WOOL;
+    	ResourceType g = ResourceType.GRAIN;
+    	player.addResource(l);
+    	player.addResource(w);
+    	player.addResource(g);
+    	assertFalse(player.getEnoughForSettlement());
+    }
+    
+    @Test
+    public void testGetEnoughForSettlementWoolMissing() {
+    	Player player = new Player(Color.RED, "d", new ArrayList<>());
+    	ResourceType b = ResourceType.BRICK;
+    	ResourceType l = ResourceType.LUMBER;
+    	ResourceType g = ResourceType.GRAIN;
+    	player.addResource(b);
+    	player.addResource(l);
+    	player.addResource(g);
+    	assertFalse(player.getEnoughForSettlement());
+    }
+    
+    @Test
+    public void testGetEnoughForSettlementGrainMissing() {
+    	Player player = new Player(Color.RED, "d", new ArrayList<>());
+    	ResourceType b = ResourceType.BRICK;
+    	ResourceType w = ResourceType.WOOL;
+    	ResourceType l = ResourceType.LUMBER;
+    	player.addResource(b);
+    	player.addResource(w);
+    	player.addResource(l);
+    	assertFalse(player.getEnoughForSettlement());
+    }
+    
+    @Test
+    public void testGetEnoughForSettlementEnough() {
+    	Player player = new Player(Color.RED, "d", new ArrayList<>());
+    	ResourceType b = ResourceType.BRICK;
+    	ResourceType l = ResourceType.LUMBER;
+    	ResourceType w = ResourceType.WOOL;
+    	ResourceType g = ResourceType.GRAIN;
+    	player.addResource(l);
+    	player.addResource(b);
+    	player.addResource(g);
+    	player.addResource(w);
+    	assertTrue(player.getEnoughForSettlement());
+    }
+        
+    @Test
+    public void testGetEnoughForCityBlank() {
+    	Player player = new Player(Color.RED, "d", new ArrayList<>());
+    	assertFalse(player.getEnoughForCity());
+    }
+    
+    @Test
+    public void testGetEnoughForCityOreMissing() {
+    	Player player = new Player(Color.RED, "d", new ArrayList<>());
+    	ResourceType o = ResourceType.ORE;
+    	ResourceType g = ResourceType.GRAIN;
+    	player.addResource(o);
+    	player.addResource(o);
+    	player.addResource(g);
+    	player.addResource(g);
+    	assertFalse(player.getEnoughForCity());
+    }
+    
+    @Test
+    public void testGetEnoughForCityGrainMissing() {
+    	Player player = new Player(Color.RED, "d", new ArrayList<>());
+    	ResourceType o = ResourceType.ORE;
+    	ResourceType g = ResourceType.GRAIN;
+    	player.addResource(o);
+    	player.addResource(o);
+    	player.addResource(o);
+    	player.addResource(g);
+    	assertFalse(player.getEnoughForCity());
+    }
+    
+    @Test
+    public void testGetEnoughForCityEnough() {
+    	Player player = new Player(Color.RED, "d", new ArrayList<>());
+    	ResourceType o = ResourceType.ORE;
+    	ResourceType g = ResourceType.GRAIN;
+    	player.addResource(o);
+    	player.addResource(o);
+    	player.addResource(o);
+    	player.addResource(g);
+    	player.addResource(g);
+    	assertTrue(player.getEnoughForCity());
+    }
 
 }
