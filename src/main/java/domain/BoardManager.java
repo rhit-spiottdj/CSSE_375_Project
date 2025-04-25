@@ -750,7 +750,7 @@ public class BoardManager {
     }
 
     private boolean checkValidRoadPlacementLocation(int one, int two, Player p, boolean init) {
-        if (invalidRoadIndices(one, two) || roadAlreadyExistsOnIntersections(one, two, init) ||
+        if (invalidRoadIndices(one, two) || roadAlreadyExistsOnIntersections(one, two, init, p) ||
                 intersectionsNotOwnedByPlayer(one, two, p) || nonAdjacentIntersections(one, two)) {
             return false;
         }
@@ -765,9 +765,10 @@ public class BoardManager {
         return !intersections[one].ownedByThisPlayer(p) && !intersections[two].ownedByThisPlayer(p);
     }
 
-    private boolean roadAlreadyExistsOnIntersections(int one, int two, boolean init) {
+    private boolean roadAlreadyExistsOnIntersections(int one, int two, boolean init, Player p) {
         if (initCheck(one, two, init)) {
-            return roads.contains(intersections[one]) || roads.contains(intersections[two]);
+            return (roads.contains(intersections[one]) && !intersections[one].ownedByThisPlayer(p))
+                    || (roads.contains(intersections[two]) && !intersections[two].ownedByThisPlayer(p));
         }
         return roads.contains(intersections[one]) && roads.contains(intersections[two]);
     }
