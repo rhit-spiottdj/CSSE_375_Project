@@ -2415,4 +2415,48 @@ public class TestGameManager {
 
         EasyMock.verify(bank);
     }
+    
+    @Test
+    public void testGameOverMinVPsNotOver() {
+    	GameManager gm = new GameManager(2);
+    	BoardManager bm = new BoardManager();
+    	gm.boardManager = bm;
+    	Player player = new Player(Color.RED, "r", new ArrayList<>());
+    	gm.setScoreToWin(5);
+    	player.setVictoryPoints(4);
+    	assertFalse(player.getVictoryPoints() >= gm.scoreToWin);
+    }
+    
+    @Test
+    public void testGameOverMinVPsOver() {
+    	GameManager gm = new GameManager(2);
+    	BoardManager bm = new BoardManager();
+    	gm.boardManager = bm;
+    	Player player = new Player(Color.RED, "r", new ArrayList<>());
+    	gm.setScoreToWin(5);
+    	player.setVictoryPoints(5);
+    	assertTrue(player.getVictoryPoints() >= gm.scoreToWin);
+    }
+    
+    @Test
+    public void testGameOverMaxVPsNotOver() {
+    	GameManager gm = new GameManager(2);
+    	BoardManager bm = new BoardManager();
+    	gm.boardManager = bm;
+    	Player player = new Player(Color.RED, "r", new ArrayList<>());
+    	gm.setScoreToWin(25);
+    	player.setVictoryPoints(24);
+    	assertFalse(player.getVictoryPoints() >= gm.scoreToWin);
+    }
+    
+    @Test
+    public void testGameOverMaxVPsOver() {
+    	GameManager gm = new GameManager(2);
+    	BoardManager bm = new BoardManager();
+    	gm.boardManager = bm;
+    	Player player = new Player(Color.RED, "r", new ArrayList<>());
+    	gm.setScoreToWin(25);
+    	player.setVictoryPoints(25);
+    	assertTrue(player.getVictoryPoints() >= gm.scoreToWin);
+    }
 }
