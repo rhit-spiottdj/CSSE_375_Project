@@ -723,6 +723,7 @@ public class BoardManager {
     public int getIntersectionSelection() {
         int temp = selectedIntersection;
         selectedIntersection = -1;
+        System.out.println(temp);
         return temp;
     }
 
