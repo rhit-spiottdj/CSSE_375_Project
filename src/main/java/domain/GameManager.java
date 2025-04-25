@@ -1,5 +1,7 @@
 package domain;
 
+import javax.swing.*;
+import java.text.MessageFormat;
 import java.util.*;
 
 public class GameManager {
@@ -29,8 +31,10 @@ public class GameManager {
     Bank bank;
     private boolean gameOver = false;
 
+    private static ResourceBundle messages; // Added for messages
+
     private GameManager(Player[] players, int numPlayers, BoardManager boardManager, Bank bank,
-                        DiceManager diceManager, DevelopmentCardManager cardManager, BonusManager bonusManager) {
+                        DiceManager diceManager, DevelopmentCardManager cardManager, BonusManager bonusManager, Locale locale) {
         this.numPlayers = (players != null) ? players.length : numPlayers;
         this.players = (players != null) ? players : new Player[this.numPlayers];
         this.boardManager = (boardManager != null) ? boardManager : new BoardManager();
@@ -38,38 +42,39 @@ public class GameManager {
         this.diceManager = (diceManager != null) ? diceManager : new DiceManager(2);
         this.bonusManager = (bonusManager != null) ? bonusManager : new BonusManager();
         this.cardManager = (cardManager != null) ? cardManager : new DevelopmentCardManager(this.players, this.bank, this.boardManager, this.bonusManager);
+        messages = ResourceBundle.getBundle("messages", locale); // Initialize messages
     }
 
     protected GameManager() {
-        this(null, 0, null, null, null, null, null);
+        this(null, 0, null, null, null, null, null, Locale.getDefault()); // Use default locale
     }
 
     public GameManager(int numPlayers) {
-        this(null, numPlayers, null, null, null, null, null);
+        this(null, numPlayers, null, null, null, null, null, Locale.getDefault());
     }
 
     public GameManager(int numPlayers, BoardManager boardManager) {
-        this(null, numPlayers, boardManager, null, null, null, null);
+        this(null, numPlayers, boardManager, null, null, null, null, Locale.getDefault());
     }
 
     protected GameManager(int numPlayers, BoardManager boardManager, DevelopmentCardManager cardManager) {
-        this(null, numPlayers, boardManager, null, null, cardManager, null);
+        this(null, numPlayers, boardManager, null, null, cardManager, null, Locale.getDefault());
     }
 
     protected GameManager(Player[] players, BoardManager boardManager) {
-        this(players, 0, boardManager, null, null, null, null);
+        this(players, 0, boardManager, null, null, null, null, Locale.getDefault());
     }
 
     protected GameManager(Player[] players, BoardManager boardManager, Bank bank) {
-        this(players, 0, boardManager, bank, null, null, null);
+        this(players, 0, boardManager, bank, null, null, null, Locale.getDefault());
     }
 
     protected GameManager(DevelopmentCardManager cardManager, Player[] players, BoardManager boardManager, Bank bank) {
-        this(players, 0, boardManager, bank, null, cardManager, null);
+        this(players, 0, boardManager, bank, null, cardManager, null, Locale.getDefault());
     }
 
     protected GameManager(Player[] players, BoardManager boardManager, Bank bank, DiceManager diceManager) {
-        this(players, 0, boardManager, bank, diceManager, null, null);
+        this(players, 0, boardManager, bank, diceManager, null, null, Locale.getDefault());
     }
 
 
@@ -394,9 +399,16 @@ public class GameManager {
     private void handleBarbarianAttack() {
         int barbarianStrength = calculateBarbarianStrength();
         int totalKnightStrength = calculateTotalKnightStrength();
+        String title = messages.getString("barbarianAttackTitle");
+        String message;
+
         if (barbarianStrength > totalKnightStrength) {
+            message = MessageFormat.format(messages.getString("barbariansWonMessage"), barbarianStrength, totalKnightStrength);
+            JOptionPane.showMessageDialog(null, message, title, JOptionPane.WARNING_MESSAGE);
             applyBarbarianPenalty();
         } else {
+            message = MessageFormat.format(messages.getString("playersWonMessage"), totalKnightStrength, barbarianStrength);
+            JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
             applyBarbarianReward();
         }
         resetAllPlayerKnightCounts();
@@ -415,7 +427,7 @@ public class GameManager {
     private int calculateTotalKnightStrength() {
         int strength = 0;
         for(Player player: players) {
-            if(player != null) { // Ensure player is not null
+            if(player != null) {
                 strength += player.getPlayedKnightCount();
             }
         }
@@ -426,7 +438,7 @@ public class GameManager {
         Player playerWithFewestKnights = null;
         int minKnights = Integer.MAX_VALUE;
         for (Player player: players) {
-            if(player != null) { // Ensure player is not null
+            if(player != null) {
                 if (player.getPlayedKnightCount() < minKnights) {
                     minKnights = player.getPlayedKnightCount();
                 }
@@ -435,19 +447,25 @@ public class GameManager {
 
         ArrayList<Player> playersToPenalize = new ArrayList<>();
         for (Player player: players) {
-            if(player != null) { // Ensure player is not null
+            if(player != null) {
                 if (player.getPlayedKnightCount() == minKnights) {
                     playersToPenalize.add(player);
                 }
             }
         }
 
+        StringBuilder penaltyMessage = new StringBuilder();
         for (Player player : playersToPenalize) {
-            downgradeRandomCity(player);
+            if (downgradeRandomCity(player)) {
+                penaltyMessage.append(MessageFormat.format(messages.getString("cityDowngradedMessage"), player.getPlayerName())).append("\n");
+            }
+        }
+        if (penaltyMessage.length() > 0) {
+            JOptionPane.showMessageDialog(null, penaltyMessage.toString().trim(), messages.getString("barbarianAttackTitle"), JOptionPane.WARNING_MESSAGE);
         }
     }
 
-    private void downgradeRandomCity(Player player) {
+    private boolean downgradeRandomCity(Player player) {
         ArrayList<Integer> playerCityLocations = new ArrayList<>();
         for(int i = 0; i < boardManager.intersections.length; i++) {
             Structure structure = boardManager.intersections[i].getStructure();
@@ -459,17 +477,16 @@ public class GameManager {
             Random rand = new Random();
             int cityIndexToDowngrade = playerCityLocations.get(rand.nextInt(playerCityLocations.size()));
 
-            // Replace City with Settlement
-            boardManager.intersections[cityIndexToDowngrade].setStructure(null); // Clear structure first
+            boardManager.intersections[cityIndexToDowngrade].setStructure(null);
             boardManager.placeSettlementSetup(cityIndexToDowngrade, player, new Settlement());
 
-            // Adjust player counts
-            player.setNumCities(player.getNumCities() + 1); // Give city back
-            player.setNumSettlements(player.getNumSettlements() - 1); // Take settlement away
+            player.setNumCities(player.getNumCities() + 1);
+            player.setNumSettlements(player.getNumSettlements() - 1);
 
-            // Recalculate VP immediately after downgrade
             calculateVictoryPointsForPlayer(player);
+            return true; // Indicate a city was downgraded
         }
+        return false; // Indicate no city was downgraded
     }
 
 
@@ -478,25 +495,27 @@ public class GameManager {
         int maxKnights = -1;
         int numPlayersWithMax = 0;
         for (Player player: players) {
-            if(player != null) { // Ensure player is not null
+            if(player != null) {
                 if (player.getPlayedKnightCount() > maxKnights) {
                     maxKnights = player.getPlayedKnightCount();
                     playerWithMostKnights = player;
                     numPlayersWithMax = 1;
-                } else if (player.getPlayedKnightCount() == maxKnights && maxKnights >= 0) { // Check if count is non-negative
+                } else if (player.getPlayedKnightCount() == maxKnights && maxKnights >= 0) {
                     numPlayersWithMax++;
                 }
             }
         }
         if (numPlayersWithMax == 1 && playerWithMostKnights != null) {
             playerWithMostKnights.setVictoryPoints(playerWithMostKnights.getVictoryPoints() + 1);
-            calculateVictoryPointsForPlayer(playerWithMostKnights); // Recalculate VP immediately
+            calculateVictoryPointsForPlayer(playerWithMostKnights);
+            String message = MessageFormat.format(messages.getString("playerRewardedMessage"), playerWithMostKnights.getPlayerName());
+            JOptionPane.showMessageDialog(null, message, messages.getString("barbarianAttackTitle"), JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
     private void resetAllPlayerKnightCounts() {
         for (Player player : players) {
-            if(player != null) { // Ensure player is not null
+            if(player != null) {
                 player.resetPlayedKnightCount();
             }
         }
@@ -591,7 +610,6 @@ public class GameManager {
 
     static boolean isValidRatio(int portTradeRatio, int numResources) {
         if (portTradeRatio <= 0) return false;
-        // Avoid division by zero if numResources is 0
         if (numResources == 0) return true;
         int base = numResources/portTradeRatio;
         return numResources == base * portTradeRatio;
@@ -611,7 +629,7 @@ public class GameManager {
 
     public int setNextPlayerInTurn(){
         inTurnIndex++;
-        if(inTurnIndex >= numPlayers) inTurnIndex = 0; // Use >= to handle potential initialization issues
+        if(inTurnIndex >= numPlayers) inTurnIndex = 0;
         inTurn = players[inTurnIndex];
         return inTurnIndex;
     }
