@@ -207,7 +207,6 @@ public class GameDisplay implements ActionListener {
 
     private void normalSetup() {
         setupLanguage();
-
         int playerNum = getPlayerNum();
         initializeGameAndBoardManager(playerNum);
         setupWinCondition();
@@ -666,10 +665,26 @@ public class GameDisplay implements ActionListener {
     }
 
     private void tryBuildCity(Player player) {
+    	if (!checkValidResourcesCity(player)) {
+    		return;
+    	}
         buildCityMessage();
         int intersection1 = getIntersectionButtonSelection();
         if (!gameManager.buildCity(intersection1, player))  invalidCityPlacementMessage();
         else    boardDisplay.upgradeToCityButton(intersection1);
+    }
+    
+    private boolean checkValidResourcesCity(Player player) {
+    	if (!player.getEnoughForCity()) {
+    		invalidResourcesMessage();
+    		return false;
+    	}
+    	return true;
+    }
+    
+    private void invalidResourcesMessage() {
+    	JOptionPane.showMessageDialog(null, messages.getString("buildInvalidResources"),
+                messages.getString("buildInvalidResourcesTitle"), JOptionPane.ERROR_MESSAGE);
     }
 
     private void invalidCityPlacementMessage() {
@@ -683,18 +698,40 @@ public class GameDisplay implements ActionListener {
     }
 
     private void tryBuildSettlement(Player player) {
+    	if (!checkValidResourcesSettlement(player)) {
+    		return;
+    	}
         buildSettlementMessage();
         int intersection1 = getIntersectionButtonSelection();
         if (!gameManager.buildSettlement(intersection1, player)) {
             invalidSettlementPlacementMessage();
         }
     }
+    
+    private boolean checkValidResourcesSettlement(Player player) {
+    	if (!player.getEnoughForSettlement()) {
+    		invalidResourcesMessage();
+    		return false;
+    	}
+    	return true;
+    }
 
     protected void tryBuildRoad(Player player) {
+    	if (!checkValidResourcesRoad(player)) {
+    		return;
+    	}
         buildRoadMessage();
         int intersection1 = getIntersectionButtonSelection();
         int intersection2 = getIntersectionButtonSelection();
         buildRoad(player, intersection1, intersection2);
+    }
+    
+    private boolean checkValidResourcesRoad(Player player) {
+    	if (!player.getEnoughForRoad()) {
+    		invalidResourcesMessage();
+    		return false;
+    	} 
+    	return true;
     }
 
     private void buildRoad(Player player, int intersection1, int intersection2) {

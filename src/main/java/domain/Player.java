@@ -195,4 +195,29 @@ public class Player {
     public void resetPlayedKnightCount() {
         this.playedKnightCount = 0;
     }
+    
+    public boolean getEnoughForSettlement() {
+    	return resources.contains(ResourceType.BRICK)
+    			&& resources.contains(ResourceType.LUMBER)
+    			&& resources.contains(ResourceType.WOOL)
+    			&& resources.contains(ResourceType.GRAIN);
+    }
+    
+    public boolean getEnoughForRoad() {
+    	return resources.contains(ResourceType.BRICK)
+    			&& resources.contains(ResourceType.LUMBER);
+    }
+    
+    public boolean getEnoughForCity() {
+    	int grain = 0;
+    	int ore = 0;
+    	for (int i = 0; i < resources.size(); i++) {
+    		if (((ArrayList) resources).get(i) == ResourceType.GRAIN) {
+    			grain++;
+    		} else if (((ArrayList) resources).get(i) == ResourceType.ORE) {
+    			ore++;
+    		}
+    	}
+    	return grain >=2 && ore >= 3;
+    }
 }
