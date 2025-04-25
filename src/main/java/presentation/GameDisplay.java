@@ -16,7 +16,7 @@ public class GameDisplay implements ActionListener {
 
     private static final String RESOURCE_BUNDLE = "messages";
     private static final int MILLS_TO_WAIT = 10;
-    public static final int TIMER_INTERVAL = 5000;
+    public static final int TIMER_INTERVAL = 20000;
     public static final int TIMER_START_AFTER = 100;
     private static final int ROBBER_ROLL = 7;
     public static final int QUICK_SETUP_SETTLEMENT_TWO = 5;
