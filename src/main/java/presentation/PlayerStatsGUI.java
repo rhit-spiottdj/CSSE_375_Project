@@ -15,9 +15,9 @@ public class PlayerStatsGUI {
 
     public static final int LEFT_PANEL_ROWS = 5;
     public static final int RIGHT_PANEL_ROWS = 5;
-    public static final int PLAYER_PANEL_WIDTH = 400;
+    public static final int PLAYER_PANEL_WIDTH = 600;
     public static final int PLAYER_PANEL_HEIGHT = 100;
-    public static final int RESOURCE_PANEL_WIDTH = 200;
+    public static final int RESOURCE_PANEL_WIDTH = 400;
     public static final int RESOUCE_PANEL_HEIGHT = 500;
     Player player;
 
