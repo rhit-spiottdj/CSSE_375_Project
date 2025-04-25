@@ -175,7 +175,7 @@ public class PlayerStatsGUI {
         ResourceType[] resourceOrder = getResourceOrder();
         final Color originalColor = leftPanel.getBackground();
         final Color flashColor = Color.YELLOW;
-        final int flashDuration = 500;
+        final int flashDuration = 5000;
 
         if (flashTimer != null && flashTimer.isRunning()) {
             flashTimer.stop();
