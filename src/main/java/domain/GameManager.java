@@ -12,7 +12,7 @@ public class GameManager {
     private static final int MAX_INTERSECTION_INDEX = 53;
     private static final int MAX_HEX_INDEX = 18;
     public static final int MULTIPLE_OF_FOUR = 4;
-    private static final int BARBARIAN_ATTACK_THRESHOLD = 1;
+    private static final int BARBARIAN_ATTACK_THRESHOLD = 7;
     private static final int ROBBER_ROLL = 7;
 
     private int sevensRolledCounter = 0;
