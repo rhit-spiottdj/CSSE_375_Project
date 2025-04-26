@@ -1,8 +1,5 @@
 package presentation;
 
-//This GUI code was adapted from a CSSE 375 revision of a
-// Settlers of Catan Project with instructor permission
-
 import domain.*;
 
 import javax.swing.*;
@@ -20,8 +17,8 @@ public class TradeManagerGUI {
     public static final int MULTIPLE_OF_THREE = 3;
     private static ResourceBundle messages;
     ResourceType[] resourceOrder =
-        new ResourceType[]{ResourceType.BRICK, GRAIN, ResourceType.LUMBER,
-            ResourceType.WOOL, ResourceType.ORE};
+            new ResourceType[]{ResourceType.BRICK, GRAIN, ResourceType.LUMBER,
+                    ResourceType.WOOL, ResourceType.ORE};
     int numDiscard;
     private JFrame frame;
     private JPanel enterResources;
@@ -92,7 +89,7 @@ public class TradeManagerGUI {
     }
 
     private void initializePassedInFields(GameManager manager, Player[] players, int numDiscard,
-        Locale locale) {
+                                          Locale locale) {
         this.manager = manager;
         this.players = players;
         this.numDiscard = numDiscard;
@@ -110,34 +107,40 @@ public class TradeManagerGUI {
     }
 
     private void initializeDiscardFields(Player player, GameManager manager, Locale locale,
-        int numDiscard) {
+                                         int numDiscard) {
         initializePassedInFields(manager,  new Player[]{player}, numDiscard, locale);
         initializeMainFields();
     }
 
+    private static void displayErrorMessage(String messageKey, String titleKey) {
+        JOptionPane.showMessageDialog(null, messages.getString(messageKey),
+                messages.getString(titleKey), JOptionPane.ERROR_MESSAGE);
+    }
+
+    private static void displayInfoMessage(String messageKey, String titleKey) {
+        JOptionPane.showMessageDialog(null, messages.getString(messageKey),
+                messages.getString(titleKey), JOptionPane.INFORMATION_MESSAGE);
+    }
+
     private static void noResourcesSelectedMessage() {
-        JOptionPane.showMessageDialog(null, messages.getString("noResourcesSelected"),
-            messages.getString("noResourcesSelected"), JOptionPane.ERROR_MESSAGE);
+        displayErrorMessage("noResourcesSelected", "noResourcesSelected");
     }
 
     private static void moreThanOneResourceTypeSelectedForBankMessage() {
-        JOptionPane.showMessageDialog(null, messages.getString("oneResourceTypeOnly"),
-            messages.getString("bankPortFailTitle"), JOptionPane.ERROR_MESSAGE);
+        displayErrorMessage("oneResourceTypeOnly", "bankPortFailTitle");
     }
 
     private static void notAMultipleOfTradeRatioMessage(){
-        JOptionPane.showMessageDialog(null, messages.getString("tradeRatioMessages"),
-            messages.getString("bankPortFailTitle"), JOptionPane.ERROR_MESSAGE);
+        displayErrorMessage("tradeRatioMessages", "bankPortFailTitle");
     }
 
     private static void insufficientResourcesMessage(int numDiscard) {
         JOptionPane.showMessageDialog(null, getFormattedInsufficientResourcesMessage(numDiscard),
-            messages.getString("invalidInput"), JOptionPane.ERROR_MESSAGE);
+                messages.getString("invalidInput"), JOptionPane.ERROR_MESSAGE);
     }
 
     private static void discardFailMessage() {
-        JOptionPane.showMessageDialog(null, messages.getString("cannotDiscardResourcesMessage"),
-            messages.getString("invalidInput"), JOptionPane.ERROR_MESSAGE);
+        displayErrorMessage("cannotDiscardResourcesMessage", "invalidInput");
     }
 
     private static String getFormattedInsufficientResourcesMessage(int numDiscard) {
@@ -146,8 +149,7 @@ public class TradeManagerGUI {
     }
 
     private static void discardSuccessMessage() {
-        JOptionPane.showMessageDialog(null, messages.getString("resourcesDiscardedMessage"),
-            messages.getString("successMessage"), JOptionPane.INFORMATION_MESSAGE);
+        displayInfoMessage("resourcesDiscardedMessage", "successMessage");
     }
 
     private void initializeTextFieldPanels() {
@@ -166,7 +168,7 @@ public class TradeManagerGUI {
     }
 
     private void addContentsToResourcePanel(JPanel resourcePanel, JLabel resourceLabel,
-        JLabel resourceRatioLabel, JTextField resourceText) {
+                                            JLabel resourceRatioLabel, JTextField resourceText) {
         resourcePanel.add(resourceLabel);
         resourcePanel.add(resourceRatioLabel);
         resourcePanel.add(resourceText);
@@ -224,43 +226,31 @@ public class TradeManagerGUI {
     }
 
     private boolean checkForStructureBeforePort(Player player, Port toCompare,
-        Intersection intersection) {
+                                                Intersection intersection) {
         Structure structure = intersection.getStructure();
-        if (checkStructureIsNullBeforePort(player, toCompare, intersection, structure)) return true;
-        return false;
-    }
-
-    private boolean checkStructureIsNullBeforePort(Player player, Port toCompare,
-        Intersection intersection, Structure structure) {
-        if(structure != null && playerOwnsStructureAndCorrectPort(player,
-            toCompare, intersection, structure)){
-            return true;
-        }
-        return false;
+        return structure != null && playerOwnsStructureAndCorrectPort(player, toCompare, intersection, structure);
     }
 
     private boolean playerOwnsStructureAndCorrectPort(Player player, Port toCompare,
-        Intersection intersection, Structure structure) {
+                                                      Intersection intersection, Structure structure) {
         Player owner = structure.getOwner();
-        if (owner.equals(player) && samePortType(intersection.getPort(), toCompare)) {
-            return true;
-        }
-        return false;
+        return owner.equals(player) && samePortType(intersection.getPort(), toCompare);
     }
 
     private boolean samePortType(Port port, Port toCompare) {
         if(port == null) return false;
         return (port.getPortTradeRatio() == 3 &&
-               toCompare.getPortTradeRatio() == 3) ||
-               port.getResourceType() == toCompare.getResourceType() &&
-               port.getPortTradeRatio() == toCompare.getPortTradeRatio();
+                toCompare.getPortTradeRatio() == 3) ||
+                port.getResourceType() == toCompare.getResourceType() &&
+                        port.getPortTradeRatio() == toCompare.getPortTradeRatio();
     }
 
     private Player getInTurnPlayer() {
-        for (Player player : players)   if (manager.isInTurnPlayer(player)) return player;
+        for (Player player : players) {
+            if (manager.isInTurnPlayer(player)) return player;
+        }
         return null;
     }
-
 
     private void initializeTradeBankAndPortButton() {
         tradeBank = new JButton(messages.getString("tradeWithBankOrPort"));
@@ -326,15 +316,15 @@ public class TradeManagerGUI {
 
     private void addDiscardComponents() {
         JComponent[] componentsToAdd =
-            new JComponent[]{label, brickLabel, brick, grainLabel, grain, lumberLabel, lumber,
-                woolLabel, wool, oreLabel, ore, discard};
+                new JComponent[]{label, brickLabel, brick, grainLabel, grain, lumberLabel, lumber,
+                        woolLabel, wool, oreLabel, ore, discard};
         for (Component component : componentsToAdd) enterResources.add(component);
     }
 
     private void addTradeComponents() {
         JComponent[] componentsToAdd =
-            new JComponent[]{label, brickPanel, grainPanel, lumberPanel, woolPanel, orePanel,
-                tradeAway, tradeBank};
+                new JComponent[]{label, brickPanel, grainPanel, lumberPanel, woolPanel, orePanel,
+                        tradeAway, tradeBank};
         for (Component component : componentsToAdd) enterResources.add(component);
     }
 
@@ -426,7 +416,7 @@ public class TradeManagerGUI {
 
     private Collection<ResourceType> convertResourceFieldsToCollection() {
         String[] resourceAmounts =
-            {brick.getText(), grain.getText(), lumber.getText(), wool.getText(), ore.getText()};
+                {brick.getText(), grain.getText(), lumber.getText(), wool.getText(), ore.getText()};
         ArrayList<ResourceType> resources = new ArrayList<>();
 
         addResourceAmountsToResources(resourceAmounts, resources);
@@ -434,14 +424,14 @@ public class TradeManagerGUI {
     }
 
     private void addResourceAmountsToResources(String[] resourceAmounts,
-        ArrayList<ResourceType> resources) {
+                                               ArrayList<ResourceType> resources) {
         for (int i = 0; i < resourceAmounts.length; i++) {
             addResourceFromTextFieldToCollection(resourceAmounts, resources, i);
         }
     }
 
     private void addResourceFromTextFieldToCollection(String[] resourceAmounts,
-        ArrayList<ResourceType> resources, int i) {
+                                                      ArrayList<ResourceType> resources, int i) {
         int resourceAmount = getResourceAmountFromTextField(resourceAmounts[i]);
 
         if (resourceAmount < 0 || resourceAmount > MAX_SINGLE_RESOURCE) {
@@ -451,23 +441,17 @@ public class TradeManagerGUI {
     }
 
     private void displayInvalidResourceAmountMessageAndDisposeFrame() {
-        displayInvalidResourceAmountMessage();
+        displayErrorMessage("invalidResourceAmount", "invalidInput");
         frame.dispose();
     }
 
-    private void displayInvalidResourceAmountMessage() {
-        JOptionPane.showMessageDialog(null, messages.getString("invalidResourceAmount"),
-            messages.getString("invalidInput"), JOptionPane.ERROR_MESSAGE);
-    }
-
     private void addAmountOfResourceToCollection(ArrayList<ResourceType> resources,
-        ResourceType resourceType, int resourceAmount) {
+                                                 ResourceType resourceType, int resourceAmount) {
         for (int j = 0; j < resourceAmount; j++) {
             resources.add(resourceType);
         }
     }
 
-    @SuppressWarnings("methodlength")
     private int getResourceAmountFromTextField(String resourceAmounts) {
         int resourceAmount;
         try {
@@ -494,19 +478,27 @@ public class TradeManagerGUI {
     }
 
     private void setValidPersonToTradeWith(Collection<ResourceType> resourcesDesired,
-        boolean[] validPeopleToTradeWith, int i) {
+                                           boolean[] validPeopleToTradeWith, int i) {
         validPeopleToTradeWith[i] =
-            players[i].hasResources(resourcesDesired) && !manager.isInTurnPlayer(players[i]);
+                players[i].hasResources(resourcesDesired) && !manager.isInTurnPlayer(players[i]);
     }
 
-    @SuppressWarnings("methodlength")
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == tradeAway) tradeAwayActionPerformed();
-        else if (e.getSource() == discard)  discardActionPerformed();
-        else if (e.getSource() == tradeFor) tradeForActionPerformed();
-        else if (isYesButtonSelected(e))    yesButtonActionPerformed(e);
-        else if (isNoButtonSelected(e))     noButtonActionPerformed(e);
-        else if (e.getSource() == tradeBank)    tradeBankActionPerformed();
+        Object source = e.getSource();
+
+        if (source == tradeAway) {
+            tradeAwayActionPerformed();
+        } else if (source == discard) {
+            discardActionPerformed();
+        } else if (source == tradeFor) {
+            tradeForActionPerformed();
+        } else if (isYesButtonSelected(e)) {
+            yesButtonActionPerformed(e);
+        } else if (isNoButtonSelected(e)) {
+            noButtonActionPerformed(e);
+        } else if (source == tradeBank) {
+            tradeBankActionPerformed();
+        }
     }
 
     private boolean isNoButtonSelected(ActionEvent e) {
@@ -519,15 +511,28 @@ public class TradeManagerGUI {
 
     private void tradeBankActionPerformed() {
         resourcesToTradeAway = convertResourceFieldsToCollection();
-        if (noResourcesSelected() || insufficientResourcesToTrade()) return;
-        ResourceType resourceToTrade = resourcesToTradeAway.iterator().next();
-        int numResource = Collections.frequency(resourcesToTradeAway, resourceToTrade);
-
-        validResourcesAndAttemptTradeWithPortOrBank(resourceToTrade, numResource);
+        if (validateTradeResources()) {
+            ResourceType resourceToTrade = resourcesToTradeAway.iterator().next();
+            int numResource = Collections.frequency(resourcesToTradeAway, resourceToTrade);
+            processTradeWithBank(resourceToTrade, numResource);
+        }
     }
 
-    private void validResourcesAndAttemptTradeWithPortOrBank(ResourceType resourceToTrade,
-        int numResource) {
+    private boolean validateTradeResources() {
+        if (resourcesToTradeAway.isEmpty()) {
+            displayNoResourcesSelectedMessageAndDisposeFrame();
+            return false;
+        }
+
+        if (!manager.currentPlayerHasSufficientResources(resourcesToTradeAway)) {
+            displayInsufficientResourcesMessageAndDisposeFrame();
+            return false;
+        }
+
+        return true;
+    }
+
+    private void processTradeWithBank(ResourceType resourceToTrade, int numResource) {
         TradeRatio ratio = getCorrespondingTradeRatio(resourceToTrade);
         if (ensureResourceRatioAndSingleType(numResource, ratio)) return;
         attemptTradeWithPortOrBank(resourceToTrade, numResource, ratio);
@@ -539,7 +544,7 @@ public class TradeManagerGUI {
     }
 
     private void attemptTradeWithPortOrBank(ResourceType resourceToTrade, int numResource,
-        TradeRatio relevantRatio) {
+                                            TradeRatio relevantRatio) {
         try {
             getResourceAndTradeWithBank(resourceToTrade, numResource, relevantRatio);
         } catch(IllegalArgumentException e){
@@ -548,43 +553,46 @@ public class TradeManagerGUI {
     }
 
     private void getResourceAndTradeWithBank(ResourceType resourceToTrade, int numResource,
-        TradeRatio relevantRatio) {
+                                             TradeRatio relevantRatio) {
         ResourceType taking = CardGUI.getResourceInput(
-            messages.getString("tradeWithBankMessage"), messages.getString("bankPortTradeTitle"));
+                messages.getString("tradeWithBankMessage"), messages.getString("bankPortTradeTitle"));
         tradeWithPortOrBank(resourceToTrade, numResource, relevantRatio, taking);
     }
 
-    @SuppressWarnings("methodlength")
     private void tradeWithPortOrBank(ResourceType resourceToTrade, int numResource,
-        TradeRatio relevantRatio, ResourceType taking) {
+                                     TradeRatio relevantRatio, ResourceType taking) {
         switch(relevantRatio){
-            case FOUR_TO_ONE: tradeWithBank(resourceToTrade, numResource, taking);
-            break;
-            case THREE_TO_ONE: tradeThreeToOne(resourceToTrade, numResource, taking);
-            break;
-            case TWO_TO_ONE: tradeTwoToOne(resourceToTrade, numResource, taking);
-            break;
-            default: frame.dispose();
+            case FOUR_TO_ONE:
+                tradeWithBank(resourceToTrade, numResource, taking);
+                break;
+            case THREE_TO_ONE:
+                tradeThreeToOne(resourceToTrade, numResource, taking);
+                break;
+            case TWO_TO_ONE:
+                tradeTwoToOne(resourceToTrade, numResource, taking);
+                break;
+            default:
+                frame.dispose();
         }
     }
 
     private void tradeWithBank(ResourceType resourceToTrade, int numResource, ResourceType taking) {
         if (!manager.playerTradeWithBank(resourceToTrade, taking, numResource)) {
             displayInsufficientResourcesBankMessageAndDisposeFrame();
-        };
+        }
     }
 
     private void tradeThreeToOne(ResourceType resourceToTrade, int numResource,
-        ResourceType taking) {
+                                 ResourceType taking) {
         if (!manager.playerTradeWithPort(new Port(3,
-            resourceToTrade), resourceToTrade, taking, numResource)) {
+                resourceToTrade), resourceToTrade, taking, numResource)) {
             displayInsufficientResourcesBankMessageAndDisposeFrame();
         }
     }
 
     private void tradeTwoToOne(ResourceType resourceToTrade, int numResource, ResourceType taking) {
         if (!manager.playerTradeWithPort(new Port(2,
-            resourceToTrade), resourceToTrade, taking, numResource)) {
+                resourceToTrade), resourceToTrade, taking, numResource)) {
             displayInsufficientResourcesBankMessageAndDisposeFrame();
         }
     }
@@ -615,64 +623,35 @@ public class TradeManagerGUI {
         frame.dispose();
     }
 
-    private boolean noResourcesSelected() {
-        if (resourcesToTradeAway.isEmpty()) {
-            displayNoResourcesSelectedMessageAndDisposeFrame();
-            return true;
-        }
-        return false;
-    }
-
     private void displayNoResourcesSelectedMessageAndDisposeFrame() {
         noResourcesSelectedMessage();
         frame.dispose();
     }
 
-    private boolean insufficientResourcesToTrade() {
-        if (!manager.currentPlayerHasSufficientResources(resourcesToTradeAway)) {
-            displayInsufficientResourcesMessageAndDisposeFrame();
-            return true;
-        }
-        return false;
-    }
-
     private void displayInsufficientResourcesMessageAndDisposeFrame() {
-        displayInsufficientResourcesMessage();
+        displayErrorMessage("doNotOwnResourcesMessage", "invalidInput");
         frame.dispose();
     }
 
     private void displayInsufficientResourcesBankMessageAndDisposeFrame() {
-        displayInsufficientResourcesBankMessage();
+        displayErrorMessage("insufficientResourcesBankMessage", "invalidInput");
         frame.dispose();
     }
-
-    private void displayInsufficientResourcesMessage() {
-        JOptionPane.showMessageDialog(null, messages.getString("doNotOwnResourcesMessage"),
-            messages.getString("invalidInput"), JOptionPane.ERROR_MESSAGE);
-    }
-
-    private void displayInsufficientResourcesBankMessage() {
-        JOptionPane.showMessageDialog(null, messages.getString("insufficientResourcesBankMessage"),
-            messages.getString("invalidInput"), JOptionPane.ERROR_MESSAGE);
-    }
-
 
     private boolean isMultipleOfRatio(TradeRatio ratio, int numResource){
         switch(ratio){
             case THREE_TO_ONE: return isMultipleOf(numResource, MULTIPLE_OF_THREE);
-            case TWO_TO_ONE: return isMultipleOf(numResource,2);
-            default: return isMultipleOf(numResource,MULTIPLE_OF_FOUR);
+            case TWO_TO_ONE: return isMultipleOf(numResource, 2);
+            default: return isMultipleOf(numResource, MULTIPLE_OF_FOUR);
         }
     }
 
     private boolean isMultipleOf(int numResource, int baseNumber) {
         if(numResource == 0) return true;
-        if( numResource < 0) return false;
+        if(numResource < 0) return false;
         return isMultipleOf(numResource - baseNumber, baseNumber);
     }
 
-
-    @SuppressWarnings("methodlength")
     private TradeRatio getCorrespondingTradeRatio(ResourceType resource){
         switch(resource){
             case BRICK: return brickTradeRatio;
@@ -686,9 +665,9 @@ public class TradeManagerGUI {
 
     private void discardActionPerformed() {
         resourcesToTradeAway = convertResourceFieldsToCollection();
-        if (discardCheckPlayerHasResources())   return;
+        if (discardCheckPlayerHasResources()) return;
         resetTextFields();
-        if (!discardResources())  return;
+        if (!discardResources()) return;
         frame.dispose();
     }
 
@@ -712,20 +691,12 @@ public class TradeManagerGUI {
 
     private boolean attemptDiscardResources() {
         if (manager.playerDiscardResources(players[0], resourcesToTradeAway)) {
-            return displayDiscardSuccessMessageAndReturnTrue();
+            discardSuccessMessage();
+            return true;
         } else {
-            return displayDiscardFailMessageAndReturnFalse();
+            discardFailMessage();
+            return false;
         }
-    }
-
-    private boolean displayDiscardFailMessageAndReturnFalse() {
-        discardFailMessage();
-        return false;
-    }
-
-    private boolean displayDiscardSuccessMessageAndReturnTrue() {
-        discardSuccessMessage();
-        return true;
     }
 
     private boolean incorrectAmountToDiscard() {
@@ -738,7 +709,10 @@ public class TradeManagerGUI {
 
     private void tradeAwayActionPerformed() {
         resourcesToTradeAway = convertResourceFieldsToCollection();
-        if (insufficientResourcesToTrade()) return;
+        if (!manager.currentPlayerHasSufficientResources(resourcesToTradeAway)) {
+            displayInsufficientResourcesMessageAndDisposeFrame();
+            return;
+        }
         resetTextFields();
         initializeTradeInGUI();
     }
@@ -767,26 +741,18 @@ public class TradeManagerGUI {
 
     private JButton getSelectedYesButton(ActionEvent e) {
         int index = Arrays.asList(yesButtons).indexOf(e.getSource());
-        JButton button = yesButtons[index];
-        return button;
+        return yesButtons[index];
     }
 
     private void noButtonActionPerformed(ActionEvent e) {
         int index = Arrays.asList(noButtons).indexOf(e.getSource());
         JButton button = noButtons[index];
         tradeOptions.remove(button.getParent());
-        if (tradeOptions.getComponents().length == 1)   nobodyWantsToTradeAndDisposeFrame();
+        if (tradeOptions.getComponents().length == 1) {
+            displayErrorMessage("nobodyWantedToTradeMessage", "invalidMessage");
+            frame.dispose();
+        }
         refreshFrame();
-    }
-
-    private void nobodyWantsToTradeAndDisposeFrame() {
-        displayNobodyWantsToTradeMessage();
-        frame.dispose();
-    }
-
-    private void displayNobodyWantsToTradeMessage() {
-        JOptionPane.showMessageDialog(null, messages.getString("nobodyWantedToTradeMessage"),
-            messages.getString("invalidMessage"), JOptionPane.ERROR_MESSAGE);
     }
 
     public boolean isShowing() {
@@ -801,5 +767,4 @@ public class TradeManagerGUI {
     public boolean isActive(){
         return active;
     }
-
 }
