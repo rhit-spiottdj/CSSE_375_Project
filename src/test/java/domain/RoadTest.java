@@ -60,6 +60,4 @@ public class RoadTest {
     private static Stream<Color> colorParameters(){
         return Stream.of(Color.RED, Color.BLUE, Color.GREEN, Color.BLACK);
     }
-
-
 }

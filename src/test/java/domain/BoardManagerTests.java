@@ -34,118 +34,245 @@ public class BoardManagerTests {
         noDuplicates.addAll(centerSet);
         assertEquals(noDuplicates.size(), centers.size());
     }
-
+    
     @Test
-    public void testGenerateHex_validateResourceTypes() {
-        BoardManager bm = new BoardManager();
-        Hexagon[] result = bm.generateHexagons(false);
-
-        int grainCount = 0;
-        int lumberCount = 0;
-        int woolCount = 0;
-        int oreCount = 0;
-        int brickCount = 0;
-
-        for (Hexagon hex : result) {
-            if (hex.getResource() == null) {
-                continue;
-            }
-            switch (hex.getResource()) {
-                case GRAIN:
-                    grainCount++;
-                    break;
-                case LUMBER:
-                    lumberCount++;
-                    break;
-                case WOOL:
-                    woolCount++;
-                    break;
-                case ORE:
-                    oreCount++;
-                    break;
-                case BRICK:
-                    brickCount++;
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        assertEquals(4, grainCount);
-        assertEquals(4, lumberCount);
-        assertEquals(4, woolCount);
-        assertEquals(3, oreCount);
-        assertEquals(3, brickCount);
+    public void testGenerateHexValidateGrainResources() {
+    	BoardManager bm = new BoardManager();
+    	Hexagon[] result = bm.generateHexagons(false);
+    	
+    	int grainCount = 0;
+    	
+    	for (Hexagon hex : result) {
+    		if (hex.getResource() == ResourceType.GRAIN) {
+    			grainCount++;
+    		}
+    	}
+    	assertEquals(4, grainCount);
     }
-
+    
     @Test
-    public void testGenerateHex_validateNumberTokens() {
-        BoardManager bm = new BoardManager();
-        Hexagon[] result = bm.generateHexagons(false);
-
-        int desertZeroCount = 0;
-        int twoCount = 0;
-        int threeCount = 0;
-        int fourCount = 0;
-        int fiveCount = 0;
-        int sixCount = 0;
-        int eightCount = 0;
-        int nineCount = 0;
-        int tenCount = 0;
-        int elevenCount = 0;
-        int twelveCount = 0;
-
-        for (Hexagon hex : result) {
-            switch (hex.getValue()) {
-                case 0:
-                    desertZeroCount++;
-                    break;
-                case 2:
-                    twoCount++;
-                    break;
-                case 3:
-                    threeCount++;
-                    break;
-                case 4:
-                    fourCount++;
-                    break;
-                case 5:
-                    fiveCount++;
-                    break;
-                case 6:
-                    sixCount++;
-                    break;
-                case 8:
-                    eightCount++;
-                    break;
-                case 9:
-                    nineCount++;
-                    break;
-                case 10:
-                    tenCount++;
-                    break;
-                case 11:
-                    elevenCount++;
-                    break;
-                case 12:
-                    twelveCount++;
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        assertEquals(1, desertZeroCount);
-        assertEquals(1, twoCount);
-        assertEquals(2, threeCount);
-        assertEquals(2, fourCount);
-        assertEquals(2, fiveCount);
-        assertEquals(2, sixCount);
-        assertEquals(2, eightCount);
-        assertEquals(2, nineCount);
-        assertEquals(2, tenCount);
-        assertEquals(2, elevenCount);
-        assertEquals(1, twelveCount);
+    public void testGenerateHexValidateLumberResources() {
+    	BoardManager bm = new BoardManager();
+    	Hexagon[] result = bm.generateHexagons(false);
+    	
+    	int lumberCount = 0;
+    	
+    	for (Hexagon hex : result) {
+    		if (hex.getResource() == ResourceType.LUMBER) {
+    			lumberCount++;
+    		}
+    	}
+    	assertEquals(4, lumberCount);
+    }
+    
+    @Test
+    public void testGenerateHexValidateWoolResources() {
+    	BoardManager bm = new BoardManager();
+    	Hexagon[] result = bm.generateHexagons(false);
+    	
+    	int woolCount = 0;
+    	
+    	for (Hexagon hex : result) {
+    		if (hex.getResource() == ResourceType.WOOL) {
+    			woolCount++;
+    		}
+    	}
+    	assertEquals(4, woolCount);
+    }
+    
+    @Test
+    public void testGenerateHexValidateBrickResources() {
+    	BoardManager bm = new BoardManager();
+    	Hexagon[] result = bm.generateHexagons(false);
+    	
+    	int brickCount = 0;
+    	
+    	for (Hexagon hex : result) {
+    		if (hex.getResource() == ResourceType.BRICK) {
+    			brickCount++;
+    		}
+    	}
+    	assertEquals(3, brickCount);
+    }
+    
+    @Test
+    public void testGenerateHexValidateOreResources() {
+    	BoardManager bm = new BoardManager();
+    	Hexagon[] result = bm.generateHexagons(false);
+    	
+    	int oreCount = 0;
+    	
+    	for (Hexagon hex : result) {
+    		if (hex.getResource() == ResourceType.ORE) {
+    			oreCount++;
+    		}
+    	}
+    	assertEquals(3, oreCount);
+    }
+    
+    @Test
+    public void testGenerateHexValidateNumberTokensDesert()  {
+    	BoardManager bm = new BoardManager();
+    	Hexagon[] result = bm.generateHexagons(false);
+    	
+    	int desertCount = 0;
+    	
+    	for (Hexagon hex : result) {
+    		if (hex.getValue() == 0) {
+    			desertCount++;
+    		}
+    	}
+    	assertEquals(1, desertCount);
+    }
+    
+    @Test
+    public void testGenerateHexValidateNumberTokensTwoCount()  {
+    	BoardManager bm = new BoardManager();
+    	Hexagon[] result = bm.generateHexagons(false);
+    	
+    	int twoCount = 0;
+    	
+    	for (Hexagon hex : result) {
+    		if (hex.getValue() == 2) {
+    			twoCount++;
+    		}
+    	}
+    	assertEquals(1, twoCount);
+    }
+    
+    @Test
+    public void testGenerateHexValidateNumberTokensThreeCount()  {
+    	BoardManager bm = new BoardManager();
+    	Hexagon[] result = bm.generateHexagons(false);
+    	
+    	int threeCount = 0;
+    	
+    	for (Hexagon hex : result) {
+    		if (hex.getValue() == 3) {
+    			threeCount++;
+    		}
+    	}
+    	assertEquals(2, threeCount);
+    }
+    
+    @Test
+    public void testGenerateHexValidateNumberTokensFourCount()  {
+    	BoardManager bm = new BoardManager();
+    	Hexagon[] result = bm.generateHexagons(false);
+    	
+    	int fourCount = 0;
+    	
+    	for (Hexagon hex : result) {
+    		if (hex.getValue() == 4) {
+    			fourCount++;
+    		}
+    	}
+    	assertEquals(2, fourCount);
+    }
+    
+    @Test
+    public void testGenerateHexValidateNumberTokensFiveCount()  {
+    	BoardManager bm = new BoardManager();
+    	Hexagon[] result = bm.generateHexagons(false);
+    	
+    	int fiveCount = 0;
+    	
+    	for (Hexagon hex : result) {
+    		if (hex.getValue() == 5) {
+    			fiveCount++;
+    		}
+    	}
+    	assertEquals(2, fiveCount);
+    }
+    
+    @Test
+    public void testGenerateHexValidateNumberTokensSixCount()  {
+    	BoardManager bm = new BoardManager();
+    	Hexagon[] result = bm.generateHexagons(false);
+    	
+    	int sixCount = 0;
+    	
+    	for (Hexagon hex : result) {
+    		if (hex.getValue() == 6) {
+    			sixCount++;
+    		}
+    	}
+    	assertEquals(2, sixCount);
+    }
+    
+    @Test
+    public void testGenerateHexValidateNumberTokensEightCount()  {
+    	BoardManager bm = new BoardManager();
+    	Hexagon[] result = bm.generateHexagons(false);
+    	
+    	int eightCount = 0;
+    	
+    	for (Hexagon hex : result) {
+    		if (hex.getValue() == 8) {
+    			eightCount++;
+    		}
+    	}
+    	assertEquals(2, eightCount);
+    }
+    
+    @Test
+    public void testGenerateHexValidateNumberTokensNineCount()  {
+    	BoardManager bm = new BoardManager();
+    	Hexagon[] result = bm.generateHexagons(false);
+    	
+    	int nineCount = 0;
+    	
+    	for (Hexagon hex : result) {
+    		if (hex.getValue() == 9) {
+    			nineCount++;
+    		}
+    	}
+    	assertEquals(2, nineCount);
+    }
+    
+    @Test
+    public void testGenerateHexValidateNumberTenCount()  {
+    	BoardManager bm = new BoardManager();
+    	Hexagon[] result = bm.generateHexagons(false);
+    	
+    	int tenCount = 0;
+    	
+    	for (Hexagon hex : result) {
+    		if (hex.getValue() == 10) {
+    			tenCount++;
+    		}
+    	}
+    	assertEquals(2, tenCount);
+    }
+    
+    @Test
+    public void testGenerateHexValidateNumberTokensElevenCount()  {
+    	BoardManager bm = new BoardManager();
+    	Hexagon[] result = bm.generateHexagons(false);
+    	
+    	int elevenCount = 0;
+    	
+    	for (Hexagon hex : result) {
+    		if (hex.getValue() == 11) {
+    			elevenCount++;
+    		}
+    	}
+    	assertEquals(2, elevenCount);
+    }
+    
+    @Test
+    public void testGenerateHexValidateNumberTokensTwelveCount()  {
+    	BoardManager bm = new BoardManager();
+    	Hexagon[] result = bm.generateHexagons(false);
+    	
+    	int twelveCount = 0;
+    	
+    	for (Hexagon hex : result) {
+    		if (hex.getValue() == 12) {
+    			twelveCount++;
+    		}
+    	}
+    	assertEquals(1, twelveCount);
     }
 
     @Test
