@@ -1,6 +1,8 @@
 package domain;
 
 import org.easymock.EasyMock;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -13,6 +15,7 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static domain.ResourceType.GRAIN;
 import static org.easymock.EasyMock.anyObject;
@@ -20,10 +23,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public class BoardManagerTests {
+    BoardManager bm;
+
+    @BeforeEach
+    public void setup() {
+        bm = new BoardManager();
+    }
 
     @Test
     public void testGenerateHex_validateUniqueness() {
-        BoardManager bm = new BoardManager();
         Hexagon[] result = bm.generateHexagons(false);
         ArrayList<Point2D> centers = new ArrayList<>();
         for (Hexagon hex : result) {
@@ -37,7 +45,6 @@ public class BoardManagerTests {
     
     @Test
     public void testGenerateHexValidateGrainResources() {
-    	BoardManager bm = new BoardManager();
     	Hexagon[] result = bm.generateHexagons(false);
     	
     	int grainCount = 0;
@@ -52,7 +59,6 @@ public class BoardManagerTests {
     
     @Test
     public void testGenerateHexValidateLumberResources() {
-    	BoardManager bm = new BoardManager();
     	Hexagon[] result = bm.generateHexagons(false);
     	
     	int lumberCount = 0;
@@ -67,7 +73,6 @@ public class BoardManagerTests {
     
     @Test
     public void testGenerateHexValidateWoolResources() {
-    	BoardManager bm = new BoardManager();
     	Hexagon[] result = bm.generateHexagons(false);
     	
     	int woolCount = 0;
@@ -82,7 +87,6 @@ public class BoardManagerTests {
     
     @Test
     public void testGenerateHexValidateBrickResources() {
-    	BoardManager bm = new BoardManager();
     	Hexagon[] result = bm.generateHexagons(false);
     	
     	int brickCount = 0;
@@ -97,7 +101,7 @@ public class BoardManagerTests {
     
     @Test
     public void testGenerateHexValidateOreResources() {
-    	BoardManager bm = new BoardManager();
+
     	Hexagon[] result = bm.generateHexagons(false);
     	
     	int oreCount = 0;
@@ -112,7 +116,7 @@ public class BoardManagerTests {
     
     @Test
     public void testGenerateHexValidateNumberTokensDesert()  {
-    	BoardManager bm = new BoardManager();
+
     	Hexagon[] result = bm.generateHexagons(false);
     	
     	int desertCount = 0;
@@ -127,11 +131,11 @@ public class BoardManagerTests {
     
     @Test
     public void testGenerateHexValidateNumberTokensTwoCount()  {
-    	BoardManager bm = new BoardManager();
+
     	Hexagon[] result = bm.generateHexagons(false);
-    	
+
     	int twoCount = 0;
-    	
+
     	for (Hexagon hex : result) {
     		if (hex.getValue() == 2) {
     			twoCount++;
@@ -139,14 +143,14 @@ public class BoardManagerTests {
     	}
     	assertEquals(1, twoCount);
     }
-    
+
     @Test
     public void testGenerateHexValidateNumberTokensThreeCount()  {
-    	BoardManager bm = new BoardManager();
+
     	Hexagon[] result = bm.generateHexagons(false);
-    	
+
     	int threeCount = 0;
-    	
+
     	for (Hexagon hex : result) {
     		if (hex.getValue() == 3) {
     			threeCount++;
@@ -154,14 +158,14 @@ public class BoardManagerTests {
     	}
     	assertEquals(2, threeCount);
     }
-    
+
     @Test
     public void testGenerateHexValidateNumberTokensFourCount()  {
-    	BoardManager bm = new BoardManager();
+
     	Hexagon[] result = bm.generateHexagons(false);
-    	
+
     	int fourCount = 0;
-    	
+
     	for (Hexagon hex : result) {
     		if (hex.getValue() == 4) {
     			fourCount++;
@@ -169,14 +173,14 @@ public class BoardManagerTests {
     	}
     	assertEquals(2, fourCount);
     }
-    
+
     @Test
     public void testGenerateHexValidateNumberTokensFiveCount()  {
-    	BoardManager bm = new BoardManager();
+
     	Hexagon[] result = bm.generateHexagons(false);
-    	
+
     	int fiveCount = 0;
-    	
+
     	for (Hexagon hex : result) {
     		if (hex.getValue() == 5) {
     			fiveCount++;
@@ -184,14 +188,14 @@ public class BoardManagerTests {
     	}
     	assertEquals(2, fiveCount);
     }
-    
+
     @Test
     public void testGenerateHexValidateNumberTokensSixCount()  {
-    	BoardManager bm = new BoardManager();
+
     	Hexagon[] result = bm.generateHexagons(false);
-    	
+
     	int sixCount = 0;
-    	
+
     	for (Hexagon hex : result) {
     		if (hex.getValue() == 6) {
     			sixCount++;
@@ -199,14 +203,14 @@ public class BoardManagerTests {
     	}
     	assertEquals(2, sixCount);
     }
-    
+
     @Test
     public void testGenerateHexValidateNumberTokensEightCount()  {
-    	BoardManager bm = new BoardManager();
+
     	Hexagon[] result = bm.generateHexagons(false);
-    	
+
     	int eightCount = 0;
-    	
+
     	for (Hexagon hex : result) {
     		if (hex.getValue() == 8) {
     			eightCount++;
@@ -214,14 +218,14 @@ public class BoardManagerTests {
     	}
     	assertEquals(2, eightCount);
     }
-    
+
     @Test
     public void testGenerateHexValidateNumberTokensNineCount()  {
-    	BoardManager bm = new BoardManager();
+
     	Hexagon[] result = bm.generateHexagons(false);
-    	
+
     	int nineCount = 0;
-    	
+
     	for (Hexagon hex : result) {
     		if (hex.getValue() == 9) {
     			nineCount++;
@@ -229,14 +233,14 @@ public class BoardManagerTests {
     	}
     	assertEquals(2, nineCount);
     }
-    
+
     @Test
     public void testGenerateHexValidateNumberTenCount()  {
-    	BoardManager bm = new BoardManager();
+
     	Hexagon[] result = bm.generateHexagons(false);
-    	
+
     	int tenCount = 0;
-    	
+
     	for (Hexagon hex : result) {
     		if (hex.getValue() == 10) {
     			tenCount++;
@@ -244,14 +248,14 @@ public class BoardManagerTests {
     	}
     	assertEquals(2, tenCount);
     }
-    
+
     @Test
     public void testGenerateHexValidateNumberTokensElevenCount()  {
-    	BoardManager bm = new BoardManager();
+
     	Hexagon[] result = bm.generateHexagons(false);
-    	
+
     	int elevenCount = 0;
-    	
+
     	for (Hexagon hex : result) {
     		if (hex.getValue() == 11) {
     			elevenCount++;
@@ -259,14 +263,14 @@ public class BoardManagerTests {
     	}
     	assertEquals(2, elevenCount);
     }
-    
+
     @Test
     public void testGenerateHexValidateNumberTokensTwelveCount()  {
-    	BoardManager bm = new BoardManager();
+
     	Hexagon[] result = bm.generateHexagons(false);
-    	
+
     	int twelveCount = 0;
-    	
+
     	for (Hexagon hex : result) {
     		if (hex.getValue() == 12) {
     			twelveCount++;
@@ -277,7 +281,7 @@ public class BoardManagerTests {
 
     @Test
     public void testGenerateIntersections_validateUniqueness() {
-        BoardManager bm = new BoardManager();
+
         Intersection[] result = bm.generateIntersections();
         ArrayList<Point2D> centers = new ArrayList<>();
         for (Intersection inter : result) {
@@ -291,7 +295,7 @@ public class BoardManagerTests {
 
     @Test
     public void testInitializeBoardStructure_validateHexagonsHaveIntersections() {
-        BoardManager bm = new BoardManager();
+
         Hexagon[] hexagons = bm.initializeBoardStructure(false);
         for (Hexagon hex : hexagons) {
             assertEquals(6, hex.getIntersections().length);
@@ -300,7 +304,7 @@ public class BoardManagerTests {
 
     @Test
     public void testMakeAdjacentIntersections() {
-        BoardManager bm = new BoardManager();
+
         Intersection[] intersections = bm.generateIntersections();
         bm.makeAdjacentIntersections(intersections);
         assertEquals(3, intersections[0].getAdjacentIntersections().size());
@@ -310,7 +314,7 @@ public class BoardManagerTests {
 
     @Test
     public void testMakeAdjacentIntersections2() {
-        BoardManager bm = new BoardManager();
+
         Intersection[] intersections = bm.generateIntersections();
         bm.makeAdjacentIntersections(intersections);
         for (Intersection inter : intersections) {
@@ -322,42 +326,42 @@ public class BoardManagerTests {
 
     @Test
     public void testCheckSettlementPlacementLocation() {
-        BoardManager bm = new BoardManager();
+
         bm.generateIntersections();
         assertFalse(bm.checkSettlementPlacementLocation(-1));
     }
 
     @Test
     public void testCheckSettlementPlacementLocation2() {
-        BoardManager bm = new BoardManager();
+
         bm.generateIntersections();
         assertTrue(bm.checkSettlementPlacementLocation(0));
     }
 
     @Test
     public void testCheckSettlementPlacementLocation3() {
-        BoardManager bm = new BoardManager();
+
         bm.generateIntersections();
         assertTrue(bm.checkSettlementPlacementLocation(1));
     }
 
     @Test
     public void testCheckSettlementPlacementLocation4() {
-        BoardManager bm = new BoardManager();
+
         bm.generateIntersections();
         assertTrue(bm.checkSettlementPlacementLocation(53));
     }
 
     @Test
     public void testCheckSettlementPlacementLocation5() {
-        BoardManager bm = new BoardManager();
+
         bm.generateIntersections();
         assertFalse(bm.checkSettlementPlacementLocation(54));
     }
 
     @Test
     public void testCheckSettlementPlacementLocation6() {
-        BoardManager bm = new BoardManager();
+
         bm.generateIntersections();
         assertTrue(bm.checkSettlementPlacementLocation(0));
         assertFalse(bm.checkSettlementPlacementLocation(6));
@@ -365,7 +369,7 @@ public class BoardManagerTests {
 
     @Test
     public void testCheckSettlementPlacementLocation7() {
-        BoardManager bm = new BoardManager();
+
         bm.generateIntersections();
         assertTrue(bm.checkSettlementPlacementLocation(0));
         assertTrue(bm.checkSettlementPlacementLocation(1));
@@ -376,7 +380,7 @@ public class BoardManagerTests {
 
     @Test
     public void testCheckSettlementPlacementLocation8() {
-        BoardManager bm = new BoardManager();
+
         bm.generateIntersections();
         for (int i = 0; i < 54; i++) {
             bm.checkSettlementPlacementLocation(i);
@@ -388,7 +392,7 @@ public class BoardManagerTests {
 
     @Test
     public void testCheckRoadPlacementLocation1() {
-        BoardManager bm = new BoardManager();
+
         bm.generateIntersections();
         Player player = EasyMock.createMock(Player.class);
         assertFalse(bm.checkRoadPlacementLocation(-1, 0, player, false));
@@ -396,7 +400,7 @@ public class BoardManagerTests {
 
     @Test
     public void testCheckRoadPlacementLocation2() {
-        BoardManager bm = new BoardManager();
+
         bm.generateIntersections();
         Player player = EasyMock.createMock(Player.class);
         assertFalse(bm.checkRoadPlacementLocation(0, -1, player, false));
@@ -404,7 +408,7 @@ public class BoardManagerTests {
 
     @Test
     public void testCheckRoadPlacementLocation3() {
-        BoardManager bm = new BoardManager();
+
         Intersection[] intersections = bm.generateIntersections();
         Settlement settlement = EasyMock.createMock(Settlement.class);
         Player player = EasyMock.createMock(Player.class);
@@ -419,7 +423,7 @@ public class BoardManagerTests {
 
     @Test
     public void testCheckRoadPlacementLocation4() {
-        BoardManager bm = new BoardManager();
+
         Intersection[] intersections = bm.generateIntersections();
         Settlement settlement = EasyMock.createMock(Settlement.class);
         Player player = EasyMock.createMock(Player.class);
@@ -433,7 +437,7 @@ public class BoardManagerTests {
 
     @Test
     public void testCheckRoadPlacementLocation5() {
-        BoardManager bm = new BoardManager();
+
         bm.generateIntersections();
         Player player = EasyMock.createMock(Player.class);
         assertFalse(bm.checkRoadPlacementLocation(54, 0, player, false));
@@ -441,7 +445,7 @@ public class BoardManagerTests {
 
     @Test
     public void testCheckRoadPlacementLocation6() {
-        BoardManager bm = new BoardManager();
+
         Intersection[] intersections = bm.generateIntersections();
         Settlement settlement = EasyMock.createMock(Settlement.class);
         Player player = EasyMock.createMock(Player.class);
@@ -456,7 +460,7 @@ public class BoardManagerTests {
 
     @Test
     public void testCheckRoadPlacementLocation7() {
-        BoardManager bm = new BoardManager();
+
         Intersection[] intersections = bm.generateIntersections();
         Settlement settlement = EasyMock.createMock(Settlement.class);
         Player player = EasyMock.createMock(Player.class);
@@ -473,7 +477,7 @@ public class BoardManagerTests {
 
     @Test
     public void testCheckRoadPlacementLocation8() {
-        BoardManager bm = new BoardManager();
+
         Intersection[] intersections = bm.generateIntersections();
         Settlement settlement = EasyMock.createMock(Settlement.class);
         Player player = EasyMock.createMock(Player.class);
@@ -500,7 +504,7 @@ public class BoardManagerTests {
 
     @Test
     public void testCheckRoadPlacementLocation9() {
-        BoardManager bm = new BoardManager();
+
         Intersection[] intersections = bm.generateIntersections();
         Settlement settlement = EasyMock.createMock(Settlement.class);
         Player player = EasyMock.createMock(Player.class);
@@ -515,7 +519,7 @@ public class BoardManagerTests {
 
     @Test
     public void testCheckRoadPlacementLocation10() {
-        BoardManager bm = new BoardManager();
+
         Intersection[] intersections = bm.generateIntersections();
         Settlement settlement = EasyMock.createMock(Settlement.class);
         Player player = EasyMock.createMock(Player.class);
@@ -531,7 +535,7 @@ public class BoardManagerTests {
 
     @Test
     public void testCheckRoadPlacementLocation11() {
-        BoardManager bm = new BoardManager();
+
         Intersection[] intersections = bm.generateIntersections();
         Settlement settlement = EasyMock.createMock(Settlement.class);
         Player player = EasyMock.createMock(Player.class);
@@ -545,7 +549,7 @@ public class BoardManagerTests {
 
     @Test
     public void testCheckRoadPlacementLocation12() {
-        BoardManager bm = new BoardManager();
+
         bm.generateIntersections();
         Player player = EasyMock.createMock(Player.class);
         assertFalse(bm.checkRoadPlacementLocation(0, 54, player, false));
@@ -554,7 +558,7 @@ public class BoardManagerTests {
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 53})
     public void testBoardManager_getSelectedIntersection_expectValidIndex(int val) {
-        BoardManager bm = new BoardManager();
+
         bm.selectedIntersection = val;
         assertEquals(val, bm.getIntersectionSelection());
         assertEquals(-1, bm.selectedIntersection);
@@ -563,7 +567,7 @@ public class BoardManagerTests {
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 53})
     public void testBoardManager_getIntersectionSettlement_expectNull(int val) {
-        BoardManager bm = new BoardManager();
+
         Intersection[] intersections = bm.generateIntersections();
         intersections[val].setStructure(null);
         bm.setIntersection(val, intersections[val]);
@@ -573,7 +577,7 @@ public class BoardManagerTests {
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 53})
     public void testBoardManager_getIntersectionSettlement_validIndexExpectSettlement(int val) {
-        BoardManager bm = new BoardManager();
+
         Intersection[] intersections = bm.generateIntersections();
         Settlement settlement = EasyMock.createMock(Settlement.class);
         Player player = EasyMock.createMock(Player.class);
@@ -588,7 +592,7 @@ public class BoardManagerTests {
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 53})
     public void testBoardManager_getIntersectionSettlementColor_validIndexExpectColorRed(int val) {
-        BoardManager bm = new BoardManager();
+
         Intersection[] intersections = bm.generateIntersections();
         Settlement settlement = EasyMock.createMock(Settlement.class);
         Player player = EasyMock.createMock(Player.class);
@@ -693,7 +697,7 @@ public class BoardManagerTests {
     @ParameterizedTest
     @CsvSource({"0, 6", "6, 0", "2, 8", "8, 2", "52, 42", "42, 52"})
     public void testBoardManager_placeRoad_expectRoadPlaced(int val1, int val2) {
-        BoardManager bm = new BoardManager();
+
         Intersection[] intersections = bm.generateIntersections();
         Settlement settlement = EasyMock.createMock(Settlement.class);
         Player player = EasyMock.createMock(Player.class);
@@ -715,7 +719,7 @@ public class BoardManagerTests {
     @ParameterizedTest
     @CsvSource({"1, 53", "53, 1"})
     public void testBoardManager_placeRoad_expectRoadNotPlaced(int val1, int val2) {
-        BoardManager bm = new BoardManager();
+
         Intersection[] intersections = bm.generateIntersections();
         Settlement settlement = EasyMock.createMock(Settlement.class);
         Player player = EasyMock.createMock(Player.class);
@@ -735,7 +739,7 @@ public class BoardManagerTests {
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 53})
     public void testBoardManager_getIntersectionSelection_expectValidIndex(int val) {
-        BoardManager bm = new BoardManager();
+
         bm.selectedIntersection = val;
         assertEquals(val, bm.getIntersectionSelection());
         assertEquals(-1, bm.selectedIntersection);
@@ -744,7 +748,7 @@ public class BoardManagerTests {
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 18})
     public void testBoardManager_getHexSelection_expectValidIndex(int val) {
-        BoardManager bm = new BoardManager();
+
         bm.selectedHex = val;
         assertEquals(val, bm.getHexSelection());
         assertEquals(-1, bm.selectedHex);
@@ -1769,7 +1773,7 @@ public class BoardManagerTests {
 
         int[] desertRowAndColumn = {-1, -1};
 
-        BoardManager bm = new BoardManager();
+
 
         bm.ifHexValueZeroSetDesert(hexValues, desertRowAndColumn, 2, 2);
 
@@ -1783,7 +1787,7 @@ public class BoardManagerTests {
 
         int[] desertRowAndColumn = {-1, -1};
 
-        BoardManager bm = new BoardManager();
+
 
         bm.ifHexValueZeroSetDesert(hexValues, desertRowAndColumn, 2, 3);
 
@@ -2068,7 +2072,7 @@ public class BoardManagerTests {
 
         EasyMock.replay(hexagonHelper.shuffler, random);
 
-        BoardManager bm = new BoardManager();
+
         bm.boardShuffleAndRandomization(hexagonHelper, random);
 
         assertNotEquals(3, hexValues[2][3]);
@@ -2165,7 +2169,7 @@ public class BoardManagerTests {
 
         EasyMock.replay(hexagonHelper.shuffler, random);
 
-        BoardManager bm = new BoardManager();
+
         bm.randomizeBoard(true, hexagonHelper, random);
 
         assertNotEquals(3, hexValues[2][3]);
@@ -2205,7 +2209,7 @@ public class BoardManagerTests {
 
         Random random = EasyMock.createMock(Random.class);
 
-        BoardManager bm = new BoardManager();
+
         bm.randomizeBoard(false, hexagonHelper, random);
 
         assertEquals(0, hexValues[2][2]);
@@ -2226,7 +2230,7 @@ public class BoardManagerTests {
 
         EasyMock.replay(player);
 
-        BoardManager bm = new BoardManager();
+
 
 
         boolean result = bm.checkSettlementCostAndCount(player);
@@ -2246,7 +2250,7 @@ public class BoardManagerTests {
 
         EasyMock.replay(player);
 
-        BoardManager bm = new BoardManager();
+
 
 
         boolean result = bm.checkSettlementCostAndCount(player);
@@ -2268,7 +2272,7 @@ public class BoardManagerTests {
 
         EasyMock.replay(player);
 
-        BoardManager bm = new BoardManager();
+
 
 
         boolean result = bm.checkSettlementCostAndCount(player);
@@ -2291,7 +2295,7 @@ public class BoardManagerTests {
 
         EasyMock.replay(player);
 
-        BoardManager bm = new BoardManager();
+
 
 
         boolean result = bm.checkHasRoadResources(player);
@@ -2312,7 +2316,7 @@ public class BoardManagerTests {
 
         EasyMock.replay(player);
 
-        BoardManager bm = new BoardManager();
+
 
 
         boolean result = bm.checkHasRoadResources(player);
@@ -2334,7 +2338,7 @@ public class BoardManagerTests {
 
         EasyMock.replay(player);
 
-        BoardManager bm = new BoardManager();
+
 
 
         boolean result = bm.checkHasRoadResources(player);
@@ -2357,7 +2361,7 @@ public class BoardManagerTests {
 
         EasyMock.replay(player);
 
-        BoardManager bm = new BoardManager();
+
 
 
         boolean result = bm.checkHasCityResources(player);
@@ -2378,7 +2382,7 @@ public class BoardManagerTests {
 
         EasyMock.replay(player);
 
-        BoardManager bm = new BoardManager();
+
 
 
         boolean result = bm.checkHasCityResources(player);
@@ -2400,7 +2404,7 @@ public class BoardManagerTests {
 
         EasyMock.replay(player);
 
-        BoardManager bm = new BoardManager();
+
 
 
         boolean result = bm.checkHasCityResources(player);
@@ -2622,7 +2626,7 @@ public class BoardManagerTests {
         hexagonHelper.numberTokens = numberTokens;
 
 
-        BoardManager bm = new BoardManager();
+
 
         EasyMock.replay(hexagonHelper);
 
@@ -2656,7 +2660,7 @@ public class BoardManagerTests {
         hexagonHelper.numberTokens = numberTokens;
 
 
-        BoardManager bm = new BoardManager();
+
 
         EasyMock.replay(hexagonHelper);
 
@@ -2668,7 +2672,7 @@ public class BoardManagerTests {
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2, 60})
     public void testBoardManager_testGetRoadsOnBoard_expectReturn(int roads) {
-        BoardManager bm = new BoardManager();
+
 
         ArrayList<Road> roadList = new ArrayList<>();
         for (int i = 0; i < roads; i++) {
@@ -2684,7 +2688,7 @@ public class BoardManagerTests {
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2, 20})
     public void testBoardManager_testGetStructures_expectReturn(int structures) {
-        BoardManager bm = new BoardManager();
+
 
         ArrayList<Structure> structureList = new ArrayList<>();
         for (int i = 0; i < structures; i++) {
@@ -3034,38 +3038,31 @@ public class BoardManagerTests {
         EasyMock.verify(settlement,inter,player);
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name="with {0} intersection(s)")
     @ValueSource(ints = {1,2})
-    public void testLinkHexagonsAndIntersections(int numInter){
-        Point2D point = EasyMock.createNiceMock(Point2D.class);
+    void testLinkHexagonsAndIntersections(int numInter) {
+        Hexagon hex     = EasyMock.createNiceMock(Hexagon.class);
+        Point2D hexCtr  = EasyMock.createNiceMock(Point2D.class);
+        EasyMock.expect(hex.getCenter()).andReturn(hexCtr).anyTimes();
+        EasyMock.replay(hex, hexCtr);
 
-        Point2D hexPoint = EasyMock.createNiceMock(Point2D.class);
-        Hexagon hex = EasyMock.createNiceMock(Hexagon.class);
-        Intersection[] inters = new Intersection[numInter];
-        Point2D[] centers = new Point2D[numInter];
-        EasyMock.expect(hex.getCenter()).andReturn(hexPoint).atLeastOnce();
-        for(int i = 0; i < numInter; i++){
-            inters[i] = EasyMock.createNiceMock(Intersection.class);
-            Point2D interCenter = EasyMock.createNiceMock(Point2D.class);
-            EasyMock.expect(interCenter.distance(hexPoint)).andReturn(0.1).atLeastOnce();
-            EasyMock.expect(inters[i].getCenter()).andReturn(interCenter).atLeastOnce();
-            inters[i].setHexagons(anyObject());
-            centers[i] = interCenter;
-            EasyMock.replay(inters[i]);
-            EasyMock.replay(interCenter);
-        }
+        InterFixture[] fixtures = IntStream.range(0, numInter)
+                .mapToObj(i -> new InterFixture(hexCtr))
+                .toArray(InterFixture[]::new);
 
-        BoardManager board = new BoardManager();
+        Hexagon[]     hexes = { hex };
+        Intersection[] inters = Arrays.stream(fixtures)
+                .map(f -> f.inter)
+                .toArray(Intersection[]::new);
 
-        EasyMock.replay(hex,point,hexPoint);
-        board.linkHexagonsAndIntersections(new Hexagon[]{hex}, inters);
+        new BoardManager().linkHexagonsAndIntersections(hexes, inters);
 
-        EasyMock.verify(hex,point,hexPoint);
-
-        for(int i = 0; i < numInter; i++){
-            EasyMock.verify(inters[i],centers[i]);
+        EasyMock.verify(hex, hexCtr);
+        for (InterFixture f : fixtures) {
+            EasyMock.verify(f.inter, f.center);
         }
     }
+
 
     @Test
     public void testAddHexagonIfAdjacent_add(){
@@ -3466,6 +3463,23 @@ public class BoardManagerTests {
 
         EasyMock.verify(road);
 
+    }
+
+    private static class InterFixture {
+        final Intersection inter;
+        final Point2D center;
+
+        InterFixture(Point2D hexCenter) {
+            this.inter  = EasyMock.createNiceMock(Intersection.class);
+            this.center = EasyMock.createNiceMock(Point2D.class);
+
+            EasyMock.expect(center.distance(hexCenter)).andReturn(0.1).anyTimes();
+            EasyMock.expect(inter.getCenter())       .andReturn(center).anyTimes();
+
+            inter.setHexagons(EasyMock.anyObject(Hexagon[].class));
+
+            EasyMock.replay(inter, center);
+        }
     }
     
 // Need to complete and finish with EasyMock for automatic testing

@@ -66,7 +66,7 @@ public class Player {
         return devCardPlayed;
     }
 
-    public Collection<ResourceType> getResources() {
+    public ArrayList<ResourceType> getResources() {
         return new ArrayList<>(resources);
     }
 
