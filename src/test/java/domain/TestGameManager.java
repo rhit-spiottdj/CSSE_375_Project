@@ -668,7 +668,7 @@ public class TestGameManager {
 
         calculateVictoryPointsForPlayer_replayStandard(); // replay player1 mocks here
         EasyMock.replay(player2); // Replay player2 separately
-        EasyMock.replay(settlement2); // Replay settlement2 separately
+        //EasyMock.replay(settlement2); // Replay settlement2 separately
 
         int actual = manager.calculateVictoryPointsForPlayer(player1);
 
@@ -1433,7 +1433,7 @@ public class TestGameManager {
         DiceManager dm = EasyMock.createMock(DiceManager.class);
 
         EasyMock.expect(dm.getCurrentDiceRoll()).andReturn(EasyMock.anyInt());
-        EasyMock.expect(bm.distributeResourcesOnRoll(EasyMock.anyInt(), eq(bank))).andReturn(0); // Use eq() for the mock object
+        EasyMock.expect(bm.distributeResourcesOnRoll(EasyMock.anyInt(), bank)).andReturn(0); // Use eq() for the mock object
 
         EasyMock.replay(bm, bank, dm);
 
@@ -1451,7 +1451,7 @@ public class TestGameManager {
         DiceManager dm = EasyMock.createMock(DiceManager.class);
 
         EasyMock.expect(dm.getCurrentDiceRoll()).andReturn(EasyMock.anyInt());
-        EasyMock.expect(bm.distributeResourcesOnRoll(EasyMock.anyInt(), eq(bank))).andReturn(1); // Use eq() for the mock object
+        EasyMock.expect(bm.distributeResourcesOnRoll(EasyMock.anyInt(), bank)).andReturn(1); // Use eq() for the mock object
 
         EasyMock.replay(bm, bank, dm);
 
@@ -1469,7 +1469,7 @@ public class TestGameManager {
         DiceManager dm = EasyMock.createMock(DiceManager.class);
 
         EasyMock.expect(dm.getCurrentDiceRoll()).andReturn(EasyMock.anyInt());
-        EasyMock.expect(bm.distributeResourcesOnRoll(EasyMock.anyInt(), eq(bank))).andReturn(2); // Use eq() for the mock object
+        EasyMock.expect(bm.distributeResourcesOnRoll(EasyMock.anyInt(), bank)).andReturn(2); // Use eq() for the mock object
 
         EasyMock.replay(bm, bank, dm);
 
@@ -1528,13 +1528,13 @@ public class TestGameManager {
     }
 
     @ParameterizedTest
-    @EnumSource()
+    @ValueSource(ints = {2, 3})
     public void testGameManager_isValidRatio_zero(int ratio){
         assertTrue(GameManager.isValidRatio(ratio, 0));
     }
 
     @ParameterizedTest
-    @EnumSource()
+    @ValueSource(ints = {2, 3})
     public void testGameManager_isValidRatio_one(int ratio){
         assertFalse(GameManager.isValidRatio(ratio, 1));
     }
