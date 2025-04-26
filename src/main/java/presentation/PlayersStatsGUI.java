@@ -4,6 +4,7 @@ import domain.Player;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.Locale;
 import java.util.HashMap; // Add this import
 import java.util.Map; // Add this import
@@ -12,9 +13,13 @@ import java.util.Map; // Add this import
 public class PlayersStatsGUI {
 
     public JPanel frame;
+    public JFrame playerInfoFrame;
+    public JFrame singlePlayerInfoFrame;
+    public JLabel playerInfoLabel;
     public PlayerStatsGUI playerStatsGUIs[]; // Holds individual GUIs
     public Player[] players;
     private Map<Player, PlayerStatsGUI> playerGuiMap; // Map players to their GUIs
+    public JButton showPlayerInfoBtn;
 
     private Locale locale;
 
@@ -22,7 +27,7 @@ public class PlayersStatsGUI {
         initializeSetFields(players, locale);
         playerGuiMap = new HashMap<>(); // Initialize map
         initializeFrame(players);
-        initializePlayerGUIs(players);
+//        initializePlayerGUIs(players);
 
     }
 
@@ -35,27 +40,57 @@ public class PlayersStatsGUI {
     private void initializeFrame(Player[] players) {
         frame = new JPanel();
         // Adjust grid layout rows if needed, based on number of players
-        frame.setLayout(new GridLayout(players.length, 1)); // One row per player panel pair
-
+        frame.setLayout(new GridLayout(1, 1));
+        showPlayerInfoBtn = new JButton();
+        showPlayerInfoBtn.setText("Show Player Information");
+        showPlayerInfoBtn.addActionListener(e -> showPlayersInfo(e, players));
+        frame.add(showPlayerInfoBtn);
     }
 
-    private void initializePlayerGUIs(Player[] players) {
-        for (int i = 0; i < players.length; i++) {
-            initializePlayerGUI(players, i);
+    private void showPlayersInfo(ActionEvent e, Player[] players) {
+        playerInfoFrame = new JFrame();
+        playerInfoFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        playerInfoFrame.setSize(new Dimension(1500, 100));
+        playerInfoFrame.setLayout(new GridLayout(1, players.length, 5, 5));
+        playerInfoLabel = new JLabel("Please pick which player's information to view");
+        playerInfoFrame.add(playerInfoLabel);
+        int i = 0;
+        for(Player p : players) {
+            JButton btn = new JButton(p.getPlayerName());
+            int finalI = i;
+            btn.addActionListener(f -> showPlayerInfoDialog(playerInfoFrame, p, finalI));
+            playerInfoFrame.add(btn);
+            i++;
         }
+        playerInfoFrame.setLocationRelativeTo(null);
+        playerInfoFrame.setVisible(true);
     }
 
-    private void initializePlayerGUI(Player[] players, int i) {
-        PlayerStatsGUI singlePlayerGUI = new PlayerStatsGUI(players[i], locale);
+    private void showPlayerInfoDialog(JFrame playerInfoFrame, Player p, int i) {
+        singlePlayerInfoFrame = new JFrame();
+        singlePlayerInfoFrame.setSize(new Dimension(800, 800));
+        singlePlayerInfoFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        initializePlayerGUI(p, i);
+        singlePlayerInfoFrame.setVisible(true);
+    }
+
+//    private void initializePlayerGUIs(Player[] players) {
+//        for (int i = 0; i < players.length; i++) {
+//            initializePlayerGUI(players, i);
+//        }
+//    }
+
+    private void initializePlayerGUI(Player p, int i) {
+        PlayerStatsGUI singlePlayerGUI = new PlayerStatsGUI(p, locale);
         playerStatsGUIs[i] = singlePlayerGUI;
-        playerGuiMap.put(players[i], singlePlayerGUI); // Map player to their GUI
+        playerGuiMap.put(p, singlePlayerGUI); // Map player to their GUI
 
         // Maybe add both panels (name+resources) to a single sub-panel per player
         JPanel playerPanelContainer = new JPanel();
         playerPanelContainer.setLayout(new BoxLayout(playerPanelContainer, BoxLayout.Y_AXIS)); // Stack vertically
         playerPanelContainer.add(singlePlayerGUI.playerNamePanel);
         playerPanelContainer.add(singlePlayerGUI.resourceDisplayPanel);
-        frame.add(playerPanelContainer); // Add the combined panel
+        singlePlayerInfoFrame.add(playerPanelContainer); // Add the combined panel
     }
 
 

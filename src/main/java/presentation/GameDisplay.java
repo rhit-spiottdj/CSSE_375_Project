@@ -16,7 +16,7 @@ public class GameDisplay implements ActionListener {
 
     private static final String RESOURCE_BUNDLE = "messages";
     private static final int MILLS_TO_WAIT = 10;
-    public static final int TIMER_INTERVAL = 100;
+    public static final int TIMER_INTERVAL = 20000;
     public static final int TIMER_START_AFTER = 100;
     private static final int ROBBER_ROLL = 7;
     public static final int QUICK_SETUP_SETTLEMENT_TWO = 5;
@@ -631,7 +631,10 @@ public class GameDisplay implements ActionListener {
         sevenRolledMessage();
         handlePlayersRobberDiscard();
         handleRobberActions(player);
-        gameManager.handleBarbarianTrigger();
+        ArrayList<Integer> downgradedIndexes = gameManager.handleBarbarianTrigger();
+        for (Integer downgradedIndex : downgradedIndexes) {
+            boardDisplay.downgradeToSettlementButton(downgradedIndex);
+        }
         enableButtonsAndCardGUI(true);
     }
 
@@ -768,6 +771,8 @@ public class GameDisplay implements ActionListener {
         if (!gameManager.buildCity(intersection1, player))  invalidCityPlacementMessage();
         else    boardDisplay.upgradeToCityButton(intersection1);
     }
+
+
     
     private boolean checkValidResourcesCity(Player player) {
     	if (!player.getEnoughForCity()) {
