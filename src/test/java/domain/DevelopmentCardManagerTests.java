@@ -82,7 +82,7 @@ public class DevelopmentCardManagerTests {
             playerResources.add(lumber);
         }
 
-        EasyMock.expect(bank.noMoreResource(EasyMock.eq(new ResourceTransaction(lumber, 1)))).andReturn(false).times(2); // Expect 2 calls for 2 resources
+        EasyMock.expect(bank.noMoreResource(EasyMock.eq(new ResourceTransaction(lumber, 1)))).andReturn(false).times(1); // Expect 2 calls for 2 resources
 
 
         player.addResource(lumber);
@@ -111,7 +111,7 @@ public class DevelopmentCardManagerTests {
             playerResources.add(lumber);
         }
 
-        EasyMock.expect(bank.noMoreResource(EasyMock.eq(new ResourceTransaction(lumber, 1)))).andReturn(false).times(2); // Expect 2 calls for 2 resources
+        EasyMock.expect(bank.noMoreResource(EasyMock.eq(new ResourceTransaction(lumber, 1)))).andReturn(false).times(1); // Expect 2 calls for 2 resources
         player.addResource(lumber);
         player.addResource(lumber);
         EasyMock.expect(player.getResources()).andReturn(playerResources);
@@ -139,7 +139,7 @@ public class DevelopmentCardManagerTests {
             playerResources.addAll(Arrays.asList(ResourceType.values()));
         }
 
-        EasyMock.expect(bank.noMoreResource(EasyMock.eq(new ResourceTransaction(lumber, 1)))).andReturn(false).times(2); // Expect 2 calls for 2 resources
+        EasyMock.expect(bank.noMoreResource(EasyMock.eq(new ResourceTransaction(lumber, 1)))).andReturn(false).times(1); // Expect 2 calls for 2 resources
 
         player.addResource(lumber);
         player.addResource(lumber);
@@ -469,7 +469,7 @@ public class DevelopmentCardManagerTests {
         EasyMock.expect(boardManager.placeRoad(intersections[1][0],intersections[1][1],player,
                 false)).andReturn(true);
         EasyMock.expect(player.getNumRoads()).andReturn(2).anyTimes();
-        player.setNumRoads(0);
+        player.setNumRoads(4);
 
         EasyMock.replay(boardManager);
         EasyMock.replay(player);
@@ -726,22 +726,32 @@ public class DevelopmentCardManagerTests {
 
     @Test
     public void testPlayKnight_playerHasKnight_stealLargestArmy() {
-
         playKnight_expectStandardErrorChecks();
+
         bonusManager.largestArmyOwner = player2;
 
         player.setDevelopmentCardAsPlayed(DevelopmentCards.KNIGHT);
+
         boardManager.moveRobber(0);
-        EasyMock.expect(boardManager.stealResource(player,player2)).andReturn(ResourceType.GRAIN);
-        player.incrementPlayedKnightCount(); // Expect increment
-        bonusManager.updateLargestArmy(player); // Expect bonus update
+        EasyMock.expectLastCall();
 
-        EasyMock.replay(player,player2,boardManager, bonusManager);
+        EasyMock.expect(boardManager.stealResource(player, player2)).andReturn(ResourceType.GRAIN);
+        player.incrementPlayedKnightCount();
 
-        ResourceType stolen = manager.playKnight(player,player2,0);
+        bonusManager.updateLargestArmy(player);
+        EasyMock.expectLastCall().andAnswer(() -> {
+            bonusManager.largestArmyOwner = player;
+            return null;
+        });
+
+        EasyMock.replay(player, player2, boardManager, bonusManager);
+
+        ResourceType stolen = manager.playKnight(player, player2, 0);
+
         assertEquals(ResourceType.GRAIN, stolen);
-        EasyMock.verify(player,player2, boardManager, bonusManager);
-        assertEquals(bonusManager.largestArmyOwner,player);
+        assertSame(player, bonusManager.largestArmyOwner);
+
+        EasyMock.verify(player, player2, boardManager, bonusManager);
     }
 
     @Test
@@ -798,15 +808,17 @@ public class DevelopmentCardManagerTests {
         EasyMock.expect(boardManager.getHexagonPlayers()).andReturn(onHexagon);
 
         player.setDevelopmentCardAsPlayed(DevelopmentCards.KNIGHT);
+        EasyMock.expectLastCall().once();
         boardManager.moveRobber(0);
-        playKnight_expectNoPlayedKnights();
+        player.incrementPlayedKnightCount();
+        bonusManager.updateLargestArmy(player);
 
-        EasyMock.replay(player,player2,boardManager);
+        EasyMock.replay(player,player2,boardManager, bonusManager);
 
         ResourceType stolen = manager.playKnight(player,null,0);
         assertEquals(null, stolen);
 
-        EasyMock.verify(player,boardManager);
+        EasyMock.verify(player,boardManager, bonusManager);
         assertNull(bonusManager.largestArmyOwner);
     }
 

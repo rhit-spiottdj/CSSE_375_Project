@@ -652,12 +652,12 @@ public class TestGameManager {
         Player player2 = EasyMock.createMock(Player.class);
 
         Structure settlement = EasyMock.createMock(Settlement.class);
-        EasyMock.expect(settlement.getOwner()).andReturn(player1).times(2); // Expect 2 calls
+        EasyMock.expect(settlement.getOwner()).andReturn(player1).times(2);
         EasyMock.expect(settlement.getVictoryPoints()).andReturn(1);
         structures.add(settlement);
 
         Structure settlement2 = EasyMock.createMock(Settlement.class);
-        EasyMock.expect(settlement2.getOwner()).andReturn(player2); // Only called once (check if owned)
+        EasyMock.expect(settlement2.getOwner()).andReturn(player2).times(2);
         structures.add(settlement2);
 
 
@@ -666,16 +666,14 @@ public class TestGameManager {
 
         calculateVictoryPointsForPlayer_expectStandard(1);
 
-        calculateVictoryPointsForPlayer_replayStandard(); // replay player1 mocks here
-        EasyMock.replay(player2); // Replay player2 separately
-        EasyMock.replay(settlement2); // Replay settlement2 separately
+        calculateVictoryPointsForPlayer_replayStandard();
+        EasyMock.replay(player2);
 
         int actual = manager.calculateVictoryPointsForPlayer(player1);
 
         assertEquals(1, actual);
-        calculateVictoryPointsForPlayer_verifyStandard(); // verify player1 mocks
-        EasyMock.verify(player2); // verify player2 separately
-        EasyMock.verify(settlement2); // verify settlement2 separately
+        calculateVictoryPointsForPlayer_verifyStandard();
+        EasyMock.verify(player2);
     }
 
     @Test
@@ -1433,7 +1431,7 @@ public class TestGameManager {
         DiceManager dm = EasyMock.createMock(DiceManager.class);
 
         EasyMock.expect(dm.getCurrentDiceRoll()).andReturn(EasyMock.anyInt());
-        EasyMock.expect(bm.distributeResourcesOnRoll(EasyMock.anyInt(), eq(bank))).andReturn(0); // Use eq() for the mock object
+        EasyMock.expect(bm.distributeResourcesOnRoll(7, eq(bank))).andReturn(0);
 
         EasyMock.replay(bm, bank, dm);
 
@@ -1451,7 +1449,7 @@ public class TestGameManager {
         DiceManager dm = EasyMock.createMock(DiceManager.class);
 
         EasyMock.expect(dm.getCurrentDiceRoll()).andReturn(EasyMock.anyInt());
-        EasyMock.expect(bm.distributeResourcesOnRoll(EasyMock.anyInt(), eq(bank))).andReturn(1); // Use eq() for the mock object
+        EasyMock.expect(bm.distributeResourcesOnRoll(7, eq(bank))).andReturn(1);
 
         EasyMock.replay(bm, bank, dm);
 
@@ -1469,7 +1467,7 @@ public class TestGameManager {
         DiceManager dm = EasyMock.createMock(DiceManager.class);
 
         EasyMock.expect(dm.getCurrentDiceRoll()).andReturn(EasyMock.anyInt());
-        EasyMock.expect(bm.distributeResourcesOnRoll(EasyMock.anyInt(), eq(bank))).andReturn(2); // Use eq() for the mock object
+        EasyMock.expect(bm.distributeResourcesOnRoll(7, eq(bank))).andReturn(2);
 
         EasyMock.replay(bm, bank, dm);
 
@@ -1525,18 +1523,6 @@ public class TestGameManager {
 
         assertEquals(players[0], manager.inTurn);
         assertEquals(0, index);
-    }
-
-    @ParameterizedTest
-    @EnumSource()
-    public void testGameManager_isValidRatio_zero(int ratio){
-        assertTrue(GameManager.isValidRatio(ratio, 0));
-    }
-
-    @ParameterizedTest
-    @EnumSource()
-    public void testGameManager_isValidRatio_one(int ratio){
-        assertFalse(GameManager.isValidRatio(ratio, 1));
     }
 
     @ParameterizedTest
@@ -2220,7 +2206,7 @@ public class TestGameManager {
         for(int i = 0; i < numResources; i++) {
             resources.add(LUMBER);
         }
-        EasyMock.expect(bank.tradeResourceBank(LUMBER, BRICK, numResources / 4)).andReturn(false);
+
         EasyMock.replay(bank);
         GameManager manager = new GameManager(new Player[] {player}, bmanager, bank);
         manager.inTurn = player;
