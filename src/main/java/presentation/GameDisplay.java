@@ -19,30 +19,8 @@ public class GameDisplay implements ActionListener {
     public static final int TIMER_INTERVAL = 20000;
     public static final int TIMER_START_AFTER = 100;
     private static final int ROBBER_ROLL = 7;
-    public static final int QUICK_SETUP_SETTLEMENT_TWO = 5;
-    public static final int QUICK_SETUP_SETTLEMENT_ONE = 0;
-    public static final int QUICK_SETUP_SETTLEMENT_THREE = 10;
-    public static final int QUICK_SETUP_SETTLEMENT_FOUR = 31;
-    public static final int QUICK_SETUP_SETTLEMENT_FIVE = 51;
-    public static final int QUICK_SETUP_SETTLEMENT_SIX = 48;
-    public static final int QUICK_SETUP_SETTLEMENT_SEVEN = 38;
-    public static final int QUICK_SETUP_SETTLEMENT_EIGHT = 46;
-    public static final int QUICK_SETUP_SETTLEMENT_NINE = 1;
-    public static final int QUICK_SETUP_SETTLEMENT_TEN = 22;
-    public static final int QUICK_SETUP_SETTLEMENT_ELEVEN = 13;
-    public static final int QUICK_SETUP_SETTLEMENT_TWELVE = 17;
-    static final int[] QUICK_SETUP_ROAD_ONE = {0, 6};
-    static final int[] QUICK_SETUP_ROAD_TWO = {29,31};
-    static final int[] QUICK_SETUP_ROAD_THREE = {10,4};
-    static final int[] QUICK_SETUP_ROAD_FOUR = {5,19};
-    static final int[] QUICK_SETUP_ROAD_FIVE = {42, 51};
-    static final int[] QUICK_SETUP_ROAD_SIX = {48, 35};
-    static final int[] QUICK_SETUP_ROAD_SEVEN = {38, 49};
-    static final int[] QUICK_SETUP_ROAD_EIGHT = {46, 52};
-    static final int[] QUICK_SETUP_ROAD_NINE = {1, 7};
-    static final int[] QUICK_SETUP_ROAD_TEN = {22, 23};
-    static final int[] QUICK_SETUP_ROAD_ELEVEN = {13, 32};
-    static final int[] QUICK_SETUP_ROAD_TWELVE = {15, 17};
+    static final int[] QUICK_SETUP_ROADS = {0, 6, 29, 31, 10, 28, 5, 19, 42, 51, 48, 35, 38, 49, 46, 52, 1, 7, 22, 23, 13, 32, 15, 17};
+    static final int[] QUICK_SETUP_SETTLEMENTS = {0, 29, 10, 5, 51, 48, 38, 46, 1, 22, 13, 17};
     private static ResourceBundle messages;
     private final Locale[] locales = {new Locale("en"), new Locale("es")};
     protected CardGUI cardDisplay;
@@ -169,105 +147,33 @@ public class GameDisplay implements ActionListener {
         }
     }
 
-    private void placeQuickSetupStructures() {
-    	placeFirstInitialQuickSetupSettlements();
-    	placeSecondInitialQuickSetupSettlements();
-    	placeFirstInitialQuickSetupRoads();
-    	placeSecondInitialQuickSetupRoads();
+    private void placeQuickSetupStructures() {    	
+    	placeInitialSettlements(0);
+    	placeInitialSettlements(6);
+    	placeInitialRoads(0);
+    	placeInitialRoads(12);
         repaintButtons();
-        repaintBoardHexes();;
+        repaintBoardHexes();
     }
-
-    private void placeSecondInitialQuickSetupRoads() {
-        gameManager.placeRoad(QUICK_SETUP_ROAD_THREE[0], QUICK_SETUP_ROAD_THREE[1],
-                gameManager.getPlayers()[0], true);
-        gameManager.placeRoad(QUICK_SETUP_ROAD_FOUR[0], QUICK_SETUP_ROAD_FOUR[1],
-                gameManager.getPlayers()[1], true);
-        if(numPlayers >= 3) {
-            gameManager.placeRoad(QUICK_SETUP_ROAD_SIX[0], QUICK_SETUP_ROAD_SIX[1],
-                    gameManager.getPlayers()[2],true);
-        }
-        if(numPlayers >= 4) {
-            gameManager.placeRoad(QUICK_SETUP_ROAD_EIGHT[0], QUICK_SETUP_ROAD_EIGHT[1],
-                    gameManager.getPlayers()[3],true);
-        }
-        if(numPlayers >= 5) {
-            gameManager.placeRoad(QUICK_SETUP_ROAD_TEN[0], QUICK_SETUP_ROAD_TEN[1],
-                    gameManager.getPlayers()[4],true);
-        }
-        if(numPlayers == 6) {
-            gameManager.placeRoad(QUICK_SETUP_ROAD_TWELVE[0], QUICK_SETUP_ROAD_TWELVE[1],
-                    gameManager.getPlayers()[5],true);
-        }
+    
+    private void placeInitialRoads(int index) {
+    	int player = 0;
+    	while (player < numPlayers) {
+    		int index2 = index + 1;
+    		gameManager.placeRoad(QUICK_SETUP_ROADS[index], QUICK_SETUP_ROADS[index2], 
+    				gameManager.getPlayers()[player], true);
+    		player++; 
+    		index+=2;
+    	}
     }
-
-    private void placeFirstInitialQuickSetupRoads() {
-        gameManager.placeRoad(QUICK_SETUP_ROAD_ONE[0], QUICK_SETUP_ROAD_ONE[1],
-                gameManager.getPlayers()[0], true);
-        gameManager.placeRoad(QUICK_SETUP_ROAD_TWO[0], QUICK_SETUP_ROAD_TWO[1],
-                gameManager.getPlayers()[1],true);
-        if(numPlayers >= 3) {
-            gameManager.placeRoad(QUICK_SETUP_ROAD_FIVE[0], QUICK_SETUP_ROAD_FIVE[1],
-                    gameManager.getPlayers()[2],true);
-        }
-        if(numPlayers >= 4) {
-            gameManager.placeRoad(QUICK_SETUP_ROAD_SEVEN[0], QUICK_SETUP_ROAD_SEVEN[1],
-                    gameManager.getPlayers()[3],true);
-        }
-        if(numPlayers >= 5) {
-            gameManager.placeRoad(QUICK_SETUP_ROAD_NINE[0], QUICK_SETUP_ROAD_NINE[1],
-                    gameManager.getPlayers()[4],true);
-        }
-        if(numPlayers == 6) {
-            gameManager.placeRoad(QUICK_SETUP_ROAD_ELEVEN[0], QUICK_SETUP_ROAD_ELEVEN[1],
-                    gameManager.getPlayers()[5],true);
-        }
-    }
-
-    private void placeSecondInitialQuickSetupSettlements() {
-        gameManager.placeInitialSettlement(QUICK_SETUP_SETTLEMENT_THREE,
-                gameManager.getPlayers()[0]);
-        gameManager.placeInitialSettlement(QUICK_SETUP_SETTLEMENT_FOUR,
-                gameManager.getPlayers()[1]);
-        if(numPlayers >= 3) {
-            gameManager.placeInitialSettlement(QUICK_SETUP_SETTLEMENT_SIX,
-                    gameManager.getPlayers()[2]);
-        }
-        if(numPlayers >= 4) {
-            gameManager.placeInitialSettlement(QUICK_SETUP_SETTLEMENT_EIGHT,
-                    gameManager.getPlayers()[3]);
-        }
-        if(numPlayers >= 5) {
-            gameManager.placeInitialSettlement(QUICK_SETUP_SETTLEMENT_TEN,
-                    gameManager.getPlayers()[4]);
-        }
-        if(numPlayers == 6) {
-            gameManager.placeInitialSettlement(QUICK_SETUP_SETTLEMENT_TWELVE,
-                    gameManager.getPlayers()[5]);
-        }
-    }
-
-    private void placeFirstInitialQuickSetupSettlements() {
-        gameManager.placeInitialSettlement(QUICK_SETUP_SETTLEMENT_ONE,
-                gameManager.getPlayers()[0]);
-        gameManager.placeInitialSettlement(QUICK_SETUP_SETTLEMENT_TWO,
-                gameManager.getPlayers()[1]);
-        if(numPlayers >= 3) {
-            gameManager.placeInitialSettlement(QUICK_SETUP_SETTLEMENT_FIVE,
-                    gameManager.getPlayers()[2]);
-        }
-        if(numPlayers >= 4) {
-            gameManager.placeInitialSettlement(QUICK_SETUP_SETTLEMENT_SEVEN,
-                    gameManager.getPlayers()[3]);
-        }
-        if(numPlayers >= 5) {
-            gameManager.placeInitialSettlement(QUICK_SETUP_SETTLEMENT_NINE,
-                    gameManager.getPlayers()[4]);
-        }
-        if(numPlayers == 6) {
-            gameManager.placeInitialSettlement(QUICK_SETUP_SETTLEMENT_ELEVEN,
-                    gameManager.getPlayers()[5]);
-        }
+    
+    private void placeInitialSettlements(int index) {
+    	int player = 0;
+    	while (player < numPlayers) {
+    		gameManager.placeInitialSettlement(QUICK_SETUP_SETTLEMENTS[index], gameManager.getPlayers()[player]);
+    		player++; 
+    		index++;
+    	}
     }
 
     private void quickSetup() {
