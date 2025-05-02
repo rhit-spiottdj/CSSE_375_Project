@@ -77,11 +77,60 @@ public class GameDisplay implements ActionListener {
     public GameDisplay(boolean quickSetup) {
         setup(quickSetup);
         setupForFirstTurn();
-
         boardFrame.pack();
         cardDisplay.frame.setVisible(false);
-
         setupTimer();
+    }
+
+    private void initAlmanacDisplay() {
+        JPanel almanacPanel = new JPanel(new GridLayout(4, 1));
+        almanacPanel.setBorder(BorderFactory.createTitledBorder(
+                messages.getString("almanacTitle") // e.g. "Build Costs"
+        ));
+        // Road
+        almanacPanel.add(new JLabel(
+                messages.getString("roadLabel") + ": " + buildCostString(
+                        ResourceType.BRICK, ResourceType.LUMBER
+                )));
+        // Settlement
+        almanacPanel.add(new JLabel(
+                messages.getString("settlementLabel") + ": " + buildCostString(
+                        ResourceType.BRICK, ResourceType.LUMBER,
+                        ResourceType.WOOL, ResourceType.GRAIN
+                )));
+        // City
+        almanacPanel.add(new JLabel(
+                messages.getString("cityLabel") + ": " + buildCostString(
+                        ResourceType.GRAIN, ResourceType.GRAIN,
+                        ResourceType.ORE, ResourceType.ORE, ResourceType.ORE
+                )));
+        // Development Card
+        almanacPanel.add(new JLabel(
+                messages.getString("devCardLabel") + ": " + buildCostString(
+                        ResourceType.WOOL, ResourceType.GRAIN, ResourceType.ORE
+                )));
+        // Place at bottom of game display
+        boardFrame.getContentPane().add(almanacPanel, BorderLayout.SOUTH);
+    }
+
+    /**
+     * Helper to build a comma-separated cost string from resource types.
+     */
+    private String buildCostString(ResourceType... resources) {
+        Map<ResourceType, Integer> count = new EnumMap<>(ResourceType.class);
+        for (ResourceType r : resources) {
+            count.merge(r, 1, Integer::sum);
+        }
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<ResourceType, Integer> e : count.entrySet()) {
+            sb.append(e.getValue())
+                    .append(" ")
+                    .append(messages.getString(e.getKey().toString().toLowerCase()))
+                    .append(", ");
+        }
+        // remove trailing comma+space
+        if (sb.length() > 2) sb.setLength(sb.length()-2);
+        return sb.toString();
     }
 
     private void setupForFirstTurn() {
@@ -137,6 +186,7 @@ public class GameDisplay implements ActionListener {
         turnDisplay = new PlayerTurnDisplay(gameManager, this, players, gameLocale);
         cardDisplay = new CardGUI(players, gameManager, this, gameLocale);
         barbarianRaidDisplay = new BarbarianRaidDisplay(gameManager);
+        initAlmanacDisplay();
     }
 
     private void handlePlayerSetup(boolean isQuickSetup) {
