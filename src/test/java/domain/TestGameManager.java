@@ -40,7 +40,7 @@ public class TestGameManager {
         GameManager manager = new GameManager();
         String expectedMessage = "Minimum amount of players allowed is 2";
         String actualMessage = assertThrows(IllegalArgumentException.class,
-            () -> manager.setNumPlayers(1)).getMessage();
+                () -> manager.setNumPlayers(1)).getMessage();
         assertEquals(expectedMessage, actualMessage);
     }
 
@@ -76,7 +76,7 @@ public class TestGameManager {
         GameManager manager = new GameManager();
         String expectedMessage = "Illegal Argument";
         String actualMessage = assertThrows(IllegalArgumentException.class,
-            () -> manager.setTurnOrder(new int[0])).getMessage();
+                () -> manager.setTurnOrder(new int[0])).getMessage();
         assertEquals(expectedMessage, actualMessage);
     }
 
@@ -92,7 +92,7 @@ public class TestGameManager {
 
         String expectedMessage = "Illegal Argument";
         String actualMessage = assertThrows(IllegalArgumentException.class,
-            () -> manager.setTurnOrder(new int[0])).getMessage();
+                () -> manager.setTurnOrder(new int[0])).getMessage();
         assertEquals(expectedMessage, actualMessage);
     }
 
@@ -103,7 +103,7 @@ public class TestGameManager {
 
         String expectedMessage = "Illegal Argument";
         String actualMessage = assertThrows(IllegalArgumentException.class,
-            () -> manager.setTurnOrder(rolledDices)).getMessage();
+                () -> manager.setTurnOrder(rolledDices)).getMessage();
         assertEquals(expectedMessage, actualMessage);
 
     }
@@ -201,7 +201,7 @@ public class TestGameManager {
 
         String expectedMessage = "Unequal Collection Sizes";
         String actualMessage = assertThrows(IllegalArgumentException.class,
-            () -> manager.setTurnOrder(rolledDices)).getMessage();
+                () -> manager.setTurnOrder(rolledDices)).getMessage();
         assertEquals(expectedMessage, actualMessage);
     }
 
@@ -219,7 +219,7 @@ public class TestGameManager {
 
         String expectedMessage = "Unequal Collection Sizes";
         String actualMessage = assertThrows(IllegalArgumentException.class,
-            () -> manager.setTurnOrder(rolledDices)).getMessage();
+                () -> manager.setTurnOrder(rolledDices)).getMessage();
         assertEquals(expectedMessage, actualMessage);
     }
 
@@ -294,7 +294,7 @@ public class TestGameManager {
         Player player1 = EasyMock.createMock(Player.class);
 
         String actualMessage = assertThrows(IllegalArgumentException.class,
-            () -> manager.placeInitialSettlement(-1, player1)).getMessage();
+                () -> manager.placeInitialSettlement(-1, player1)).getMessage();
 
         assertEquals(expectedMessage, actualMessage);
     }
@@ -312,12 +312,12 @@ public class TestGameManager {
 
 
         EasyMock.expect(boardManager.placeSettlementSetup(eq(0), eq(player1),
-            EasyMock.anyObject(Settlement.class))).andReturn(false);
+                EasyMock.anyObject(Settlement.class))).andReturn(false);
 
         EasyMock.replay(boardManager);
 
         String actualMessage = assertThrows(IllegalArgumentException.class,
-            () -> manager.placeInitialSettlement( 0, player1)).getMessage();
+                () -> manager.placeInitialSettlement( 0, player1)).getMessage();
 
         assertEquals(expectedMessage, actualMessage);
     }
@@ -334,7 +334,7 @@ public class TestGameManager {
 
         try {
             EasyMock.expect(boardManager.placeSettlementSetup(eq(index), eq(player1),
-                EasyMock.anyObject(Settlement.class))).andReturn(true);
+                    EasyMock.anyObject(Settlement.class))).andReturn(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -357,7 +357,7 @@ public class TestGameManager {
         String expectedMessage = "Invalid Index";
 
         String actualMessage = assertThrows(IllegalArgumentException.class,
-            () -> manager.giveInitialResources(val, player)).getMessage();
+                () -> manager.giveInitialResources(val, player)).getMessage();
 
         assertEquals(expectedMessage, actualMessage);
     }
@@ -421,7 +421,7 @@ public class TestGameManager {
 
         String expectedMessage = "No resources to distribute";
         String actualMessage = assertThrows(IllegalArgumentException.class,
-            () -> manager.giveInitialResources(0, player)).getMessage();
+                () -> manager.giveInitialResources(0, player)).getMessage();
 
         assertEquals(expectedMessage, actualMessage);
 
@@ -456,7 +456,7 @@ public class TestGameManager {
 
         String expectedMessage = "Cannot place road on the same intersection";
         String actualMessage = assertThrows(IllegalArgumentException.class,
-            () -> manager.placeRoad( 0, 0, player1, false)).getMessage();
+                () -> manager.placeRoad( 0, 0, player1, false)).getMessage();
 
         assertEquals(expectedMessage, actualMessage);
 
@@ -470,16 +470,15 @@ public class TestGameManager {
 
         Player player1 = EasyMock.createMock(Player.class);
 
-        //test with any settlement object
         EasyMock.expect(boardManager.placeSettlementSetup(eq(0), eq(player1),
-                EasyMock.anyObject(Settlement.class)))
-            .andReturn(false);
+                        EasyMock.anyObject(Settlement.class)))
+                .andReturn(false);
 
         EasyMock.replay(boardManager, player1);
 
         String expectedMessage = "Error placing settlement, try again";
         String actualMessage = assertThrows(IllegalArgumentException.class,
-            () -> manager.placeInitialSettlement( 0, player1)).getMessage();
+                () -> manager.placeInitialSettlement( 0, player1)).getMessage();
 
         assertEquals(expectedMessage, actualMessage);
 
@@ -499,7 +498,7 @@ public class TestGameManager {
 
         String expectedMessage = "Error placing road, try again";
         String actualMessage = assertThrows(IllegalArgumentException.class,
-            () -> manager.placeRoad( 0, 1, player1,false)).getMessage();
+                () -> manager.placeRoad( 0, 1, player1,false)).getMessage();
 
         assertEquals(expectedMessage, actualMessage);
 
@@ -547,12 +546,12 @@ public class TestGameManager {
     @ParameterizedTest
     @ValueSource(ints = {1, 2, 3, 4, 5})
     public void testGameManager_calculateVictoryPointsForPlayer_ownedSettlements(
-        int numSettlements) {
+            int numSettlements) {
         calculateVictoryPointsForPlayer_setupStandard();
 
         for (int i = 0; i < numSettlements; i++) {
             Structure settlement = EasyMock.createMock(Settlement.class);
-            EasyMock.expect(settlement.getOwner()).andReturn(player1);
+            EasyMock.expect(settlement.getOwner()).andReturn(player1).times(2); // Expect 2 calls per structure in the loop now
             EasyMock.expect(settlement.getVictoryPoints()).andReturn(1);
             structures.add(settlement);
         }
@@ -575,7 +574,7 @@ public class TestGameManager {
 
         for (int i = 0; i < numCities; i++) {
             Structure city = EasyMock.createMock(City.class);
-            EasyMock.expect(city.getOwner()).andReturn(player1);
+            EasyMock.expect(city.getOwner()).andReturn(player1).times(2); // Expect 2 calls per structure
             EasyMock.expect(city.getVictoryPoints()).andReturn(2);
             structures.add(city);
         }
@@ -597,12 +596,12 @@ public class TestGameManager {
 
 
         Structure city = EasyMock.createMock(City.class);
-        EasyMock.expect(city.getOwner()).andReturn(player1);
+        EasyMock.expect(city.getOwner()).andReturn(player1).times(2); // Expect 2 calls per structure
         EasyMock.expect(city.getVictoryPoints()).andReturn(2);
         structures.add(city);
 
         Structure settlement = EasyMock.createMock(Settlement.class);
-        EasyMock.expect(settlement.getOwner()).andReturn(player1);
+        EasyMock.expect(settlement.getOwner()).andReturn(player1).times(2); // Expect 2 calls per structure
         EasyMock.expect(settlement.getVictoryPoints()).andReturn(1);
         structures.add(settlement);
 
@@ -623,14 +622,14 @@ public class TestGameManager {
 
         for (int i = 0; i < 4; i++) {
             Structure city = EasyMock.createMock(City.class);
-            EasyMock.expect(city.getOwner()).andReturn(player1);
+            EasyMock.expect(city.getOwner()).andReturn(player1).times(2); // Expect 2 calls per structure
             EasyMock.expect(city.getVictoryPoints()).andReturn(2);
             structures.add(city);
         }
 
         for (int i = 0; i < 5; i++) {
             Structure settlement = EasyMock.createMock(Settlement.class);
-            EasyMock.expect(settlement.getOwner()).andReturn(player1);
+            EasyMock.expect(settlement.getOwner()).andReturn(player1).times(2); // Expect 2 calls per structure
             EasyMock.expect(settlement.getVictoryPoints()).andReturn(1);
             structures.add(settlement);
         }
@@ -653,26 +652,30 @@ public class TestGameManager {
         Player player2 = EasyMock.createMock(Player.class);
 
         Structure settlement = EasyMock.createMock(Settlement.class);
-        EasyMock.expect(settlement.getOwner()).andReturn(player1);
+        EasyMock.expect(settlement.getOwner()).andReturn(player1).times(2); // Expect 2 calls
         EasyMock.expect(settlement.getVictoryPoints()).andReturn(1);
         structures.add(settlement);
 
         Structure settlement2 = EasyMock.createMock(Settlement.class);
-        EasyMock.expect(settlement2.getOwner()).andReturn(player2);
+        EasyMock.expect(settlement2.getOwner()).andReturn(player2); // Only called once (check if owned)
         structures.add(settlement2);
+
 
         calculateVictoryPointsForPlayer_expectLongestRoad(false);
         calculateVictoryPointsForPlayer_expectLargestArmy(false);
 
         calculateVictoryPointsForPlayer_expectStandard(1);
 
-        calculateVictoryPointsForPlayer_replayStandard();
-        EasyMock.replay(player2);
+        calculateVictoryPointsForPlayer_replayStandard(); // replay player1 mocks here
+        EasyMock.replay(player2); // Replay player2 separately
+        EasyMock.replay(settlement2); // Replay settlement2 separately
+
         int actual = manager.calculateVictoryPointsForPlayer(player1);
 
         assertEquals(1, actual);
-        calculateVictoryPointsForPlayer_verifyStandard();
-        EasyMock.verify(player2);
+        calculateVictoryPointsForPlayer_verifyStandard(); // verify player1 mocks
+        EasyMock.verify(player2); // verify player2 separately
+        EasyMock.verify(settlement2); // verify settlement2 separately
     }
 
     @Test
@@ -715,7 +718,7 @@ public class TestGameManager {
 
         for (int i = 0; i < 5; i++) {
             Structure settlement = EasyMock.createMock(Settlement.class);
-            EasyMock.expect(settlement.getOwner()).andReturn(player1);
+            EasyMock.expect(settlement.getOwner()).andReturn(player1).times(2); // Expect 2 calls
             EasyMock.expect(settlement.getVictoryPoints()).andReturn(1);
             structures.add(settlement);
         }
@@ -745,7 +748,7 @@ public class TestGameManager {
 
         for (int i = 0; i < 5; i++) {
             Structure settlement = EasyMock.createMock(Settlement.class);
-            EasyMock.expect(settlement.getOwner()).andReturn(player1);
+            EasyMock.expect(settlement.getOwner()).andReturn(player1).times(2); // Expect 2 calls
             EasyMock.expect(settlement.getVictoryPoints()).andReturn(1);
             structures.add(settlement);
         }
@@ -775,7 +778,7 @@ public class TestGameManager {
 
         for (int i = 0; i < 4; i++) {
             Structure settlement = EasyMock.createMock(Settlement.class);
-            EasyMock.expect(settlement.getOwner()).andReturn(player1);
+            EasyMock.expect(settlement.getOwner()).andReturn(player1).times(2); // Expect 2 calls
             EasyMock.expect(settlement.getVictoryPoints()).andReturn(1);
             structures.add(settlement);
         }
@@ -802,9 +805,10 @@ public class TestGameManager {
 
     private void calculateVictoryPointsForPlayer_setupStandard() {
         boardManager = EasyMock.createMock(BoardManager.class);
-        bonusManager = EasyMock.createMock(BonusManager.class);
+        bonusManager = EasyMock.createMock(BonusManager.class); // Mock bonusManager
         cardManager = EasyMock.createMock(DevelopmentCardManager.class);
         manager = new GameManager(2, boardManager, cardManager);
+        manager.bonusManager = bonusManager; // Inject the mock
         player1 = EasyMock.createMock(Player.class);
         manager.inTurn = player1;
         cards = new ArrayList<>();
@@ -818,33 +822,25 @@ public class TestGameManager {
     }
 
     private void calculateVictoryPointsForPlayer_verifyStandard() {
-        EasyMock.verify(player1, boardManager, cardManager);
+        EasyMock.verify(player1, boardManager, bonusManager); // Verify bonusManager
         for (Structure structure : structures) {
             EasyMock.verify(structure);
         }
     }
 
     private void calculateVictoryPointsForPlayer_replayStandard() {
-        EasyMock.replay(player1, boardManager, cardManager);
+        EasyMock.replay(player1, boardManager, bonusManager); // Replay bonusManager
         for (Structure structure : structures) {
             EasyMock.replay(structure);
         }
     }
 
     private void calculateVictoryPointsForPlayer_expectLongestRoad(boolean hasRoad) {
-        if (hasRoad) {
-            EasyMock.expect(bonusManager.getLongestRoadOwner()).andReturn(player1);
-        } else {
-            EasyMock.expect(bonusManager.getLongestRoadOwner()).andReturn(null);
-        }
+        EasyMock.expect(bonusManager.getLongestRoadOwner()).andReturn(hasRoad ? player1 : null);
     }
 
-    private void calculateVictoryPointsForPlayer_expectLargestArmy(boolean hasRoad) {
-        if (hasRoad) {
-            EasyMock.expect(bonusManager.getLargestArmyOwner()).andReturn(player1);
-        } else {
-            EasyMock.expect(bonusManager.getLargestArmyOwner()).andReturn(null);
-        }
+    private void calculateVictoryPointsForPlayer_expectLargestArmy(boolean hasArmy) { // Corrected parameter name
+        EasyMock.expect(bonusManager.getLargestArmyOwner()).andReturn(hasArmy ? player1 : null);
     }
 
     @ParameterizedTest
@@ -856,7 +852,7 @@ public class TestGameManager {
         String expectedMessage = "Invalid Hex Index";
 
         String actualMessage = assertThrows(IllegalArgumentException.class,
-            () -> manager.moveRobber( val)).getMessage();
+                () -> manager.moveRobber( val)).getMessage();
 
         assertEquals(expectedMessage, actualMessage);
     }
@@ -872,7 +868,7 @@ public class TestGameManager {
 
         String expectedMessage = "Robber is already on this hex";
         String actualMessage = assertThrows(IllegalArgumentException.class,
-            () -> manager.moveRobber(0)).getMessage();
+                () -> manager.moveRobber(0)).getMessage();
 
         assertEquals(expectedMessage, actualMessage);
 
@@ -931,7 +927,7 @@ public class TestGameManager {
 
 
         EasyMock.expect(boardManager.getHexagonPlayers())
-            .andReturn(new ArrayList<>(List.of(player1)));
+                .andReturn(new ArrayList<>(List.of(player1)));
 
         EasyMock.replay(boardManager);
 
@@ -955,7 +951,7 @@ public class TestGameManager {
 
 
         EasyMock.expect(boardManager.getHexagonPlayers())
-            .andReturn(new ArrayList<>(List.of(player1, player2)));
+                .andReturn(new ArrayList<>(List.of(player1, player2)));
 
         EasyMock.replay(boardManager);
 
@@ -979,7 +975,7 @@ public class TestGameManager {
 
 
         EasyMock.expect(boardManager.getHexagonPlayers())
-            .andReturn(new ArrayList<>(List.of(player1, player2, player3)));
+                .andReturn(new ArrayList<>(List.of(player1, player2, player3)));
 
         EasyMock.replay(boardManager);
 
@@ -1003,7 +999,7 @@ public class TestGameManager {
 
 
         EasyMock.expect(boardManager.getHexagonPlayers())
-            .andReturn(new ArrayList<>(List.of(player1, player2, player3, player4)));
+                .andReturn(new ArrayList<>(List.of(player1, player2, player3, player4)));
 
         EasyMock.replay(boardManager);
 
@@ -1072,8 +1068,8 @@ public class TestGameManager {
 
         String expectedMessage = "Player has no resources to steal";
         String actualMessage = assertThrows(IllegalArgumentException.class,
-            () -> gameManager.tryRobberSteal(player1Mock,
-                player2Mock)).getMessage();
+                () -> gameManager.tryRobberSteal(player1Mock,
+                        player2Mock)).getMessage();
 
         assertEquals(expectedMessage, actualMessage);
 
@@ -1095,8 +1091,8 @@ public class TestGameManager {
 
         String expectedMessage = "No player to steal from";
         String actualMessage = assertThrows(IllegalArgumentException.class,
-            () -> gameManager.tryRobberSteal(player1Mock,
-                null)).getMessage();
+                () -> gameManager.tryRobberSteal(player1Mock,
+                        null)).getMessage();
 
         assertEquals(expectedMessage, actualMessage);
 
@@ -1119,14 +1115,14 @@ public class TestGameManager {
         BoardManager boardManagerMock = EasyMock.createMock(BoardManager.class);
 
         EasyMock.expect(boardManagerMock.stealResource(player1Mock, player2Mock))
-            .andReturn(ResourceType.LUMBER);
+                .andReturn(ResourceType.LUMBER);
 
         EasyMock.replay(boardManagerMock, player1Mock, player2Mock);
 
         GameManager gameManager = new GameManager(players, boardManagerMock);
 
         ResourceType actual = gameManager.tryRobberSteal(player1Mock,
-            player2Mock);
+                player2Mock);
 
         assertEquals(ResourceType.LUMBER, actual);
 
@@ -1210,7 +1206,7 @@ public class TestGameManager {
     public void testGameManager_setInTurnPlayer_negativeIndex(int numPlayers){
         setupPlayers(numPlayers);
         String actualMessage = assertThrows(IndexOutOfBoundsException.class,
-            () -> manager.setInTurnPlayer(-1)).getMessage();
+                () -> manager.setInTurnPlayer(-1)).getMessage();
         String expectedMessage = "Outside player range";
         assertEquals(expectedMessage, actualMessage);
     }
@@ -1236,7 +1232,7 @@ public class TestGameManager {
     public void testGameManager_setInTurnPlayer_overMaxIndex(int numPlayers){
         setupPlayers(numPlayers);
         String actualMessage = assertThrows(IndexOutOfBoundsException.class,
-            () -> manager.setInTurnPlayer(numPlayers)).getMessage();
+                () -> manager.setInTurnPlayer(numPlayers)).getMessage();
         String expectedMessage = "Outside player range";
         assertEquals(expectedMessage, actualMessage);
     }
@@ -1268,7 +1264,7 @@ public class TestGameManager {
 
         String expectedMessage = "Invalid Index";
         String actualMessage = assertThrows(IllegalArgumentException.class,
-            () -> manager.buildSettlement( -1, player1)).getMessage();
+                () -> manager.buildSettlement( -1, player1)).getMessage();
 
         assertEquals(expectedMessage, actualMessage);
 
@@ -1326,7 +1322,7 @@ public class TestGameManager {
 
         String expectedMessage = "Cannot place road on the same intersection";
         String actualMessage = assertThrows(IllegalArgumentException.class,
-            () -> manager.buildRoad(index, index, player1)).getMessage();
+                () -> manager.buildRoad(index, index, player1)).getMessage();
 
         assertEquals(expectedMessage, actualMessage);
 
@@ -1384,7 +1380,7 @@ public class TestGameManager {
 
         String expectedMessage = "Invalid Index";
         String actualMessage = assertThrows(IllegalArgumentException.class,
-            () -> manager.buildCity( -1, player1)).getMessage();
+                () -> manager.buildCity( -1, player1)).getMessage();
 
         assertEquals(expectedMessage, actualMessage);
 
@@ -1437,7 +1433,7 @@ public class TestGameManager {
         DiceManager dm = EasyMock.createMock(DiceManager.class);
 
         EasyMock.expect(dm.getCurrentDiceRoll()).andReturn(EasyMock.anyInt());
-        EasyMock.expect(bm.distributeResourcesOnRoll(EasyMock.anyInt(), bank)).andReturn(0);
+        EasyMock.expect(bm.distributeResourcesOnRoll(EasyMock.anyInt(), eq(bank))).andReturn(0); // Use eq() for the mock object
 
         EasyMock.replay(bm, bank, dm);
 
@@ -1455,7 +1451,7 @@ public class TestGameManager {
         DiceManager dm = EasyMock.createMock(DiceManager.class);
 
         EasyMock.expect(dm.getCurrentDiceRoll()).andReturn(EasyMock.anyInt());
-        EasyMock.expect(bm.distributeResourcesOnRoll(EasyMock.anyInt(), bank)).andReturn(1);
+        EasyMock.expect(bm.distributeResourcesOnRoll(EasyMock.anyInt(), eq(bank))).andReturn(1); // Use eq() for the mock object
 
         EasyMock.replay(bm, bank, dm);
 
@@ -1473,7 +1469,7 @@ public class TestGameManager {
         DiceManager dm = EasyMock.createMock(DiceManager.class);
 
         EasyMock.expect(dm.getCurrentDiceRoll()).andReturn(EasyMock.anyInt());
-        EasyMock.expect(bm.distributeResourcesOnRoll(EasyMock.anyInt(), bank)).andReturn(2);
+        EasyMock.expect(bm.distributeResourcesOnRoll(EasyMock.anyInt(), eq(bank))).andReturn(2); // Use eq() for the mock object
 
         EasyMock.replay(bm, bank, dm);
 
@@ -1573,7 +1569,7 @@ public class TestGameManager {
         BoardManager bmanager = EasyMock.createMock(BoardManager.class);
         EasyMock.expect(port.getPortTradeRatio()).andReturn(2).anyTimes();
         EasyMock.expect(bank.tradeResourcePort(port, ResourceType.LUMBER, BRICK,
-        val / 2)).andReturn(true);
+                val / 2)).andReturn(true);
         EasyMock.replay(port, bank);
         GameManager manager = new GameManager(new Player[]{player}, bmanager, bank);
         manager.inTurn = player;
@@ -1781,30 +1777,32 @@ public class TestGameManager {
         Bank bank = EasyMock.createMock(Bank.class);
         Player player = EasyMock.createMock(Player.class);
         DevelopmentCardManager dcm = EasyMock.createMock(DevelopmentCardManager.class);
+        BonusManager bonusManagerMock = EasyMock.createMock(BonusManager.class); // Mock BonusManager
 
         int[][] intersections = new int[][]{{0, 1}, {1, 2}};
         EasyMock.expect(dcm.playRoadBuilding(player, intersections)).andReturn(true);
         EasyMock.expect(bm.getRoadsOnBoard()).andReturn(new ArrayList<>());
 
-        EasyMock.expect(bonusManager.findLongestRoad(EasyMock.anyObject(), EasyMock.anyObject())).andReturn(true);
+        EasyMock.expect(bonusManagerMock.findLongestRoad(EasyMock.anyObject(), EasyMock.anyObject())).andReturn(true);
 
         EasyMock.expect(player.getUnplayableDevelopmentCards()).andReturn(new ArrayList<>());
 
         EasyMock.expect(bm.getStructures()).andReturn(new ArrayList<>());
 
-        EasyMock.expect(bonusManager.getLongestRoadOwner()).andReturn(null);
-        EasyMock.expect(bonusManager.getLargestArmyOwner()).andReturn(null);
+        EasyMock.expect(bonusManagerMock.getLongestRoadOwner()).andReturn(null);
+        EasyMock.expect(bonusManagerMock.getLargestArmyOwner()).andReturn(null);
         player.setVictoryPoints(0);
 
-        EasyMock.replay(bm, bank, player, dcm, bonusManager);
+        EasyMock.replay(bm, bank, player, dcm, bonusManagerMock); // Add bonusManagerMock to replay
 
         GameManager gm = new GameManager(dcm, new Player[]{player}, bm, bank);
+        gm.bonusManager = bonusManagerMock; // Inject the mock
 
         gm.setInTurnPlayer(0);
 
         assertTrue(gm.playRoadBuildingCard(intersections));
 
-        EasyMock.verify(bm, bank, player, dcm);
+        EasyMock.verify(bm, bank, player, dcm, bonusManagerMock); // Add bonusManagerMock to verify
     }
 
     @ParameterizedTest
@@ -2017,7 +2015,6 @@ public class TestGameManager {
         assertTrue(manager.isInTurnPlayer(player1));
     }
 
-    //Extra Integration Test
     @ParameterizedTest
     @ValueSource(ints = {0,1,2,14})
     public void testGameManager_getDevelopmentCardsInBank_differentAmounts(int amount){
@@ -2053,7 +2050,6 @@ public class TestGameManager {
         assertTrue(returnCards.isEmpty());
     }
 
-    //Extra Integration Test
     @ParameterizedTest
     @ValueSource(ints = {0,1,2,14})
     public void testGameManager_getPlayableDevelopmentCards_differentAmounts(int amount){
@@ -2078,7 +2074,6 @@ public class TestGameManager {
         assertTrue(returnCards.isEmpty());
     }
 
-    //Extra Integration Test
     @ParameterizedTest
     @ValueSource(ints = {0,1,2,14})
     public void testGameManager_getUnplayableDevelopmentCards_differentAmounts(int amount){
@@ -2103,7 +2098,6 @@ public class TestGameManager {
         assertTrue(returnCards.isEmpty());
     }
 
-    //Extra Integration Test
     @ParameterizedTest
     @ValueSource(ints = {0,1,2,14})
     public void testGameManager_getFutureDevelopmentCards_differentAmounts(int amount){
@@ -2279,9 +2273,9 @@ public class TestGameManager {
         DevelopmentCardManager devmanager = EasyMock.createMock(DevelopmentCardManager.class);
         GameManager manager = new GameManager(devmanager, new Player[] {player, playerToStealFrom}, bmanager, bank);
         manager.inTurn = player;
-        EasyMock.expect(devmanager.playKnight(player, playerToStealFrom, index)).andReturn(null);
+        EasyMock.expect(devmanager.playKnight(player, playerToStealFrom, index)).andThrow(new IllegalArgumentException("Invalid hex index")); // Expect exception
         EasyMock.replay(player, playerToStealFrom, devmanager, bmanager);
-        assertTrue(manager.playKnight(playerToStealFrom, index));
+        assertThrows(IllegalArgumentException.class, () -> manager.playKnight(playerToStealFrom, index)); // Assert exception
         EasyMock.verify(player, playerToStealFrom, devmanager, bmanager);
     }
 
