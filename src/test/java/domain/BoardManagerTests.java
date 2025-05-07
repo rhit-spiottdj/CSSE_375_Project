@@ -1545,8 +1545,6 @@ public class BoardManagerTests {
         EasyMock.expect(hex1.getResource()).andReturn(ResourceType.BRICK);
 
         EasyMock.expect(inter1.getStructure()).andReturn(settlement);
-        EasyMock.expect(inter1.getStructure()).andReturn(settlement);
-        EasyMock.expect(inter1.getStructure()).andReturn(settlement);
 
         EasyMock.expect(settlement.getOwner()).andReturn(player);
 
@@ -1566,8 +1564,6 @@ public class BoardManagerTests {
         EasyMock.expect(hex2.getHasRobber()).andReturn(false);
         EasyMock.expect(hex2.getResource()).andReturn(ResourceType.BRICK);
 
-        EasyMock.expect(inter2.getStructure()).andReturn(settlement2);
-        EasyMock.expect(inter2.getStructure()).andReturn(settlement2);
         EasyMock.expect(inter2.getStructure()).andReturn(settlement2);
 
         EasyMock.expect(settlement2.getOwner()).andReturn(player2);

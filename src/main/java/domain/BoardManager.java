@@ -724,7 +724,6 @@ public class BoardManager {
     public int getIntersectionSelection() {
         int temp = selectedIntersection;
         selectedIntersection = -1;
-        System.out.println(temp);
         return temp;
     }
 
@@ -1001,11 +1000,18 @@ public class BoardManager {
 
     private int checkStructureExistsAndTryToGiveResource(Bank bank, Hexagon hex) {
         ResourceType resource = hex.getResource();
+        Boolean distributed = true;
+        int returnCode = 0;
         Intersection[] intersections = hex.getIntersections();
         for (Intersection inter : intersections) {
-            if (inter.getStructure() != null) return tryAddResourcesFromRoll(bank, inter, resource);
+            if (inter.getStructure() != null) { 
+            	returnCode = tryAddResourcesFromRoll(bank, inter, resource); // something with the return values may be short circuiting the distribution process
+            	if (returnCode == 2) {
+            		distributed = false;
+            	}
+            }
         }
-        return 0;
+        return returnCode;
     }
 
     private int tryAddResourcesFromRoll(Bank bank, Intersection inter,
