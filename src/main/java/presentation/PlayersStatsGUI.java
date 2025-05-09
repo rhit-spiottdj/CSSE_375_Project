@@ -20,16 +20,16 @@ public class PlayersStatsGUI {
     public JFrame playerInfoFrame;
     public JFrame singlePlayerInfoFrame;
     public JLabel playerInfoLabel;
-    public PlayerStatsGUI playerStatsGUIs[]; // Holds individual GUIs
+    public PlayerStatsGUI playerStatsGUIs[];
     public Player[] players;
-    private Map<Player, PlayerStatsGUI> playerGuiMap; // Map players to their GUIs
+    private Map<Player, PlayerStatsGUI> playerGuiMap;
     public JButton showPlayerInfoBtn;
 
     private Locale locale;
 
     public PlayersStatsGUI(Player[] players, Locale locale) {
         initializeSetFields(players, locale);
-        playerGuiMap = new HashMap<>(); // Initialize map
+        playerGuiMap = new HashMap<>();
         initializeFrame(players);
 //        initializePlayerGUIs(players);
 
