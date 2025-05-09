@@ -28,6 +28,8 @@ public class PlayerTurnDisplay {
     private static final int PLAYER_LABEL_WIDTH = 7;
     private static final int PLAYER_LABEL_HEIGHT = 1;
     public static final int END_TURN_BUTTON_WIDTH = 7;
+    private static final int COLOR_INDICATOR_SIZE = 15;
+
     private ResourceBundle messages;
     protected String playerName;
     protected boolean turnEnded;
@@ -38,6 +40,8 @@ public class PlayerTurnDisplay {
     private JButton buildButton;
 
     public JLabel playerNameLabel;
+    private JPanel playerNamePanel;
+    private JPanel colorIndicator;
 
     private GameManager gameManager;
 
@@ -115,8 +119,34 @@ public class PlayerTurnDisplay {
         turnEnded = false;
         resetContent();
 
-        playerNameLabel.setText(getPlayerNameTurn(playerName));
+        updatePlayerNameAndColor(player);
+    }
 
+    private void updatePlayerNameAndColor(Player player) {
+        if (playerNamePanel != null) {
+            panel.remove(playerNamePanel);
+        }
+
+        playerNamePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
+        colorIndicator = new JPanel();
+        colorIndicator.setBackground(player.getPlayerColor());
+        colorIndicator.setPreferredSize(new Dimension(COLOR_INDICATOR_SIZE, COLOR_INDICATOR_SIZE));
+        colorIndicator.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+        playerNameLabel = new JLabel(getPlayerNameTurn(playerName));
+
+        playerNamePanel.add(colorIndicator);
+        playerNamePanel.add(playerNameLabel);
+
+        GridBagConstraints constraints = new GridBagConstraints();
+        setGridBagConstraints(constraints,
+                new GridBagConstraintHelper(0, 0, PLAYER_LABEL_WIDTH, PLAYER_LABEL_HEIGHT));
+        setPlayerNameLabelConstraints(constraints);
+
+        panel.add(playerNamePanel, constraints);
+        panel.revalidate();
+        panel.repaint();
     }
 
     public String getPlayerNameTurn(String playerName) {
@@ -153,13 +183,21 @@ public class PlayerTurnDisplay {
         setGridBagConstraints(constraints,
                 new GridBagConstraintHelper(0, 0, PLAYER_LABEL_WIDTH, PLAYER_LABEL_HEIGHT));
         setPlayerNameLabelConstraints(constraints);
-        initializePlayerNameLabel();
-        panel.add(playerNameLabel, constraints);
-    }
 
-    private void initializePlayerNameLabel() {
+        playerNamePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
+        Player firstPlayer = gameManager.getPlayers()[0];
+        colorIndicator = new JPanel();
+        colorIndicator.setBackground(firstPlayer.getPlayerColor());
+        colorIndicator.setPreferredSize(new Dimension(COLOR_INDICATOR_SIZE, COLOR_INDICATOR_SIZE));
+        colorIndicator.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
         playerNameLabel = new JLabel(getPlayerNameTurn(playerName));
-        playerNameLabel.setHorizontalAlignment(JLabel.CENTER);
+
+        playerNamePanel.add(colorIndicator);
+        playerNamePanel.add(playerNameLabel);
+
+        panel.add(playerNamePanel, constraints);
     }
 
     private void addDicePanel() {

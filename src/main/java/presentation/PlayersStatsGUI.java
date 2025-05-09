@@ -12,6 +12,10 @@ import java.util.Map; // Add this import
 
 public class PlayersStatsGUI {
 
+    public static final int FRAME_WIDTH = 1500;
+    public static final int FRAME_HEIGHT = 100;
+    public static final int COLOR_INDICATOR_SIZE = 15;
+
     public JPanel frame;
     public JFrame playerInfoFrame;
     public JFrame singlePlayerInfoFrame;
@@ -50,16 +54,27 @@ public class PlayersStatsGUI {
     private void showPlayersInfo(ActionEvent e, Player[] players) {
         playerInfoFrame = new JFrame();
         playerInfoFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        playerInfoFrame.setSize(new Dimension(1500, 100));
+        playerInfoFrame.setSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
         playerInfoFrame.setLayout(new GridLayout(1, players.length, 5, 5));
         playerInfoLabel = new JLabel("Please pick which player's information to view");
         playerInfoFrame.add(playerInfoLabel);
         int i = 0;
         for(Player p : players) {
+            JPanel playerButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
+            JPanel colorIndicator = new JPanel();
+            colorIndicator.setBackground(p.getPlayerColor());
+            colorIndicator.setPreferredSize(new Dimension(COLOR_INDICATOR_SIZE, COLOR_INDICATOR_SIZE));
+            colorIndicator.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
             JButton btn = new JButton(p.getPlayerName());
             int finalI = i;
             btn.addActionListener(f -> showPlayerInfoDialog(playerInfoFrame, p, finalI));
-            playerInfoFrame.add(btn);
+
+            playerButtonPanel.add(colorIndicator);
+            playerButtonPanel.add(btn);
+
+            playerInfoFrame.add(playerButtonPanel);
             i++;
         }
         playerInfoFrame.setLocationRelativeTo(null);
@@ -83,12 +98,22 @@ public class PlayersStatsGUI {
     private void initializePlayerGUI(Player p, int i) {
         PlayerStatsGUI singlePlayerGUI = new PlayerStatsGUI(p, locale);
         playerStatsGUIs[i] = singlePlayerGUI;
-        playerGuiMap.put(p, singlePlayerGUI); // Map player to their GUI
+        playerGuiMap.put(p, singlePlayerGUI);
 
-        // Maybe add both panels (name+resources) to a single sub-panel per player
         JPanel playerPanelContainer = new JPanel();
         playerPanelContainer.setLayout(new BoxLayout(playerPanelContainer, BoxLayout.Y_AXIS)); // Stack vertically
-        playerPanelContainer.add(singlePlayerGUI.playerNamePanel);
+
+        JPanel nameWithColorPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+        JPanel colorIndicator = new JPanel();
+        colorIndicator.setBackground(p.getPlayerColor());
+        colorIndicator.setPreferredSize(new Dimension(COLOR_INDICATOR_SIZE, COLOR_INDICATOR_SIZE));
+        colorIndicator.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+        nameWithColorPanel.add(colorIndicator);
+        nameWithColorPanel.add(singlePlayerGUI.playerNamePanel);
+
+        playerPanelContainer.add(nameWithColorPanel);
         playerPanelContainer.add(singlePlayerGUI.resourceDisplayPanel);
         singlePlayerInfoFrame.add(playerPanelContainer); // Add the combined panel
     }
