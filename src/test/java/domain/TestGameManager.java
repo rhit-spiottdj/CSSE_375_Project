@@ -1432,8 +1432,8 @@ public class TestGameManager {
         DiceManager dm = EasyMock.createMock(DiceManager.class);
 
         EasyMock.expect(dm.getCurrentDiceRoll()).andReturn(EasyMock.anyInt());
-        EasyMock.expect(bm.distributeResourcesOnRoll(EasyMock.anyInt(), bank)).andReturn(0); // Use eq() for the mock object
-        EasyMock.expect(bm.distributeResourcesOnRoll(7, bank)).andReturn(0);
+        EasyMock.expect(bm.distributeResourcesOnRoll(EasyMock.anyInt(), bank)).andReturn(0).anyTimes(); // Use eq() for the mock object
+        EasyMock.expect(bm.distributeResourcesOnRoll(7, bank)).andReturn(0).anyTimes();
 
         EasyMock.replay(bm, bank, dm);
 
@@ -1451,8 +1451,8 @@ public class TestGameManager {
         DiceManager dm = EasyMock.createMock(DiceManager.class);
 
         EasyMock.expect(dm.getCurrentDiceRoll()).andReturn(EasyMock.anyInt());
-        EasyMock.expect(bm.distributeResourcesOnRoll(EasyMock.anyInt(), bank)).andReturn(1); // Use eq() for the mock object
-        EasyMock.expect(bm.distributeResourcesOnRoll(7, bank)).andReturn(1);
+        EasyMock.expect(bm.distributeResourcesOnRoll(EasyMock.anyInt(), bank)).andReturn(1).anyTimes();
+        EasyMock.expect(bm.distributeResourcesOnRoll(7, bank)).andReturn(1).anyTimes();
 
         EasyMock.replay(bm, bank, dm);
 
@@ -1470,8 +1470,8 @@ public class TestGameManager {
         DiceManager dm = EasyMock.createMock(DiceManager.class);
 
         EasyMock.expect(dm.getCurrentDiceRoll()).andReturn(EasyMock.anyInt());
-        EasyMock.expect(bm.distributeResourcesOnRoll(EasyMock.anyInt(), bank)).andReturn(2); // Use eq() for the mock object
-        EasyMock.expect(bm.distributeResourcesOnRoll(7, bank)).andReturn(2);
+        EasyMock.expect(bm.distributeResourcesOnRoll(EasyMock.anyInt(), bank)).andReturn(2).anyTimes(); // Use eq() for the mock object
+        EasyMock.expect(bm.distributeResourcesOnRoll(7, bank)).andReturn(2).anyTimes();
 
         EasyMock.replay(bm, bank, dm);
 

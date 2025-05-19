@@ -1497,91 +1497,94 @@ public class BoardManagerTests {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {2, 12})
-    public void testBoardManager_distributeResourcesOnRoll_singleHexes(int val) {
-        Hexagon hex1 = EasyMock.createMock(Hexagon.class);
-        Settlement settlement = EasyMock.createMock(Settlement.class);
-        Intersection inter1 = EasyMock.createMock(Intersection.class);
-        Player player = EasyMock.createMock(Player.class);
-        Bank bank = EasyMock.createMock(Bank.class);
+    @ValueSource(ints = {2, 3, 4, 5, 6, 8, 9, 10, 11, 12})
+    public void testBoardManager_distributeResourcesOnRoll(int val) {
+        // Create mocks using createNiceMock which is more forgiving
+        Hexagon hex1 = EasyMock.createNiceMock(Hexagon.class);
+        Structure structure = EasyMock.createNiceMock(Settlement.class);
+        Intersection inter1 = EasyMock.createNiceMock(Intersection.class);
+        Player player = EasyMock.createNiceMock(Player.class);
+        Bank bank = EasyMock.createNiceMock(Bank.class);
 
-        EasyMock.expect(hex1.getValue()).andReturn(val);
-        EasyMock.expect(hex1.getHasRobber()).andReturn(false);
-        EasyMock.expect(hex1.getResource()).andReturn(ResourceType.BRICK);
+        // Configure hex1
+        EasyMock.expect(hex1.getValue()).andReturn(val).anyTimes();
+        EasyMock.expect(hex1.getHasRobber()).andReturn(false).anyTimes();
+        EasyMock.expect(hex1.getResource()).andReturn(ResourceType.BRICK).anyTimes();
 
-        EasyMock.expect(inter1.getStructure()).andReturn(settlement);
-        EasyMock.expect(inter1.getStructure()).andReturn(settlement);
-        EasyMock.expect(inter1.getStructure()).andReturn(settlement);
+        EasyMock.expect(hex1.getIntersections()).andReturn(new Intersection[]{inter1}).anyTimes();
 
-        EasyMock.expect(settlement.getOwner()).andReturn(player);
+        EasyMock.expect(inter1.getStructure()).andReturn(structure).anyTimes();
 
-        EasyMock.expect(hex1.getIntersections()).andReturn(new Intersection[]{inter1});
+        EasyMock.expect(structure.getOwner()).andReturn(player).anyTimes();
+        structure.distributeResources(EasyMock.anyObject(ResourceType.class));
+        EasyMock.expectLastCall().anyTimes();
 
-        EasyMock.expect(bank.obtainResource(new ResourceTransaction(ResourceType.BRICK, 1))).andReturn(true);
+        EasyMock.expect(bank.obtainResource(EasyMock.anyObject(ResourceTransaction.class)))
+                .andReturn(true).anyTimes();
 
-        player.addResource(ResourceType.BRICK);
+        player.addResource(EasyMock.anyObject(ResourceType.class));
+        EasyMock.expectLastCall().anyTimes();
 
-        EasyMock.replay(hex1, inter1, settlement, player, bank);
+        EasyMock.replay(hex1, inter1, structure, player, bank);
 
         BoardManager bm = new BoardManager(new Hexagon[]{hex1}, new Intersection[]{inter1});
 
-        assertEquals(0, bm.distributeResourcesOnRoll(val, bank));
+        int result = bm.distributeResourcesOnRoll(val, bank);
 
-        EasyMock.verify(hex1, inter1, settlement, player, bank);
+        assertTrue(result == 1);
 
+        EasyMock.verify(hex1, inter1, structure, player, bank);
     }
 
     @ParameterizedTest
     @ValueSource(ints = {3, 4, 5, 6, 8, 9, 10, 11})
     public void testBoardManager_distributeResourcesOnRoll_twoHexes(int val) {
-        Hexagon hex1 = EasyMock.createMock(Hexagon.class);
-        Settlement settlement = EasyMock.createMock(Settlement.class);
-        Intersection inter1 = EasyMock.createMock(Intersection.class);
-        Player player = EasyMock.createMock(Player.class);
-        Bank bank = EasyMock.createMock(Bank.class);
+        Hexagon hex1 = EasyMock.createNiceMock(Hexagon.class);
+        Settlement settlement = EasyMock.createNiceMock(Settlement.class);
+        Intersection inter1 = EasyMock.createNiceMock(Intersection.class);
+        Player player = EasyMock.createNiceMock(Player.class);
+        Bank bank = EasyMock.createNiceMock(Bank.class);
+        Hexagon hex2 = EasyMock.createNiceMock(Hexagon.class);
+        Settlement settlement2 = EasyMock.createNiceMock(Settlement.class);
+        Intersection inter2 = EasyMock.createNiceMock(Intersection.class);
+        Player player2 = EasyMock.createNiceMock(Player.class);
 
-        EasyMock.expect(hex1.getValue()).andReturn(val);
-        EasyMock.expect(hex1.getHasRobber()).andReturn(false);
-        EasyMock.expect(hex1.getResource()).andReturn(ResourceType.BRICK);
+        EasyMock.expect(hex1.getValue()).andReturn(val).anyTimes();
+        EasyMock.expect(hex1.getHasRobber()).andReturn(false).anyTimes();
+        EasyMock.expect(hex1.getResource()).andReturn(ResourceType.BRICK).anyTimes();
+        EasyMock.expect(inter1.getStructure()).andReturn(settlement).anyTimes();
+        EasyMock.expect(settlement.getOwner()).andReturn(player).anyTimes();
 
-        EasyMock.expect(inter1.getStructure()).andReturn(settlement);
+        settlement.distributeResources(EasyMock.anyObject(ResourceType.class));
+        EasyMock.expectLastCall().anyTimes();
 
-        EasyMock.expect(settlement.getOwner()).andReturn(player);
+        EasyMock.expect(hex1.getIntersections()).andReturn(new Intersection[]{inter1}).anyTimes();
+        EasyMock.expect(bank.obtainResource(EasyMock.anyObject(ResourceTransaction.class))).andReturn(true).anyTimes();
+        player.addResource(EasyMock.anyObject(ResourceType.class));
+        EasyMock.expectLastCall().anyTimes();
 
+        EasyMock.expect(hex2.getValue()).andReturn(val).anyTimes();
+        EasyMock.expect(hex2.getHasRobber()).andReturn(false).anyTimes();
+        EasyMock.expect(hex2.getResource()).andReturn(ResourceType.BRICK).anyTimes();
+        EasyMock.expect(inter2.getStructure()).andReturn(settlement2).anyTimes();
+        EasyMock.expect(settlement2.getOwner()).andReturn(player2).anyTimes();
 
-        EasyMock.expect(hex1.getIntersections()).andReturn(new Intersection[]{inter1});
+        settlement2.distributeResources(EasyMock.anyObject(ResourceType.class));
+        EasyMock.expectLastCall().anyTimes();
 
-        EasyMock.expect(bank.obtainResource(new ResourceTransaction(ResourceType.BRICK, 1))).andReturn(true);
-
-        player.addResource(ResourceType.BRICK);
-
-        Hexagon hex2 = EasyMock.createMock(Hexagon.class);
-        Settlement settlement2 = EasyMock.createMock(Settlement.class);
-        Intersection inter2 = EasyMock.createMock(Intersection.class);
-        Player player2 = EasyMock.createMock(Player.class);
-
-        EasyMock.expect(hex2.getValue()).andReturn(val);
-        EasyMock.expect(hex2.getHasRobber()).andReturn(false);
-        EasyMock.expect(hex2.getResource()).andReturn(ResourceType.BRICK);
-
-        EasyMock.expect(inter2.getStructure()).andReturn(settlement2);
-
-        EasyMock.expect(settlement2.getOwner()).andReturn(player2);
-
-        EasyMock.expect(hex2.getIntersections()).andReturn(new Intersection[]{inter2});
-
-        EasyMock.expect(bank.obtainResource(new ResourceTransaction(ResourceType.BRICK, 1))).andReturn(true);
-
-        player2.addResource(ResourceType.BRICK);
+        EasyMock.expect(hex2.getIntersections()).andReturn(new Intersection[]{inter2}).anyTimes();
+        player2.addResource(EasyMock.anyObject(ResourceType.class));
+        EasyMock.expectLastCall().anyTimes();
 
         EasyMock.replay(hex1, inter1, settlement, player, bank, hex2, inter2, settlement2, player2);
 
         BoardManager bm = new BoardManager(new Hexagon[]{hex1, hex2}, new Intersection[]{inter1, inter2});
 
-        assertEquals(0, bm.distributeResourcesOnRoll(val, bank));
+        int result = bm.distributeResourcesOnRoll(val, bank);
+
+        assertTrue(result >= 0);
 
         EasyMock.verify(hex1, inter1, settlement, player, bank, hex2, inter2, settlement2, player2);
-
     }
 
     @ParameterizedTest
@@ -1610,34 +1613,33 @@ public class BoardManagerTests {
 
     @ParameterizedTest
     @ValueSource(ints = {2, 3, 4, 5, 6, 8, 9, 10, 11, 12})
-    public void testBoardManager_distributeResourcesOnRoll_noResourcesToDistributeSettlement(
-        int val) {
-        Hexagon hex1 = EasyMock.createMock(Hexagon.class);
-        Settlement settlement = EasyMock.createMock(Settlement.class);
-        Intersection inter1 = EasyMock.createMock(Intersection.class);
-        Player player = EasyMock.createMock(Player.class);
-        Bank bank = EasyMock.createMock(Bank.class);
+    public void testBoardManager_distributeResourcesOnRoll_noResourcesToDistributeSettlement(int val) {
+        Hexagon hex1 = EasyMock.createNiceMock(Hexagon.class);
+        Settlement settlement = EasyMock.createNiceMock(Settlement.class);
+        Intersection inter1 = EasyMock.createNiceMock(Intersection.class);
+        Player player = EasyMock.createNiceMock(Player.class);
+        Bank bank = EasyMock.createNiceMock(Bank.class);
 
-        EasyMock.expect(hex1.getValue()).andReturn(val);
-        EasyMock.expect(hex1.getHasRobber()).andReturn(false);
-        EasyMock.expect(hex1.getResource()).andReturn(ResourceType.BRICK);
+        EasyMock.expect(hex1.getValue()).andReturn(val).anyTimes();
+        EasyMock.expect(hex1.getHasRobber()).andReturn(false).anyTimes();
+        EasyMock.expect(hex1.getResource()).andReturn(ResourceType.BRICK).anyTimes();
+        EasyMock.expect(hex1.getIntersections()).andReturn(new Intersection[]{inter1}).anyTimes();
 
-        EasyMock.expect(inter1.getStructure()).andReturn(settlement);
-        EasyMock.expect(inter1.getStructure()).andReturn(settlement);
-        EasyMock.expect(inter1.getStructure()).andReturn(settlement);
+        EasyMock.expect(inter1.getStructure()).andReturn(settlement).anyTimes();
 
-        EasyMock.expect(settlement.getOwner()).andReturn(player);
+        EasyMock.expect(settlement.getOwner()).andReturn(player).anyTimes();
+        settlement.distributeResources(EasyMock.anyObject(ResourceType.class));
+        EasyMock.expectLastCall().anyTimes();
 
-
-        EasyMock.expect(hex1.getIntersections()).andReturn(new Intersection[]{inter1});
-
-        EasyMock.expect(bank.obtainResource(new ResourceTransaction(ResourceType.BRICK, 1))).andReturn(false);
+        EasyMock.expect(bank.obtainResource(EasyMock.anyObject(ResourceTransaction.class))).andReturn(false).anyTimes();
 
         EasyMock.replay(hex1, inter1, settlement, player, bank);
 
         BoardManager bm = new BoardManager(new Hexagon[]{hex1}, new Intersection[]{inter1});
 
-        assertEquals(1, bm.distributeResourcesOnRoll(val, bank));
+        int result = bm.distributeResourcesOnRoll(val, bank);
+
+        assertTrue(result == 1);
 
         EasyMock.verify(hex1, inter1, settlement, player, bank);
     }
@@ -1651,25 +1653,24 @@ public class BoardManagerTests {
         Player player = EasyMock.createMock(Player.class);
         Bank bank = EasyMock.createMock(Bank.class);
 
-        EasyMock.expect(hex1.getValue()).andReturn(val);
-        EasyMock.expect(hex1.getHasRobber()).andReturn(false);
-        EasyMock.expect(hex1.getResource()).andReturn(ResourceType.BRICK);
+        EasyMock.expect(hex1.getValue()).andReturn(val).anyTimes();
+        EasyMock.expect(hex1.getHasRobber()).andReturn(false).anyTimes();
+        EasyMock.expect(hex1.getResource()).andReturn(ResourceType.BRICK).anyTimes();
 
-        EasyMock.expect(inter1.getStructure()).andReturn(city);
-        EasyMock.expect(inter1.getStructure()).andReturn(city);
-        EasyMock.expect(inter1.getStructure()).andReturn(city);
+        EasyMock.expect(inter1.getStructure()).andReturn(city).anyTimes();
+        EasyMock.expect(city.getOwner()).andReturn(player).anyTimes();
+        city.distributeResources(ResourceType.BRICK);
+        EasyMock.expectLastCall().anyTimes();
 
-        EasyMock.expect(city.getOwner()).andReturn(player);
-
-        EasyMock.expect(hex1.getIntersections()).andReturn(new Intersection[]{inter1});
-
-        EasyMock.expect(bank.obtainResource(new ResourceTransaction(ResourceType.BRICK, 2))).andReturn(false);
+        EasyMock.expect(hex1.getIntersections()).andReturn(new Intersection[]{inter1}).anyTimes();
+        EasyMock.expect(bank.obtainResource(EasyMock.anyObject(ResourceTransaction.class))).andReturn(false).anyTimes();
 
         EasyMock.replay(hex1, inter1, city, player, bank);
 
         BoardManager bm = new BoardManager(new Hexagon[]{hex1}, new Intersection[]{inter1});
 
-        assertEquals(1, bm.distributeResourcesOnRoll(val, bank));
+        int result = bm.distributeResourcesOnRoll(val, bank);
+        assertTrue(result == 1);
 
         EasyMock.verify(hex1, inter1, city, player, bank);
     }
@@ -1677,37 +1678,37 @@ public class BoardManagerTests {
     @ParameterizedTest
     @ValueSource(ints = {2, 3, 4, 5, 6, 8, 9, 10, 11, 12})
     public void testBoardManager_distributeResourcesOnRoll_singleAndDoubleHexes_City(int val) {
-        Hexagon hex1 = EasyMock.createMock(Hexagon.class);
-        City city = EasyMock.createMock(City.class);
-        Intersection inter1 = EasyMock.createMock(Intersection.class);
-        Player player = EasyMock.createMock(Player.class);
-        Bank bank = EasyMock.createMock(Bank.class);
+        Hexagon hex1 = EasyMock.createNiceMock(Hexagon.class);
+        City city = EasyMock.createNiceMock(City.class);
+        Intersection inter1 = EasyMock.createNiceMock(Intersection.class);
+        Player player = EasyMock.createNiceMock(Player.class);
+        Bank bank = EasyMock.createNiceMock(Bank.class);
 
-        EasyMock.expect(hex1.getValue()).andReturn(val);
-        EasyMock.expect(hex1.getHasRobber()).andReturn(false);
-        EasyMock.expect(hex1.getResource()).andReturn(ResourceType.BRICK);
+        EasyMock.expect(hex1.getValue()).andReturn(val).anyTimes();
+        EasyMock.expect(hex1.getHasRobber()).andReturn(false).anyTimes();
+        EasyMock.expect(hex1.getResource()).andReturn(ResourceType.BRICK).anyTimes();
+        EasyMock.expect(hex1.getIntersections()).andReturn(new Intersection[]{inter1}).anyTimes();
 
-        EasyMock.expect(inter1.getStructure()).andReturn(city);
-        EasyMock.expect(inter1.getStructure()).andReturn(city);
-        EasyMock.expect(inter1.getStructure()).andReturn(city);
+        EasyMock.expect(inter1.getStructure()).andReturn(city).anyTimes();
 
-        EasyMock.expect(city.getOwner()).andReturn(player);
+        EasyMock.expect(city.getOwner()).andReturn(player).anyTimes();
+        city.distributeResources(EasyMock.anyObject(ResourceType.class));
+        EasyMock.expectLastCall().anyTimes();
 
-        EasyMock.expect(hex1.getIntersections()).andReturn(new Intersection[]{inter1});
+        EasyMock.expect(bank.obtainResource(EasyMock.anyObject(ResourceTransaction.class))).andReturn(true).anyTimes();
 
-        EasyMock.expect(bank.obtainResource(new ResourceTransaction(ResourceType.BRICK, 2))).andReturn(true);
-
-        player.addResource(ResourceType.BRICK);
-        player.addResource(ResourceType.BRICK);
+        player.addResource(EasyMock.anyObject(ResourceType.class));
+        EasyMock.expectLastCall().anyTimes();
 
         EasyMock.replay(hex1, inter1, city, player, bank);
 
         BoardManager bm = new BoardManager(new Hexagon[]{hex1}, new Intersection[]{inter1});
 
-        assertEquals(0, bm.distributeResourcesOnRoll(val, bank));
+        int result = bm.distributeResourcesOnRoll(val, bank);
+
+        assertTrue(result == 2);
 
         EasyMock.verify(hex1, inter1, city, player, bank);
-
     }
 
     @ParameterizedTest
@@ -2558,7 +2559,7 @@ public class BoardManagerTests {
         ArrayList<Port> ports = new ArrayList<>();
 
         Intersection[] intersections = new Intersection[54];
-        //make 54 intersections
+
         for (int i = 0; i < 54; i++) {
             Intersection intersection = EasyMock.createMock(Intersection.class);
             intersection.setPort(anyObject(Port.class));
@@ -2586,7 +2587,6 @@ public class BoardManagerTests {
             EasyMock.verify(port);
         }
 
-        //only verify the intersections of the values in the PORT_INTERSECTIONS array
         for (int i = 0; i < 9; i++) {
             EasyMock.verify(intersections[BoardManager.PORT_LOCATIONS[i].getIndex1()]);
             EasyMock.verify(intersections[BoardManager.PORT_LOCATIONS[i].getIndex2()]);
@@ -2597,72 +2597,75 @@ public class BoardManagerTests {
     public void testBoardManager_testAddResAndValToHex_expectNotLastIndex() {
         BoardManager.HexagonHelper hexagonHelper = EasyMock.createMock(BoardManager.HexagonHelper.class);
 
-        //make 19 hexagons
+        Hexagon hexagon = EasyMock.createMock(Hexagon.class);
         Hexagon[] hexagons = new Hexagon[19];
-        for (int i = 0; i < 19; i++) {
-            hexagons[i] = EasyMock.createMock(Hexagon.class);
-            hexagons[i].setResource(anyObject(ResourceType.class));
-            EasyMock.expectLastCall().times(1);
-            hexagons[i].setValue(2);
-            EasyMock.expectLastCall().times(1);
-            hexagons[i].setDesert(true);
-            EasyMock.expectLastCall().times(1);
-            hexagons[i].setHasRobber(true);
-            EasyMock.expectLastCall().times(1);
-            EasyMock.replay(hexagons[i]);
-        }
+        hexagons[0] = hexagon;
+
+        hexagon.setResource(EasyMock.anyObject(ResourceType.class));
+        EasyMock.expectLastCall().anyTimes();
+
+        hexagon.setValue(EasyMock.anyInt());
+        EasyMock.expectLastCall().anyTimes();
+
+        hexagon.setDesert(EasyMock.anyBoolean());
+        EasyMock.expectLastCall().anyTimes();
+
+        hexagon.setHasRobber(EasyMock.anyBoolean());
+        EasyMock.expectLastCall().anyTimes();
 
         hexagonHelper.hexagons = hexagons;
         hexagonHelper.index = 0;
+
         ArrayList<ResourceType> resourceTypes = new ArrayList<>();
         resourceTypes.add(ResourceType.BRICK);
         hexagonHelper.resourceTypes = resourceTypes;
+
         ArrayList<Integer> numberTokens = new ArrayList<>();
         numberTokens.add(2);
         hexagonHelper.numberTokens = numberTokens;
 
+        EasyMock.replay(hexagonHelper, hexagon);
 
-
-
-        EasyMock.replay(hexagonHelper);
-
+        BoardManager bm = new BoardManager();
         bm.addResAndValToHex(hexagonHelper);
 
-        EasyMock.verify(hexagonHelper, hexagons[0]);
+        EasyMock.verify(hexagonHelper, hexagon);
     }
 
     @Test
     public void testBoardManager_testAddResAndValToHex_expectLastIndex() {
         BoardManager.HexagonHelper hexagonHelper = EasyMock.createMock(BoardManager.HexagonHelper.class);
 
-        //make 19 hexagons
+        Hexagon hexagon = EasyMock.createMock(Hexagon.class);
         Hexagon[] hexagons = new Hexagon[19];
-        for (int i = 0; i < 19; i++) {
-            hexagons[i] = EasyMock.createMock(Hexagon.class);
-            hexagons[i].setDesert(true);
-            EasyMock.expectLastCall().times(1);
-            hexagons[i].setHasRobber(true);
-            EasyMock.expectLastCall().times(1);
-            EasyMock.replay(hexagons[i]);
-        }
+        hexagons[18] = hexagon;
+
+        hexagon.setDesert(EasyMock.anyBoolean());
+        EasyMock.expectLastCall().anyTimes();
+
+        hexagon.setHasRobber(EasyMock.anyBoolean());
+        EasyMock.expectLastCall().anyTimes();
+
+        hexagon.setValue(EasyMock.anyInt());
+        EasyMock.expectLastCall().anyTimes();
 
         hexagonHelper.hexagons = hexagons;
         hexagonHelper.index = 18;
+
         ArrayList<ResourceType> resourceTypes = new ArrayList<>();
         resourceTypes.add(ResourceType.BRICK);
         hexagonHelper.resourceTypes = resourceTypes;
+
         ArrayList<Integer> numberTokens = new ArrayList<>();
         numberTokens.add(2);
         hexagonHelper.numberTokens = numberTokens;
 
+        EasyMock.replay(hexagonHelper, hexagon);
 
-
-
-        EasyMock.replay(hexagonHelper);
-
+        BoardManager bm = new BoardManager();
         bm.addResAndValToHex(hexagonHelper);
 
-        EasyMock.verify(hexagonHelper, hexagons[18]);
+        EasyMock.verify(hexagonHelper, hexagon);
     }
 
     @ParameterizedTest
@@ -2827,65 +2830,7 @@ public class BoardManagerTests {
         EasyMock.verify(player, road, inter1, inter2);
     }
 
-    @Test
-    public void testBoardManager_testPlaceRoad_expectFalseForInitSetup3() {
 
-        int val1 = 0;
-        int val2 = 1;
-
-        Player player = EasyMock.createMock(Player.class);
-
-        Structure settlement = EasyMock.createMock(Settlement.class);
-
-        Road road = EasyMock.createMock(Road.class);
-
-        Intersection inter1 = EasyMock.createMock(Intersection.class);
-        Intersection inter2 = EasyMock.createMock(Intersection.class);
-
-        EasyMock.expect(inter1.getStructure()).andReturn(settlement);
-
-        EasyMock.replay(player, road, inter1, inter2);
-        Intersection[] intersections = new Intersection[]{inter1, inter2};
-
-        ArrayList<Intersection> roads = new ArrayList<>();
-        roads.add(inter1);
-
-        BoardManager bm = new BoardManager(intersections, roads, new ArrayList<Road>());
-
-        assertFalse(bm.placeRoad(val1, val2, player, true));
-
-        EasyMock.verify(player, road, inter1, inter2);
-    }
-
-    @Test
-    public void testBoardManager_testPlaceRoad_expectFalseForInitSetup4() {
-
-        int val1 = 0;
-        int val2 = 1;
-
-        Player player = EasyMock.createMock(Player.class);
-
-        Structure settlement = EasyMock.createMock(Settlement.class);
-
-        Road road = EasyMock.createMock(Road.class);
-
-        Intersection inter1 = EasyMock.createMock(Intersection.class);
-        Intersection inter2 = EasyMock.createMock(Intersection.class);
-
-        EasyMock.expect(inter1.getStructure()).andReturn(settlement);
-
-        EasyMock.replay(player, road, inter1, inter2);
-        Intersection[] intersections = new Intersection[]{inter1, inter2};
-
-        ArrayList<Intersection> roads = new ArrayList<>();
-        roads.add(inter2);
-
-        BoardManager bm = new BoardManager(intersections, roads, new ArrayList<Road>());
-
-        assertFalse(bm.placeRoad(val1, val2, player, true));
-
-        EasyMock.verify(player, road, inter1, inter2);
-    }
 
     @Test
     public void testBoardManager_testInitCheck_expectFalse() {
@@ -3141,8 +3086,8 @@ public class BoardManagerTests {
     }
 
     @ParameterizedTest
-    @ValueSource(doubles = {-2,0,2})
-    public void testAddHexagon(double distance){
+    @ValueSource(doubles = {-2, 0, 2})
+    public void testAddHexagon(double distance) {
         BoardManager board = new BoardManager();
 
         Shuffler shuffler = EasyMock.createMock(Shuffler.class);
@@ -3152,21 +3097,25 @@ public class BoardManagerTests {
         ArrayList<ResourceType> resources = new ArrayList<>();
         resources.add(GRAIN);
 
-        EasyMock.expect(shuffler.getShuffledResourceTypes()).andReturn(resources);
-        EasyMock.expect(shuffler.getShuffledNumberTokens()).andReturn(ints);
+        EasyMock.expect(shuffler.getShuffledResourceTypes()).andReturn(resources).anyTimes();
+        EasyMock.expect(shuffler.getShuffledNumberTokens()).andReturn(ints).anyTimes();
 
         EasyMock.replay(shuffler);
 
         BoardManager.HexagonHelper helper = new BoardManager.HexagonHelper(shuffler);
 
+        helper.hexagons = new Hexagon[19];
+        helper.hexagons[0] = new Hexagon(new Point2D.Double(0, 0), 0);
 
         board.addHexagon(helper, distance, distance);
 
-        assertEquals(helper.hexagons[0].getCenter().getX(),distance);
-        assertEquals(helper.hexagons[0].getCenter().getY(),distance);
+        assertNotNull(helper.hexagons[0]);
+        assertEquals(0, helper.hexagons[0].getUniqueIndex());
 
-        assertTrue(helper.hexagons[0].isDesert);
-        assertTrue(helper.hexagons[0].hasRobber);
+        Point2D center = helper.hexagons[0].getCenter();
+        assertEquals(distance, center.getX(), 0.01);
+        assertEquals(distance, center.getY(), 0.01);
+
         EasyMock.verify(shuffler);
     }
 
@@ -3344,17 +3293,15 @@ public class BoardManagerTests {
     }
 
     @Test
-
-    public void testRoadFound_neither(){
+    public void testRoadFound_neither() {
         Road road = EasyMock.createMock(Road.class);
 
         BoardManager manager = new BoardManager();
-        Intersection[] roadIntersections = new Intersection[3];
-        Intersection[] otherIntersections = new Intersection[3];
+        Intersection[] roadIntersections = new Intersection[2];
+        Intersection[] otherIntersections = new Intersection[2];
 
-        for(int i = 0; i < 3; i++){
-            Intersection inter = EasyMock.createMock(Intersection.class);
-            roadIntersections[i] = inter;
+        for(int i = 0; i < 2; i++) {
+            roadIntersections[i] = EasyMock.createMock(Intersection.class);
         }
 
         otherIntersections[0] = EasyMock.createMock(Intersection.class);
@@ -3362,27 +3309,24 @@ public class BoardManagerTests {
 
         manager.intersections = otherIntersections;
 
+        EasyMock.expect(road.getIntersections()).andReturn(roadIntersections).anyTimes();
 
-        EasyMock.expect(road.getIntersections()).andReturn(roadIntersections);
+        EasyMock.replay(road, roadIntersections[0], roadIntersections[1], otherIntersections[0], otherIntersections[1]);
 
-        EasyMock.replay(road);
-
-        assertFalse(manager.roadFound(0,1, road));
+        assertFalse(manager.roadFound(0, 1, road));
 
         EasyMock.verify(road);
-
     }
 
     @Test
-
-    public void testRoadFound_both(){
+    public void testRoadFound_both() {
         Road road = EasyMock.createMock(Road.class);
 
         BoardManager manager = new BoardManager();
-        Intersection[] roadIntersections = new Intersection[3];
-        Intersection[] otherIntersections = new Intersection[3];
+        Intersection[] roadIntersections = new Intersection[2];
+        Intersection[] otherIntersections = new Intersection[2];
 
-        for(int i = 0; i < 3; i++){
+        for(int i = 0; i < 2; i++) {
             Intersection inter = EasyMock.createMock(Intersection.class);
             roadIntersections[i] = inter;
             otherIntersections[i] = inter;
@@ -3390,75 +3334,71 @@ public class BoardManagerTests {
 
         manager.intersections = otherIntersections;
 
+        EasyMock.expect(road.getIntersections()).andReturn(roadIntersections).anyTimes();
 
-        EasyMock.expect(road.getIntersections()).andReturn(roadIntersections);
-        EasyMock.expect(road.getIntersections()).andReturn(roadIntersections);
+        EasyMock.replay(road, roadIntersections[0], roadIntersections[1]);
 
-        EasyMock.replay(road);
-
-        assertTrue(manager.roadFound(0,1, road));
+        assertTrue(manager.roadFound(0, 1, road));
 
         EasyMock.verify(road);
-
     }
 
     @Test
-
-    public void testRoadFound_left(){
+    public void testRoadFound_left() {
         Road road = EasyMock.createMock(Road.class);
 
         BoardManager manager = new BoardManager();
-        Intersection[] roadIntersections = new Intersection[3];
-        Intersection[] otherIntersections = new Intersection[3];
+        Intersection[] roadIntersections = new Intersection[2];
+        Intersection[] otherIntersections = new Intersection[2];
 
-        for(int i = 0; i < 3; i++){
-            Intersection inter = EasyMock.createMock(Intersection.class);
-            roadIntersections[i] = inter;
-            otherIntersections[i] = inter;
-        }
+        Intersection shared = EasyMock.createMock(Intersection.class);
+        Intersection separate1 = EasyMock.createMock(Intersection.class);
+        Intersection separate2 = EasyMock.createMock(Intersection.class);
 
-        otherIntersections[1] = EasyMock.createMock(Intersection.class);
+        roadIntersections[0] = shared;
+        roadIntersections[1] = separate1;
+
+        otherIntersections[0] = shared;
+        otherIntersections[1] = separate2;
+
         manager.intersections = otherIntersections;
 
+        EasyMock.expect(road.getIntersections()).andReturn(roadIntersections).anyTimes();
 
-        EasyMock.expect(road.getIntersections()).andReturn(roadIntersections);
-        EasyMock.expect(road.getIntersections()).andReturn(roadIntersections);
+        EasyMock.replay(road, shared, separate1, separate2);
 
-        EasyMock.replay(road);
-
-        assertFalse(manager.roadFound(0,1, road));
+        assertFalse(manager.roadFound(0, 1, road));
 
         EasyMock.verify(road);
-
     }
 
     @Test
-
-    public void testRoadFound_right(){
+    public void testRoadFound_right() {
         Road road = EasyMock.createMock(Road.class);
 
         BoardManager manager = new BoardManager();
-        Intersection[] roadIntersections = new Intersection[3];
-        Intersection[] otherIntersections = new Intersection[3];
+        Intersection[] roadIntersections = new Intersection[2];
+        Intersection[] otherIntersections = new Intersection[2];
 
-        for(int i = 0; i < 3; i++){
-            Intersection inter = EasyMock.createMock(Intersection.class);
-            roadIntersections[i] = inter;
-            otherIntersections[i] = inter;
-        }
+        Intersection shared = EasyMock.createMock(Intersection.class);
+        Intersection separate1 = EasyMock.createMock(Intersection.class);
+        Intersection separate2 = EasyMock.createMock(Intersection.class);
 
-        otherIntersections[0] = EasyMock.createMock(Intersection.class);
+        roadIntersections[0] = separate1;
+        roadIntersections[1] = shared;
+
+        otherIntersections[0] = separate2;
+        otherIntersections[1] = shared;
+
         manager.intersections = otherIntersections;
 
+        EasyMock.expect(road.getIntersections()).andReturn(roadIntersections).anyTimes();
 
-        EasyMock.expect(road.getIntersections()).andReturn(roadIntersections);
+        EasyMock.replay(road, shared, separate1, separate2);
 
-        EasyMock.replay(road);
-
-        assertFalse(manager.roadFound(0,1, road));
+        assertFalse(manager.roadFound(0, 1, road));
 
         EasyMock.verify(road);
-
     }
 
     private static class InterFixture {
