@@ -481,8 +481,7 @@ public class GameManager {
         }
 
         if(!playerCityLocations.isEmpty()) {
-            Random rand = new Random();
-            int cityIndexToDowngrade = playerCityLocations.get(rand.nextInt(playerCityLocations.size()));
+            int cityIndexToDowngrade = playerCityLocations.get(0);
 
             boardManager.replaceCityWithSettlement(cityIndexToDowngrade);
 

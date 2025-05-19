@@ -8,7 +8,6 @@ import java.util.*;
 public class BoardManager {
 
 
-    private static final int NUM_HEXAGONS = 19;
     private static final int HEX_MID_ROW_SIZE = 5;
     private static final int HALF_BOARD_SIZE = 3;
     private static final int RANDOM_BOUND = 5;

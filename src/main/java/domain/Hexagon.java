@@ -4,7 +4,7 @@ import java.awt.geom.Point2D;
 
 public class Hexagon {
 
-    private Point2D center;
+    public Point2D center;
 
     private ResourceType resource;
 

@@ -45,7 +45,7 @@ public class GameDisplay implements ActionListener {
 
 	protected Player[] players;
 
-	protected Road[] roads;
+	private Road[] roads;
 
 	private ArrayList<Integer> playerRolls = new ArrayList<>();
 
@@ -698,7 +698,6 @@ public class GameDisplay implements ActionListener {
 	}
 
 	private void handleRoadAction(Player player) throws Exception {
-		buildRoad = false;
 		if (tryBuildRoad(player)) {
 			bonusManager.findLongestRoad(players, roads);
 		}
@@ -708,11 +707,9 @@ public class GameDisplay implements ActionListener {
 	}
 
 	private void handleCityAction(Player player) throws Exception {
-		buildCity = false;
 		tryBuildCity(player);
 		repaintButtons();
 		repaintBoardHexes();
-		;
 		hasInTurnWonTheGame();
 	}
 
@@ -1150,6 +1147,7 @@ public class GameDisplay implements ActionListener {
 		boardDisplay.redrawButtons(boardManager);
 		boardFrame.revalidate();
 		boardFrame.repaint();
+		roads = boardManager.getRoadsOnBoard().toArray(new Road[0]);
 	}
 
 	private Player getPlayerByName(String name) {

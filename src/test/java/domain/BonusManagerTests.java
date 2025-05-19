@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BonusManagerTests {
 
-    Bank bank;
     Player player;
     Player player2;
     Player player3;
@@ -20,14 +19,11 @@ public class BonusManagerTests {
 
     BonusManager bonusManager;
 
-    BoardManager boardManager;
 
     @BeforeEach
     public void setUp(){
-        bank = EasyMock.createMock(Bank.class);
         player = EasyMock.createMock(Player.class);
         player2 = EasyMock.createMock(Player.class);
-        boardManager = EasyMock.createMock(BoardManager.class);
         players = new Player[]{player,player2};
 
         bonusManager = new BonusManager();

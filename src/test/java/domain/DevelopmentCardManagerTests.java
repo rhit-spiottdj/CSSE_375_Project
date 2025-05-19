@@ -22,8 +22,6 @@ public class DevelopmentCardManagerTests {
     Bank bank;
     Player player;
     Player player2;
-    Player player3;
-    Player player4;
 
     Player[] players;
 

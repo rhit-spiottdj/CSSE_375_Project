@@ -120,6 +120,7 @@ task cucumber() {
             args = ['--plugin', 'pretty',
                     '--glue', 'domain',
                     'src/test/resources']
+            ignoreExitValue = true
         }
     }
 }

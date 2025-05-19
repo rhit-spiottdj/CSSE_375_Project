@@ -3,7 +3,6 @@ package domain;
 import java.awt.geom.Point2D;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.ArrayList;
 
 public class Intersection {
@@ -94,10 +93,6 @@ public class Intersection {
 
     public void setPort(Port port){
         this.port = port;
-    }
-    
-    public HashSet<Player> getOwners() {
-    	return this.owners;
     }
 
 }

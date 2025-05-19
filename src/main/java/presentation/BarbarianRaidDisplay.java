@@ -9,7 +9,7 @@ public class BarbarianRaidDisplay {
 
     public JPanel panel;
     private JLabel progressLabel;
-    private GameManager gameManager;
+    public GameManager gameManager;
     private int threshold;
 
     public BarbarianRaidDisplay(GameManager manager) {
